@@ -1,1 +1,212 @@
 
+<html>
+
+    <body>
+
+        <!-- START --> <!-- The core Firebase JS SDK is always required and must be listed first -->
+
+<script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-app.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-firestore.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-auth.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+<script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-analytics.js"></script>
+
+<script>// <![CDATA[
+
+  // Your web app's Firebase configuration
+
+  var firebaseConfig = {
+
+    apiKey: "AIzaSyDKEgiN2XFgck764dmEmBjq0rHS6aNeqEo",
+
+    authDomain: "first-cf1b5.firebaseapp.com",
+
+    databaseURL: "https://first-cf1b5.firebaseio.com",
+
+    projectId: "first-cf1b5",
+
+    storageBucket: "first-cf1b5.appspot.com",
+
+    messagingSenderId: "308150005119",
+
+    appId: "1:308150005119:web:8a2be1d376b848e2d73e4a",
+
+    measurementId: "G-XK7J96PLCS"
+
+  };
+
+  ///Change till here
+
+  
+
+  // Initialize Firebase
+
+  firebase.initializeApp(firebaseConfig);
+
+  firebase.analytics();
+
+  const db = firebase.firestore();
+
+  const auth = firebase.auth();
+
+  
+
+// ]]></script>
+
+<!--  END Firebase initial --> <form id="signup-Form">Email <input type="email" id="signup-email" />
+
+</br>
+
+passowrd<input type="password" id="signup-password" />
+
+</br>
+
+<button id="loginButton">Signup</button></form><b>
+
+<script>// <![CDATA[
+
+    //login
+
+    const signupForm = document.querySelector("#signup-Form");
+
+        signupForm.addEventListener('submit', (e) => { e.preventDefault();
+
+        //get user info
+
+        const email = signupForm['signup-email'].value;
+
+        const password = signupForm['signup-password'].value;
+
+        //login
+
+        auth.createUserWithEmailAndPassword(email, password).then( cred => {
+
+            signupForm.reset();
+
+            console.log("Success signup");
+
+        window.location.href = "https://vipatra.myshopify.com/pages/bills-table";
+
+        })
+
+        })
+
+codeGenerator();       
+
+            //check user
+
+auth.onAuthStateChanged(user => {
+
+    if(user){
+
+        db.collection("userCode").add({
+
+            uid: user.uid,
+
+            code: codeg 
+
+        })
+
+    }
+
+    else{
+
+        window.location.href = "https://vipatra.myshopify.com/pages/signup-form";
+
+    }
+
+})
+
+var codeg;
+
+function codeGenerator(){
+
+    var ALPHABET = '123456789abcdefghijklmnpqrstuvwxyz';
+
+var ID_LENGTH = 6;
+
+  var rtn = '';
+
+  for (var i = 0; i < ID_LENGTH; i++) {
+
+    rtn += ALPHABET.charAt(Math.floor(Math.random() * ALPHABET.length));
+
+  }
+
+  codeg = rtn;
+
+var x=1;
+
+/*db.collection("userCode")
+
+.where("code","==",codeg)
+
+.get()
+
+.then()({ snap => {
+
+    snap.forEach(doc => {
+
+        if(doc.data().code==codeg){
+
+            x=0;
+
+        }
+
+        else{
+
+            x=1;
+
+            
+
+        }
+
+    });
+
+}); */
+
+db.collection("b").where("code","==",codeg).get().then((snapshot) => {
+
+    snapshot.docs.forEach(doc => {
+
+        if(doc.data().code==codeg){
+
+            x=0;
+
+        }
+
+    })
+
+})      
+
+    
+
+if(x==1){
+
+    codeg=rtn;
+
+}
+
+else{
+
+ codeGenerator();   
+
+}
+
+}    
+
+   
+
+// ]]></script>
+
+</b>
+
+    </body>
+
+</html>
