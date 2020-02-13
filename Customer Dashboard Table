@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+
+        <title>Page Title</title>
+
+    </head>
+
+    <body>
+
+           <!-- START -->
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+
+<script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-app.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-firestore.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-auth.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+<script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-analytics.js"></script>
+
+<script>
+
+  // Your web app's Firebase configuration
+
+  var firebaseConfig = {
+
+    apiKey: "AIzaSyDKEgiN2XFgck764dmEmBjq0rHS6aNeqEo",
+
+    authDomain: "first-cf1b5.firebaseapp.com",
+
+    databaseURL: "https://first-cf1b5.firebaseio.com",
+
+    projectId: "first-cf1b5",
+
+    storageBucket: "first-cf1b5.appspot.com",
+
+    messagingSenderId: "308150005119",
+
+    appId: "1:308150005119:web:8a2be1d376b848e2d73e4a",
+
+    measurementId: "G-XK7J96PLCS"
+
+  };
+
+  ///Change till here
+
+  // Initialize Firebase
+
+  firebase.initializeApp(firebaseConfig);
+
+  firebase.analytics();
+
+  const db = firebase.firestore();
+
+  const auth = firebase.auth();
+
+</script>
+
+<!--  END Firebase initial -->
+
+<!-- START Seller Dashboard  -->
+
+<style>
+
+html, body {
+
+           margin: 0;
+
+           padding: 0;
+
+           width: 100%;
+
+}
+
+input{
+
+    padding:4px;
+
+    border:1.5px solid  black;
+
+    border-radius:5px;
+
+    margin-bottom:1em;
+
+    font-weight:6000;
+
+    font-size:18px;
+
+    outline:none;
+
+}
+
+#total{
+
+    font-size: 20px;
+
+}
+
+#billG{
+
+    border-radius: 10px;
+
+    padding: 10px;
+
+    margin: 10px;
+
+    background-color: white;
+
+    max-width: 300px;
+
+}
+
+#billG-title{
+
+    font-size: 20px;
+
+}
+
+</style>
+
+   <center>
+
+   <h1 id=log></h1>
+
+ <form id="bill-generator">
+
+  <fieldset id="billG">
+
+    <legend id="billG-title">Bill Generator</legend>
+
+    Item name:<br>
+
+    <input type="text" id="item"><br>
+
+    Price:<br>
+
+    <input type="number" id="price" oninput="total()"><br>
+
+    Quantity:<br>
+
+    <input type="number" id="quantity" oninput="total()"><br><br>
+
+    <h2 id="total"></h2>
+
+    Customer Code:<br>
+
+    <input type="text" maxlength="6" id="cCode" ><br><br>
+
+<input type=submit>
+
+  </fieldset>
+
+</form>
+
+    
+
+        
+
+            <!-- google signin -->
+
+    
+
+        </center>
+
+<script>
+
+//calculating total************************
+
+       var userID;
+
+        function total(){
+
+        var pr =document.getElementById("price").value;
+
+        var qn = document.getElementById("quantity").value;
+
+        var result = parseFloat(pr) * parseFloat(qn);
+
+       if(!isNaN(result))
+
+    {
+
+    document.getElementById("total").innerHTML = "Total Amount = ₹" + result + "";
+
+   }
+
+   }
+
+//saving data*******************************
+
+     const form = document.querySelector('#bill-generator');
+
+     var strn;
+
+        // saving data
+
+  form.addEventListener('submit', (e) => {
+
+    e.preventDefault();
+
+//get cust uid
+
+var strn;
+
+var uCODE = form.cCode.value;
+
+var customerid;
+
+auth.onAuthStateChanged((user) => {
+
+if(user){
+
+    db.collection("userCode")
+
+    .where("code","==",uCODE)
+
+    .limit(1)
+
+    .get()
+
+    .then((snapshot) => {
+
+     snapshot.docs.forEach(doc => {
+
+        customerid = doc.data().uid;  
+
+        console.log(doc.data().uid);
+
+})
+
+}).then(()=> {
+
+    db.collection('slrinfo')
+
+        .where('uid','==',user.uid)
+
+        .get()
+
+        .then((snapshot) => {
+
+       snapshot.docs.forEach(doc => {
+
+         strn = doc.data().strName;  
+
+      // console.log(doc.data().uid); 
+
+    })
+
+  }) 
+
+})
+
+.then(()=> {
+
+    db.collection('bill').add({
+
+       cstmrid: customerid,
+
+       cuid: uCODE,
+
+       //strName: strn,
+
+       slrid: user.uid, 
+
+           bill: {/* "storeName" : form.storeName.value,*/
+
+            "item" : form.item.value,
+
+            "price" : form.price.value,
+
+            "quantity": form.quantity.value
+
+        }
+
+ })
+
+    form.price.value = '';
+
+    form.quantity.value = '';
+
+    form.item.value = '';
+
+    form.cCode.value = '';
+
+});
+
+    
+
+        
+
+ }
+
+  //  else{
+
+        //document.getElementById('log').innerHTML = "NOT login";
+
+    //}
+
+}) 
+
+     
+
+})
+
+   </script>  
+
+    </body>
+
+</html>
