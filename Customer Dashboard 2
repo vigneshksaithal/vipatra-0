@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+
+        <title>Page Title</title>
+
+    </head>
+
+    <body>   
+
+    <style>
+
+body{
+
+ background-color:#ffffff;
+
+}
+
+table {
+
+ width:100%;
+
+ border-collapse:collapse ; 
+
+ border-color:black;
+
+}
+
+table, td {
+
+ padding: 8px;
+
+ text-align: center;
+
+ border-left:none;
+
+ border-right:none;
+
+    
+
+}
+
+tr:nth-child(odd) {
+
+    background-color: #f2f2f2;
+
+} 
+
+tr:hover{
+
+    background-color:lightgreen;
+
+}
+
+th {
+
+    padding: 8px;
+
+    font-size: 18px;
+
+    text-align: center;
+
+    background-color: #4CAF50;
+
+    color: white;
+
+}
+
+td {
+
+    font-size: 16px;
+
+    padding: 10px;
+
+}
+
+th, td{
+
+    border-bottom: 1px solid black;
+
+}
+
+.back-btn{
+
+    background-color: #296ecf;
+
+    border: none;
+
+    color: white;
+
+    padding: 15px 32px;
+
+    text-align: center;
+
+    text-decoration: none;
+
+    display: inline-block;
+
+    font-size: 16px;
+
+    border-radius: 4px;
+
+    padding: 10px 24px;
+
+    align: center;
+
+    margin: 19px;
+
+}
+
+#back-button{
+
+    text-align:right;
+
+}
+
+.bill-box{
+
+    background-color: #fafafa;
+
+    border: 1px solid grey;
+
+    border-radius: 5px;
+
+    padding: 5px;
+
+    box-shadow: 1px 1px 6px #888888;
+
+    max-width: 500px;
+
+    margin: auto;
+
+}
+
+.your-bills{
+
+    text-align: center;
+
+    font-size: 20px;
+
+}
+
+#amount-h{
+
+    color: green;
+
+    font-size: 30px;
+
+}
+
+#table-head{
+
+    background-color: #d9d9d9;
+
+}
+
+#date-bill-view{
+
+    color: #8a8987;
+
+    font-size: 15px;
+
+}
+
+#store-name{
+
+    font-size: 20px;
+
+}
+
+#bl-heading{
+
+    padding: 80px;
+
+    font-size: 16px;
+
+    text-align: center;
+
+    background-color: #4CAF50;
+
+    color: white;
+
+    
+
+}
+
+#user-code{
+
+    color: blue;
+
+    font-size: 20px;
+
+}
+
+#total{
+
+    color:blue;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+}
+
+.loader {
+
+  border: 4px solid #ffffff00;
+
+  border-top: 4px solid #f20761;
+
+  border-radius: 50%;
+
+  width: 30px;
+
+  height: 30px;
+
+  animation: spin 0.75s linear infinite;
+
+  margin:auto;
+
+}
+
+@keyframes spin {
+
+  0% { transform: rotate(0deg); }
+
+  100% { transform: rotate(360deg); }
+
+}
+
+    </style>
+
+    <!-- START -->
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+
+<script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-app.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-auth.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-firestore.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+<script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-analytics.js"></script>
+
+<script>
+
+  // Your web app's Firebase configuration
+
+  var firebaseConfig = {
+
+    apiKey: "AIzaSyDKEgiN2XFgck764dmEmBjq0rHS6aNeqEo",
+
+    authDomain: "first-cf1b5.firebaseapp.com",
+
+    databaseURL: "https://first-cf1b5.firebaseio.com",
+
+    projectId: "first-cf1b5",
+
+    storageBucket: "first-cf1b5.appspot.com",
+
+    messagingSenderId: "308150005119",
+
+    appId: "1:308150005119:web:8a2be1d376b848e2d73e4a",
+
+    measurementId: "G-XK7J96PLCS"
+
+  };
+
+  ///Change till here
+
+  // Initialize Firebase
+
+  firebase.initializeApp(firebaseConfig);
+
+  firebase.analytics();
+
+  const db = firebase.firestore();
+
+  const auth = firebase.auth();
+
+  //const auth = firebase.auth();  
+
+</script>
+
+<!--  END Firebase initial -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+  <div id="bd">
+
+  <center>
+
+      <span class="your-bills">Your bills</span><br><br>
+
+      <span id="user-code">user code</span>
+
+      <br><br>
+
+  </center>
+
+  <div id='table-elements'>
+
+      <table id="ex-table">
+
+    <tr id="bl-heading">
+
+      <th>Store Name</th>
+
+        <th>Date</th>
+
+        <th>Amount</th>
+
+    </tr>
+
+  </table>
+
+  <br>
+
+  <center>*** END ***</center>
+
+  <h1 id="test"></h1> 
+
+  </div>
+
+  <div class="loader"></div>
+
+     <script>
+
+auth.onAuthStateChanged((user) => {
+
+  if(user){      
+
+   db.collection("userCode")
+
+    .where("uid","==",user.uid)
+
+    .get()
+
+    .then((snapshot) => {
+
+     snapshot.docs.forEach(doc => {
+
+        document.getElementById("user-code").innerHTML = doc.data().code;
+
+      })
+
+     })
+
+    }
+
+  })
+
+$('#table-elements').hide();
+
+const billList = document.querySelector("#bill-list");
+
+//create element and render bills
+
+function renderBills (doc){
+
+    var content = '';
+
+      var val = doc.data();
+
+      content += '<tr onclick="javascript:showRow(this);">';
+
+      content += '<td>' + val.store_name + '</td>';
+
+      content += '<td>' + val.date + '</td>';
+
+      content += '<td>' + '₹' + val.amount +
+
+      '</td>';
+
+      content += '<td hidden>' + doc.id + '</td>';
+
+      content += '</tr>';
+
+    $('#ex-table').append(content);
+
+    
+
+/*    $.getJSON(url , function(val) {
+
+    var tbl_body = document.createElement("tbody");
+
+    var odd_even = false;
+
+    $.each(val, function() {
+
+        var tbl_row = tbl_body.insertRow();
+
+        tbl_row.className = odd_even ? "odd" : "even";
+
+        $.each(this, function(k , v) {
+
+            var cell = tbl_row.insertCell();
+
+            cell.appendChild(document.createTextNode(v.toString()));
+
+        });        
+
+        odd_even = !odd_even;               
+
+    });
+
+    $("#target_table_id").append(tbl_body);   //DOM table doesn't have .appendChild
+
+});*/
+
+}
+
+//auth.onAuthStateChanged((user) =>{
+
+  //  if(user){
+
+        db.collection("finalbill").limit(5).get().then((snapshot) => {
+
+    snapshot.docs.forEach(doc => {
+
+        renderBills(doc);
+
+    })
+
+    }).then(()=>{
+
+    $('#table-elements').show();
+
+    $('.loader').hide();
+
+        
+
+    })
+
+//}
+
+//})
+
+</script>
+
+</div>
+
+<div id="viewBill" hidden>
+
+    <style>
+
+#viewBill{
+
+  display: none;
+
+}
+
+    </style>
+
+  <!-- START Bill view -->
+
+    <center>
+
+    <br>
+
+   <font id="store-name" size="4" weight="b">Company name</font>
+
+   <br> 
+
+    <span id="amont-h">Paid</span> 
+
+    <br>  
+
+    <span id="amount-h">₹xxx</span> 
+
+    <br><br>
+
+        <div class="bill-box">
+
+         Date:&nbsp;<span id="bl-date"></span>
+
+         <br><br> 
+
+         Transaction ID:&nbsp;<span id="trans-id"></span>
+
+        <br><br>
+
+        <center>
+
+        <div class="loader"></div>
+
+        <div id='bill-view-table'>
+
+          <table id="billView">
+
+          </table>
+
+        </div>
+
+        
+
+        <br>
+
+        <span id="total"></span>
+
+    </center>
+
+</div>
+
+    </center>
+
+    <div id="back-button">    
+
+    <button class="back-btn" onclick="backButton()">back</button>
+
+    </div>
+
+    <!-- END Bill view  -->
+
+    <script>
+
+    //row click show data
+
+function showRow(row){
+
+$('#bill-view-table').hide();
+
+$('.loader').show();    document.getElementById("bd").style.display="none";    document.getElementById("viewBill").style.display="block";
+
+    var x = row.cells;
+
+//retain till here
+
+console.log(x[3].innerHTML);
+
+/*showing full bill items by calling subcollection*/
+
+var myList;
+
+db.collection('finalbill')
+
+.doc(x[3].innerHTML)
+
+.collection('finalbill')
+
+.get()
+
+.then(querySnapshot=>{
+
+    querySnapshot.docs.map(doc=>{
+
+        myList=doc.data().bill
+
+    })
+
+}).then(()=>{
+
+console.log(myList.amount)
+
+buildHtmlTable('#billView');
+
+$('#bill-view-table').show();
+
+$('.loader').hide();
+
+/*building html table */
+
+/* Builds the HTML Table out of myList.*/
+
+function buildHtmlTable(selector) {
+
+var columns = addAllColumnHeaders(myList, selector);
+
+  for (var i = 0; i < myList.length; i++) {
+
+    var row$ = $('<tr/>');
+
+    for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+
+      var cellValue = myList[i][columns[colIndex]];
+
+      
+
+      if (cellValue == null) cellValue = "";
+
+      row$.append($('<td/>').html(cellValue));
+
+    }
+
+    $(selector).append(row$);
+
+  }
+
+}  
+
+})/*closing bracket of then function*/ 
+
+document.getElementById("total").innerHTML = "Total = "+ x[2].innerHTML; 
+
+document.getElementById("amount-h").innerHTML = x[2].innerHTML; 
+
+document.getElementById("bl-date").innerHTML = x[1].innerHTML;
+
+document.getElementById("trans-id").innerHTML = x[3].innerHTML; 
+
+ 
+
+document.getElementById("store-name").innerHTML = x[0].innerHTML; 
+
+}
+
+// Adds a header row to the table and returns the set of columns.
+
+// Need to do union of keys from all records as some records may not contain
+
+// all records.
+
+function addAllColumnHeaders(myList, selector) {
+
+  var columnSet = [];
+
+  var headerTr$ = $('<tr/>');
+
+ for (var i = 0; i < myList.length; i++) {
+
+  var rowHash = myList[i];
+
+   for (var key in rowHash) {
+
+    if ($.inArray(key, columnSet) == -1) {
+
+     columnSet.push(key);
+
+/*changing the header names */
+
+     if(key=="name"){
+
+         key="Item";
+
+     }
+
+     else if(key=="price"){
+
+         key="Rate";
+
+     }
+
+     else if(key=="quantity"){
+
+         key="Quantity";
+
+     }
+
+     else if(key=="total"){
+
+         key="Amount";
+
+     }
+
+      headerTr$.append($('<th/>').html(key));
+
+      
+
+      }
+
+    }
+
+  }
+
+  $(selector).append(headerTr$);
+
+  return columnSet;
+
+}
+
+/*END table building*/ 
+
+function backButton(){
+
+  document.getElementById("bd").style.display ="block";
+
+document.getElementById("viewBill").style.display="none";
+
+$('#billView').empty();
+
+}
+
+/**/
+
+    </script>
+
+   </div>        
+
+  </body>
+
+</html>
