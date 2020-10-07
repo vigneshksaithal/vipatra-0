@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--bootstrap css-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    
+    <style>
+      #login-form {
+      margin: 20px;
+      }
+      #login{
+        font-weight: bold;
+      }
+      #login-heading{
+        font-size: 20px;
+      }
+    </style>
+    <title>Page Title</title>    
+  </head>
+  <body>
+    <!-- START -->
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-analytics.js"></script>
+    <script>
+      // Your web app's Firebase configuration
+      var firebaseConfig = {
+    apiKey: "AIzaSyB268KjjM7SMtgeZG7Zq4Gl1ozPrMFef_g",
+    authDomain: "vipatra-3d522.firebaseapp.com",
+    databaseURL: "https://vipatra-3d522.firebaseio.com",
+    projectId: "vipatra-3d522",
+    storageBucket: "vipatra-3d522.appspot.com",
+    messagingSenderId: "146612162751",
+    appId: "1:146612162751:web:6dd64e26e26d535861b60a",
+    measurementId: "G-R3DTVJTV26"
+  };
+      /*Change till here*/
+      /* Initialize Firebase*/
+      firebase.initializeApp(firebaseConfig);
+      firebase.analytics();
+      const db = firebase.firestore();
+      const auth = firebase.auth();
+    </script>
+    <!--  END Firebase initial -->
+      <br>
+      <div class="container">
+        <div class="row text-center">
+          <div class="col">
+            <h4>Vipatra</h4>
+          </div>
+        </div>
+        <br><br><br>
+        <div class="row">
+          <div class="col">
+            <span id="login-heading">Log in to your account</span>
+            <form id="login-form" class="text-center">
+        <br>
+        <div class="form-group">
+          <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email">
+        </div>
+        <div class="form-group">
+          <input type="password" class="form-control" id="password" placeholder="Password">
+        </div>
+        <br>
+        <button id="login" class="btn btn-success btn-block" onclick="">
+        <span id="login-spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+  <span class="sr-only">Loading...</span>
+   <span id="login-btn-text">Login</span>
+        </button>
+      </form>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col text-center">
+              <span>© Vipatra</span>
+              &nbsp;
+                <a href="https://vipatra.in/#help-and-support">Help</a>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col">
+            <div id="error-text" class="alert alert-warning d-none"></div>
+          </div>
+        </div>
+      </div>
+    <script>
+    
+      function login(e) {
+        e.preventDefault();
+        $('#login').attr('disabled', true);
+        $('#login-btn-text').addClass('d-none');
+        $('#login-spinner').removeClass('d-none');
+         
+        let email = $('#email').val();
+        let password = $('#password').val();
+          auth.signInWithEmailAndPassword(email, password).then(() => {
+          console.log('success logged in');
+          window.location.href = '/store/dashboard';
+         }).catch((error) => {
+           $('#error-text').removeClass('d-none');
+           $('#error-text').text(error);
+           $('#login').attr('disabled', false);
+           $('#login-btn-text').removeClass('d-none');
+           $('#login-spinner').addClass('d-none');
+        });
+      }
+       
+    </script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+  </body>
+</html>
