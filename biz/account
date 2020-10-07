@@ -16,18 +16,7 @@
       }
     </style>
     
-  </head>
-  <body>
-    <!-- START -->
-    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-analytics.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-performance.js"></script>
-    <script defer src="https://vipatra.in/firebase/prod.js"></script>
-    
-    <!--  END Firebase initial -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand">
       <img src="https://vipatra.in/images/vipatra-logo-small.png" width="30" height="30" class="d-inline-block align-top" alt="vipatra_logo" loading="lazy">Vipatra</a>
       <button class="navbar-toggler btn btn-dark" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,6 +71,21 @@
         </ul>
       </div>
     </nav>
+    
+    <!-- START -->
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-performance.js"></script>
+    <script defer src="https://vipatra.in/firebase/prod.js"></script>
+    
+    <!--  END Firebase initial -->
+    
+  </head>
+  <body>
+     
+    <div id="body">
     
     <br>
     <h4 class="text-center mb-3">Account</h4>
@@ -152,28 +156,34 @@
       </div>
     </form>
     <br><br><br>
+    
+    </div>
+    
     <script>
+    
       var userId;     document.addEventListener("DOMContentLoaded", function() {
         get_user_id();
       });            
                                             
      var app = new Vue({
-        el: '#form',
-        data: {
-          bizName: '',
-          address: '',
-          phone: '',
-          currency: '',
-          gstIN: '',
-          newEmail: '',
-          newPassword: '', 
-          updateBtn: false,
-          emailBtn: false,
-          passwordBtn: false       
+        el: '#body',
+        data() {
+          return {
+            bizName: '',
+            address: '',
+            phone: '',
+            currency: '',
+            gstIN: '',
+            newEmail: '',
+            newPassword: '', 
+            updateBtn: false,
+            emailBtn: false,
+            passwordBtn: false    
+          }   
         },
         
         methods: {
-          get_store_data: function() {
+          get_store_data() {
             db.collection('biz')
             .doc(userId)
             .get()
@@ -187,7 +197,7 @@
             })
           },
           
-          update_biz_data: function() {          
+          update_biz_data() {          
             db.collection('biz')
             .doc(userId)
             .set({
@@ -203,7 +213,7 @@
             });                        
           },
           
-          update_email: function() {
+          update_email() {
             this.updateBtn = true;
             var user = auth.currentUser;
       
@@ -214,7 +224,7 @@
             });
           },
           
-          update_password: function() {
+          update_password() {
             this.passwordBtn = true;
             var user = auth.currentUser;      
           user.updatePassword(this.newPassword)
