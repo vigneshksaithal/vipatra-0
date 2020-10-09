@@ -3,13 +3,22 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+    
     <link defer rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    
     <style> 
+    
       .btn{
       font-weight: bold;
+      }
+      
+      [v-cloak] {
+        display: none;
       }      
     </style>
+    
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand">
       <img src="https://vipatra.in/images/vipatra-logo-small.png" width="30" height="30" class="d-inline-block align-top" alt="vipatra_logo" loading="lazy">Vipatra</a>
@@ -66,18 +75,22 @@
       </div>
     </nav>
   </head>
+  
   <body>
+  
     <!-- START -->
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-analytics.js"></script>
-    <script defer src="https://vipatra.in/firebase/prod.js"></script>
-    <!--  END Firebase initial -->
-    <div>
-      <h3 class="justify-content-center my-3">Sales Reports</h3>
+    <script src="/firebase/prod.js"></script>
     
-    <div id="body" class="container">
+    <!--  END Firebase initial -->
+    <div id="body" v-cloak>
+    
+      <h3 class="text-center my-3">Sales Reports</h3>
+    
+    <div class="container">
       <div class="alert alert-warning" role="alert">Please select From and To date to see reports</div>
       
       <br>
@@ -95,9 +108,10 @@
         </div>
       </div>
       <div class="text-right">
-        <button v-on:click.prevent="get_sales_data" class="btn btn-primary mt-4 mb-4">Apply</button>
+        <button v-on:click.prevent="get_sales_data()" class="btn btn-primary mt-4 mb-4">Apply</button>
       </div>
-      <section v-if="showData" class="container">
+      
+      <section v-show="showData" class="container">
         <h6>SALES SUMMARY: OVERVIEW</h6>
         <br>
         <br><br>
@@ -147,7 +161,9 @@
         <hr>
       </section>
     </div>
+    
     <script>
+    
       var app = new Vue({
         el: '#body',
         data() {
@@ -178,7 +194,7 @@
             var tempToDate = new Date (this.toDate);
             
             db.collection('store')
-            .doc(user_id)
+            .doc(this.userId)
             .collection('transactions')
             .where('date', '>=' , tempFromDate)
             .where('date', '<=', tempToDate)
@@ -254,20 +270,12 @@
          }
          }
        });
-      }
-                
-      }             
-      });
+      },
       
-      document.addEventListener("DOMContentLoaded", function() {
-        get_user_id();
-      });
-      
-      function get_user_id() {
-        auth.onAuthStateChanged((user) => {
-          
+      get_user_id() {
+        auth.onAuthStateChanged((user) => {          
           if(user){
-            user_id = (user.uid);             
+            this.userId = (user.uid);             
           }
           else{
             document.write('Please Login');
@@ -279,12 +287,21 @@
         });
       }
       
+                
+      }             
+      });
+      
+      app.get_user_id();
+      
     </script>
     <script defer src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <!-- JS, Popper.js-->
+   
     <script defer src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    
     <script defer src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    
     <!--chartjs-->
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    
   </body>
 </html>
