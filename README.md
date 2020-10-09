@@ -5,7 +5,7 @@ For contributing please clearly explain the issue and it will be accepted if it 
 
 #languages used
 1. HTML
-2. Css
+2. CSS
 3. Javascript
 
 #framework used
