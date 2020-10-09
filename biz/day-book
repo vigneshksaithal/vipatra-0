@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand">
+      <img src="https://vipatra.in/images/vipatra-logo-small.png" width="30" height="30" class="d-inline-block align-top" alt="vipatra_logo" loading="lazy">Vipatra</a>
+      <button class="navbar-toggler btn btn-dark" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/store/new-bill">
+              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus-square-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4a.5.5 0 0 0-1 0v3.5H4a.5.5 0 0 0 0 1h3.5V12a.5.5 0 0 0 1 0V8.5H12a.5.5 0 0 0 0-1H8.5V4z"/>
+              </svg>
+              &nbsp; New Bill
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/store/items">
+              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-box-seam" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
+              </svg>
+              &nbsp; Inventory
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/store/reports">
+              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-bar-chart-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <rect width="4" height="5" x="1" y="10" rx="1"/>
+                <rect width="4" height="9" x="6" y="6" rx="1"/>
+                <rect width="4" height="14" x="11" y="1" rx="1"/>
+              </svg>
+              &nbsp; Reports
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/store/account">
+              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-person-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13.468 12.37C12.758 11.226 11.195 10 8 10s-4.757 1.225-5.468 2.37A6.987 6.987 0 0 0 8 15a6.987 6.987 0 0 0 5.468-2.63z"/>
+                <path fill-rule="evenodd" d="M8 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                <path fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z"/>
+              </svg>
+              &nbsp; Account
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/store/help">
+              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-info-circle-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+              </svg>
+              &nbsp; Help
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    
+     <!-- START -->
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-analytics.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/7.19.1/firebase-performance.js"></script>
+    <script src="/firebase/prod.js"></script>
+    <!--  END Firebase initial -->
+  </head>
+  
+  <body>
+    <div id="body">
+    
+      <h4 class="text-center mt-3 mb-5">Day Book</h4>
+    
+        <div class="container">
+          <h5 class="my-3">Total Sales = ₹ {{ totalSales }}</h5>
+            <div v-show="!showTable" class="text-center">
+              <div class="spinner-border my-3 text-center" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+            
+            <table v-show="showTable" class="table my-3">
+              <thead>
+              <tr>
+                <th>Bill Date</th>
+                <th>Amount</th>
+              </tr>
+              </thead>
+              <tbody>
+                <tr v-for="bill in bills">
+                  <td>{{ bill.date }}</td>
+                  <td>{{ bill.totalAmount }}</td>
+                </tr>
+              </tbody>
+            </table>             
+            
+          </div>
+      
+        </div>
+      
+     <script>
+    
+      var app = new Vue({
+        el: '#body',
+        data() {
+          return {
+            showTable: false,
+            totalSales: 0,
+            totalAmount: 0,
+            billAmount: 0,
+            billDate: '',
+            transactionId: '',
+            bills: []
+          }
+        },
+        methods: {        
+          show_bills() {
+            var todaysDate = this.get_todays_date();
+    
+            var docRef =          db.collection('bills')
+            .where('bizID','==', 'demo')
+            .where('date', '>=', todaysDate)
+            .where('date', '<=', todaysDate)
+            .orderBy('date', 'desc');
+            
+             docRef.get()
+             .then((snapshot) => {             
+               snapshot.docs.forEach((doc) => {
+               this.totalSales += Number(doc.data().totalAmount);
+               var formattedDate = this.formatted_date(doc.data().date.toDate());
+               this.bills.push({
+                 date: formattedDate,
+                 totalAmount: doc.data().totalAmount,
+                 docId: doc.id
+                                  
+               });              
+                this.showTable = true;                
+               });
+             }).catch(() => {
+               
+             });
+          },          
+          
+          formatted_date(value) {
+            let date = new Date(value);
+            let dd = String(date.getDate()).padStart(2, '0');
+            let mm = String(date.getMonth() + 1).padStart(2, '0'); /*January is 0!*/
+            let yyyy = date.getFullYear();
+        
+            date = dd + '-' + mm + '-' + yyyy;
+            return date;
+          }, 
+        
+          get_todays_date() {
+            let date = new Date();
+            let dd = String(date.getDate()).padStart(2, '0');
+            let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+            let yyyy = date.getFullYear();
+        
+            date = yyyy + '-' + mm + '-' + dd;
+            return (new Date(date));
+          },
+          
+          get_user_id() {
+            auth.onAuthStateChanged((user) => {           
+              if (user) {
+                this.userId = (user.uid);
+                this.get_todays_date();
+                this.show_bills();
+              }
+              else {
+                document.write('Please Login');
+                setTimeout(() => {
+                window.location.href = '/store/login'; 
+              }, 1000)
+              }
+            });
+          },
+          
+                                                                        
+        
+        }
+      });
+      
+      app.get_user_id();
+      
+    </script>
+      
+    <script defer src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>    
+    
+  </body>
+</html>
