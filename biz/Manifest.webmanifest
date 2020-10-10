@@ -1,0 +1,20 @@
+{
+  "name": "Vipatra",
+  "short_name": "Vipatra Billing Software",
+  "start_url": "/store/dashboard?source=pwa",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#292b2c",
+  "icons": [
+    {
+      "src": "/images/vipatra-logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/vipatra-logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
