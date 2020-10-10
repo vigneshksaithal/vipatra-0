@@ -16,7 +16,8 @@
       
       [v-cloak] {
         display: none;
-      }      
+      } 
+           
     </style>
     
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -82,7 +83,7 @@
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-analytics.js"></script>
     <script src="/firebase/prod.js"></script>
     
     <!--  END Firebase initial -->
@@ -91,7 +92,7 @@
       <h3 class="text-center my-3">Sales Reports</h3>
     
     <div class="container">
-      <div class="alert alert-warning" role="alert">Please select From and To date to see reports</div>
+      <div v-show="showAlert" class="alert alert-warning" role="alert">Please select From and To date to see reports</div>
       
       <br>
       <h5>Date Range</h5>
@@ -177,11 +178,14 @@
             totalMargin: 0,
             salesArr: [],
             labelsArr: [],
-            marginArr: []    
+            marginArr: [],
+            showAlert: false,
+            alertText: ''    
           }              
         },
         methods: {
           get_sales_data() {
+            this.is_date_null();
             this.totalSales = 0;
             this.noOfSales = 0;
             this.avgSale = 0;
@@ -216,6 +220,15 @@
             this.calculate_avg_sale();
             this.show_chart();
           });
+       },
+       
+       is_date_null() {
+         if (this.fromDate == '' || this.toDate == '') {
+           this.showAlert = true;
+         }
+         else {
+           this.showAlert = false;  
+         }           
        },
        
        timestamp_to_date(timestamp) {
