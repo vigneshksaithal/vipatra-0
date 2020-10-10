@@ -1,7 +1,9 @@
 Vipatra is a billing software for small business
+and it will be accepted if it solves the problem.
+## Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-For contributing please clearly explain the issue and it will be accepted if it solves the problem.
-
+Please make sure to update tests as appropriate.
 #languages used
 1. HTML
 2. Css
