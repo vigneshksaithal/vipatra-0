@@ -1,22 +1,15 @@
 <!doctype html>
 <html lang="en">
-
   <head>
-    <!-- Required meta tags -->
+  
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
-    <style>
-    [v-cloak]{
-      display: none;
-    }
-    </style>
-
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js" integrity="sha256-KSlsysqp7TXtFo/FHjb1T9b425x3hrvzjMWaJyKbpcI=" crossorigin="anonymous"></script>
 
     <!-- Bootstrap CSS -->
-    <link defer rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand">
       <img src="https://vipatra.in/images/vipatra-logo-small.png" width="30" height="30" class="d-inline-block align-top" alt="vipatra_logo" loading="lazy">Vipatra</a>
@@ -73,7 +66,7 @@
       </div>
     </nav>
     
-    <!-- START -->
+     <!-- START -->
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-firestore.js"></script>
@@ -85,72 +78,106 @@
   </head>
   
   <body>
-     
-    <h4 class="text-center my-3">Stock Report</h4>
+    <div id="body">
     
-    <section v-cloak id="body" class="container">   
-     
-      <div v-show="!showTable" class="text-center">
-        <div class="spinner-border" role="status">
-          <span class="sr-only">Loading...</span>
+      <h4 class="text-center mt-3 mb-5">Day Book</h4>
+    
+        <div class="container">
+          <h5 class="my-3">Total Sales = ₹ {{ totalSales }}</h5>
+            <div v-show="!showTable" class="text-center">
+              <div class="spinner-border my-3 text-center" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+            
+            <table v-show="showTable" class="table my-3">
+              <thead>
+              <tr>
+                <th>Bill Date</th>
+                <th>Amount</th>
+              </tr>
+              </thead>
+              <tbody>
+                <tr v-for="bill in bills">
+                  <td>{{ bill.date }}</td>
+                  <td>{{ bill.totalAmount }}</td>
+                </tr>
+              </tbody>
+            </table>             
+            
+          </div>
+      
         </div>
-      </div>
       
-      <table v-show="showTable" class="table">
-        <thead>
-          <th>Item</th>
-          <th>Stock</th>
-          <th>Stock Value</th>
-        </thead>
-        <tbody>
-          <tr v-on:click="row_click(this.textContent)" v-for="item in itemsList">
-            <td v-text="item.item"></td>
-            <td v-text="item.stock"></td>
-            <td v-text="item.stockValue"></td>
-          </tr>
-        </tbody>
-      </table>
-      
-    </section>
+     <script>
     
-    <script>
-    
-      
       var app = new Vue({
         el: '#body',
         data() {
           return {
             showTable: false,
-            userId: '',
-            itemsList: []
-          }            
+            totalSales: 0,
+            totalAmount: 0,
+            billAmount: 0,
+            billDate: '',
+            transactionId: '',
+            bills: []
+          }
         },
-        methods: {
-          show_items() {
-            db.collection('biz')
-            .doc(this.userId)
-            .collection('items')
-            .orderBy('itemInfo.item', 'asc')
-            .get()
-            .then((snapshot)=>{
-              snapshot.forEach((doc)=>{
-                var val = doc.data().itemInfo;
-                this.itemsList.push({
-                  item: val.item,
-                  stock: val.stock,
-                  stockValue: (val.stock * val.costPrice) 
-                });    
-              });
-            }).then(() => {
-              this.showTable = true;
-            });
-          },              
+        methods: {        
+          show_bills() {
+            var todaysDate = this.get_todays_date();
+    
+            var docRef =          db.collection('bills')
+            .where('bizID','==', 'demo')
+            .where('date', '>=', todaysDate)
+            .where('date', '<=', todaysDate)
+            .orderBy('date', 'desc');
+            
+             docRef.get()
+             .then((snapshot) => {             
+               snapshot.docs.forEach((doc) => {
+               this.totalSales += Number(doc.data().totalAmount);
+               var formattedDate = this.formatted_date(doc.data().date.toDate());
+               this.bills.push({
+                 date: formattedDate,
+                 totalAmount: doc.data().totalAmount,
+                 docId: doc.id
+                                  
+               });              
+                this.showTable = true;                
+               });
+             }).catch(() => {
+               
+             });
+          },          
+          
+          formatted_date(value) {
+            let date = new Date(value);
+            let dd = String(date.getDate()).padStart(2, '0');
+            let mm = String(date.getMonth() + 1).padStart(2, '0'); /*January is 0!*/
+            let yyyy = date.getFullYear();
+        
+            date = dd + '-' + mm + '-' + yyyy;
+            return date;
+          }, 
+        
+          get_todays_date() {
+            let date = new Date();
+            let dd = String(date.getDate()).padStart(2, '0');
+            let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+            let yyyy = date.getFullYear();
+        
+            date = yyyy + '-' + mm + '-' + dd;
+            return (new Date(date));
+          },
           
           get_user_id() {
             auth.onAuthStateChanged((user) => {           
               if (user) {
                 this.userId = (user.uid);
-                this.show_items();
+                this.get_todays_date();
+                this.show_bills();
               }
               else {
                 document.write('Please Login');
@@ -158,23 +185,20 @@
                 window.location.href = '/store/login'; 
               }, 1000)
               }
-            });*/
+            });
           },
           
-          row_click(row) {
-            var data = row;
-            console.log(data);
-          }            
+                                                                        
         
-        } 
+        }
       });
       
       app.get_user_id();
-                             
-    </script>  
-     
+      
+    </script>
+      
     <!-- jQuery, popperjs, bootstrap -->  
-    <script src="https://cdn.jsdelivr.net/combine/npm/jquery@3.5.1,npm/popper.js@1.16.1,npm/bootstrap@4.5.2"></script>
-  
+    <script src="https://cdn.jsdelivr.net/combine/npm/jquery@3.5.1,npm/popper.js@1.16.1,npm/bootstrap@4.5.2"></script>          
+    
   </body>
 </html>
