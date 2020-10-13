@@ -3,13 +3,21 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js" integrity="sha256-KSlsysqp7TXtFo/FHjb1T9b425x3hrvzjMWaJyKbpcI=" crossorigin="anonymous"></script>
+    
     <link defer rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-    <style> 
+    
+    <style>     
       .btn{
       font-weight: bold;
-      }      
+      }
+      
+      [v-cloak] {
+        display: none;
+      }            
     </style>
+    
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand">
       <img src="https://vipatra.in/images/vipatra-logo-small.png" width="30" height="30" class="d-inline-block align-top" alt="vipatra_logo" loading="lazy">Vipatra</a>
@@ -66,23 +74,26 @@
       </div>
     </nav>
   </head>
+  
   <body>
+  
     <!-- START -->
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-analytics.js"></script>
-    <script defer src="https://vipatra.in/firebase/prod.js"></script>
-    <!--  END Firebase initial -->
-    <div>
-      <h3 class="justify-content-center my-3">Sales Reports</h3>
+    <script src="/firebase/prod.js"></script>
     
-    <div id="body" class="container">
-      <div class="alert alert-warning" role="alert">Please select From and To date to see reports</div>
+    <!--  END Firebase initial -->
+    <section v-cloak id="body">
+    
+      <h4 class="text-center my-3">Sales Reports</h4>
+    
+    <div class="container">
+      <div v-show="showAlert" class="alert alert-warning" role="alert">Please select From and To date to see reports</div>
+      <br>
       
-      <br>
-      <h5>Date Range</h5>
-      <br>
+      <h6>Date Range</h6>
       
       <div class="row">
         <div class="col">
@@ -95,13 +106,14 @@
         </div>
       </div>
       <div class="text-right">
-        <button v-on:click.prevent="get_sales_data" class="btn btn-primary mt-4 mb-4">Apply</button>
+        <button v-on:click.prevent="get_sales_data" class="btn btn-primary my-4">Apply</button>
       </div>
-      <section v-if="showData" class="container">
+      
+      <section v-show="showData" class="container">
+      
         <h6>SALES SUMMARY: OVERVIEW</h6>
-        <br>
         <br><br>
-        <div class="row" >
+        <div class="row">
           <div class="col">
             <h3>₹ {{ totalSales }}</h3>
           </div>
@@ -124,7 +136,7 @@
             <h3>₹ {{ totalMargin }}</h3>
           </div>
           <div class="col">
-            <h3>₹ {{ avgSale }}</h3>
+            <h3>₹ {{ (totalSales / noOfSales).toFixed(2) }}</h3>
           </div>
         </div>
         <div class="row" >
@@ -139,103 +151,121 @@
         <hr>
         <div class="row">
           <div class="col">
-            <h6>TOTAL SALES: CHART</h6>
-            <br><br>
-            <canvas id="sales-chart"></canvas>
+            <div class="card">
+              <div class="card-body">
+                <h6>TOTAL SALES: CHART</h6>
+                <br><br>
+                <canvas id="sales-chart"></canvas>
+              </div>
+            </div>
           </div>
         </div>
-        <hr>
+    
       </section>
-    </div>
+      
+    </section>
+    
     <script>
+    
       var app = new Vue({
         el: '#body',
         data() {
           return {
+            userId: '',
             showData: false,
             fromDate: '',
             toDate: '',
             totalSales: 0,
             noOfSales: 0,
-            avgSale: 0,
             totalMargin: 0,
             salesArr: [],
             labelsArr: [],
-            marginArr: []    
+            showAlert: false   
           }              
         },
         methods: {
+        
           get_sales_data() {
+            this.is_date_null();
             this.totalSales = 0;
             this.noOfSales = 0;
-            this.avgSale = 0;
             this.totalMargin = 0;
             this.salesArr = [];
             this.labelsArr = [];
-            this.marginArr = [];
-            this.showData = true;
-            var tempFromDate = new Date (this.fromDate);
-            var tempToDate = new Date (this.toDate);
             
-            db.collection('store')
-            .doc(user_id)
-            .collection('transactions')
+            let tempFromDate = new Date (this.fromDate);
+            let tempToDate = new Date (this.toDate);
+            
+            db.collection('biz')
+            .doc(this.userId)
+            .collection('sales')
             .where('date', '>=' , tempFromDate)
             .where('date', '<=', tempToDate)
             .orderBy('date', 'desc')
             .get()
             .then((snapshot) => {
               snapshot.forEach((doc) => {
-                this.salesArr.push(Number(doc.data().salesInfo.sales));                                                this.marginArr.push(Number(doc.data().salesInfo.margin));
+                let val = doc.data().salesInfo;
+                this.totalSales += parseFloat(val.sales);
+                this.totalMargin += parseFloat(val.margin);
+                this.noOfSales += parseFloat(val.noOfSales);
+                this.salesArr.push(val.sales);     
+                console.log(this.salesArr);                                        
                        
-              this.noOfSales += parseFloat(doc.data().salesInfo.noOfSales);
-              var date = doc.data().date;  
-              date = date.toDate();
-              var chart_date = this.timestamp_to_date(date);
-              this.labelsArr.push(chart_date)          
-            }); 
-          }).then(() => {
-            this.calculate_total_sales();
-            this.calculate_total_margin();
-            this.calculate_avg_sale();
-            this.show_chart();
-          });
+               let date = doc.data().date;  
+               date = date.toDate();
+               let chart_date = this.timestamp_to_date(date);
+               this.labelsArr.push(chart_date)          
+             }); 
+           }).then(() => {
+             console.log(this.salesArr);
+             this.show_chart();
+           });
+       },
+       
+       is_date_null() {
+         if (this.fromDate == '' || this.toDate == '') {
+           this.showAlert = true;
+           this.showData = false;
+         }
+         else {
+           this.showAlert = false; 
+           this.showData = true; 
+         }           
        },
        
        timestamp_to_date(timestamp) {
-         var date = new Date(timestamp);       
-         var dd = String(date.getDate()).padStart(2, '0');
-         var mm = String(date.getMonth() + 1).padStart(2, '0'); /*January is 0!*/
-         var yyyy = date.getFullYear();
+         let date = new Date(timestamp);       
+         let dd = String(date.getDate()).padStart(2, '0');
+         let mm = String(date.getMonth() + 1).padStart(2, '0'); /*January is 0!*/
+         let yyyy = date.getFullYear();
       
          date = yyyy + '-' + mm + '-' + dd;
          date = dd;
          return date;
        },
-       
-       calculate_avg_sale() {
-       this.avgSale = (this.totalSales/this.noOfSales).toFixed(2);
-       },
       
-       calculate_total_sales() {
-         this.totalSales =      this.salesArr.reduce(this.add, 0);
-      /*initial value to avoid when the array is empty*/
-       },
-      
-       calculate_total_margin() {
-         this.totalMargin = this.marginArr.reduce(this.add, 0);
+       get_user_id() {
+        auth.onAuthStateChanged((user) => {          
+          if(user){
+            this.userId = (user.uid);             
+          }
+          else{
+            document.write('Please Login');
+            setTimeout(() => {
+              window.location.href = '/store/login'; 
+            }, 1000);
+          }          
+        });
       },
       
-       add(accumulator,a) {
-         return accumulator + parseFloat(a);
-       },
-      
-       show_chart() {
-         var ctx = document.getElementById('sales-chart').getContext('2d');
-         var chart = new Chart(ctx, {
+      show_chart() {
+        console.log(app.salesArr);
+        var ctx = document.getElementById('sales-chart').getContext('2d');
+        var chart = new Chart(ctx, {
            type: 'bar',
            data: {
-           labels: this.labelsArr,
+           labels: app.labelsArr,
            datasets: [{
              label: 'Sales',
              backgroundColor: 'rgb(255, 99, 132)',
@@ -243,48 +273,28 @@
              data: this.salesArr
            }]
          },
-         /* Configuration options go here*/
          options: {
-         scales: {
-         xAxes: [{
-           gridLines: {
-             color: "rgba(0, 0, 0, 0)",
+           scales: {
+             xAxes: [{
+               gridLines: {
+                 color: "rgba(0, 0, 0, 0)",
+               }
+             }]
            }
-         }]
-         }
          }
        });
       }
+      
                 
       }             
       });
-      
-      document.addEventListener("DOMContentLoaded", function() {
-        get_user_id();
-      });
-      
-      function get_user_id() {
-        auth.onAuthStateChanged((user) => {
-          
-          if(user){
-            user_id = (user.uid);             
-          }
-          else{
-            document.write('Please Login');
-            setTimeout(() => {
-              window.location.href = '/store/login'; 
-            }, 1000);
-          }
-          
-        });
-      }
+                 
+      app.get_user_id();
       
     </script>
-    <script defer src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <!-- JS, Popper.js-->
-    <script defer src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-    <script defer src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
-    <!--chartjs-->
-    <script defer src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    
+    <!-- jQuery, popper.js, bootstrap, chartjs -->
+    <script defer src="https://cdn.jsdelivr.net/combine/npm/jquery@3.5.1,npm/popper.js@1.16.1,npm/bootstrap@4.5.2,npm/chart.js@2.9.3"></script>
+     
   </body>
 </html>
