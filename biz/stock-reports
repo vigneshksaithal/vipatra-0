@@ -1,11 +1,18 @@
 <!doctype html>
 <html lang="en">
+
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <style>
+    [v-cloak]{
+      display: none;
+    }
+    </style>
 
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js" integrity="sha256-KSlsysqp7TXtFo/FHjb1T9b425x3hrvzjMWaJyKbpcI=" crossorigin="anonymous"></script>
 
     <!-- Bootstrap CSS -->
     <link defer rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
@@ -66,79 +73,83 @@
       </div>
     </nav>
     
-  </head>
-  <body>
-     <!-- START -->
+    <!-- START -->
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-analytics.js"></script>
     <script defer src="https://www.gstatic.com/firebasejs/7.19.1/firebase-performance.js"></script>
-    <script defer src="https://vipatra.in/firebase/dev.js"></script>
+    <script src="/firebase/prod.js"></script>
     <!--  END Firebase initial -->
-    <h4 class="text-center m-3">Stock Report</h4>
-    <br>
     
-    <section id="body" class="container">
-      <div v-if="showSpinner" class="text-center">
+  </head>
+  
+  <body>
+     
+    <h4 class="text-center my-3">Stock Report</h4>
+    
+    <section v-cloak id="body" class="container">   
+     
+      <div v-show="!showTable" class="text-center">
         <div class="spinner-border" role="status">
-        <span class="sr-only">Loading...</span>
+          <span class="sr-only">Loading...</span>
+        </div>
       </div>
-      </div>
-      <table v-if="!showSpinner" id="items-table" class="table">
+      
+      <table v-show="showTable" class="table">
         <thead>
           <th>Item</th>
           <th>Stock</th>
           <th>Stock Value</th>
         </thead>
+        <tbody>
+          <tr v-on:click="row_click(this.textContent)" v-for="item in itemsList">
+            <td v-text="item.item"></td>
+            <td v-text="item.stock"></td>
+            <td v-text="item.stockValue"></td>
+          </tr>
+        </tbody>
       </table>
+      
     </section>
     
     <script>
+    
       
       var app = new Vue({
         el: '#body',
         data() {
           return {
-            showSpinner: true,
-            userID: ''
+            showTable: false,
+            userId: '',
+            itemsList: []
           }            
         },
         methods: {
           show_items() {
-            db.collection('store')
-            .doc('demo')
+            db.collection('biz')
+            .doc(this.userId)
             .collection('items')
-           // .orderBy('itemInfo.name', 'asc')
+            .orderBy('itemInfo.item', 'asc')
             .get()
             .then((snapshot)=>{
               snapshot.forEach((doc)=>{
-                console.log(doc.data().name);
-                this.get_item_data(doc);      
+                var val = doc.data().itemInfo;
+                this.itemsList.push({
+                  item: val.item,
+                  stock: val.stock,
+                  stockValue: (val.stock * val.costPrice) 
+                });    
               });
             }).then(() => {
-              this.showSpinner = false;
+              this.showTable = true;
             });
-          },
-          
-          get_item_data(doc) {
-            var content = '';
-            var val = doc.data().itemInfo;
-            docID = doc.id;
-            content += '<tbody>';
-            content += '<tr>';
-            content += '<td>' + val.name + '</td>';
-            content += '<td>' + val.stock  + '</td>';
-            content += '<td>' + (val.stock*val.costPrice)  + '</td>';                
-            content += '</tr>';    
-            content += '</tbody>';
-            document.getElementById('items-table').appendChild(content);          
-          },    
+          },              
           
           get_user_id() {
             auth.onAuthStateChanged((user) => {           
               if (user) {
-                this.userID = (user.uid);
+                this.userId = (user.uid);
                 this.show_items();
               }
               else {
@@ -147,23 +158,23 @@
                 window.location.href = '/store/login'; 
               }, 1000)
               }
-            });
-          }               
+            });*/
+          },
+          
+          row_click(row) {
+            var data = row;
+            console.log(data);
+          }            
         
         } 
       });
       
-      document.addEventListener("DOMContentLoaded", function() {
-      //app.get_user_id();
-      app.show_items();
-      });
-      
-        
-    </script>    
-
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script defer src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-    <script defer src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+      app.get_user_id();
+                             
+    </script>  
+     
+    <!-- jQuery, popperjs, bootstrap -->  
+    <script src="https://cdn.jsdelivr.net/combine/npm/jquery@3.5.1,npm/popper.js@1.16.1,npm/bootstrap@4.5.2"></script>
+  
   </body>
 </html>
