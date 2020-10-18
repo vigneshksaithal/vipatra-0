@@ -2,7 +2,7 @@
 <html lang="en">
 
   <head>
-    <!-- Required meta tags -->
+  
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
@@ -90,11 +90,13 @@
     
     <section v-cloak id="body" class="container">   
      
-      <div v-show="!showTable" class="text-center">
+      <div v-show="!showSpinner" class="text-center">
         <div class="spinner-border" role="status">
           <span class="sr-only">Loading...</span>
         </div>
       </div>
+      
+      <div class="alert alert-secondary" role="alert">No reports to show. Please add items by going to inventory to see reports.</div>
       
       <table v-show="showTable" class="table">
         <thead>
@@ -103,29 +105,29 @@
           <th>Stock Value</th>
         </thead>
         <tbody>
-          <tr v-on:click="row_click(this.textContent)" v-for="item in itemsList">
-            <td v-text="item.item"></td>
-            <td v-text="item.stock"></td>
-            <td v-text="item.stockValue"></td>
+          <tr v-for="item in itemsList">
+            <td>{{ item.item }}</td>
+            <td>{{ item.stock }}</td>
+            <td>{{ item.stockValue }}</td>
           </tr>
         </tbody>
       </table>
       
     </section>
     
-    <script>
-    
-      
+    <script>          
       var app = new Vue({
         el: '#body',
         data() {
           return {
+            showSpinner: true,
             showTable: false,
             userId: '',
             itemsList: []
           }            
         },
         methods: {
+        
           show_items() {
             db.collection('biz')
             .doc(this.userId)
@@ -142,7 +144,11 @@
                 });    
               });
             }).then(() => {
+              this.showSpinner = false;
               this.showTable = true;
+            }).catch(() => {
+              this.showSpinner = false;
+              this.showAlert = true;
             });
           },              
           
@@ -158,12 +164,7 @@
                 window.location.href = '/store/login'; 
               }, 1000)
               }
-            });*/
-          },
-          
-          row_click(row) {
-            var data = row;
-            console.log(data);
+            });
           }            
         
         } 
@@ -173,8 +174,9 @@
                              
     </script>  
      
-    <!-- jQuery, popperjs, bootstrap -->  
-    <script src="https://cdn.jsdelivr.net/combine/npm/jquery@3.5.1,npm/popper.js@1.16.1,npm/bootstrap@4.5.2"></script>
+    <!-- jQuery & JS bundle w/ Popper.js -->
+    <script defer src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
   
   </body>
 </html>
