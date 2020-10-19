@@ -54,6 +54,9 @@
       background-color: DodgerBlue !important;
       color: #ffffff;
       }
+      #bill{
+        max-width: 720px;
+      }
     </style>
     <!-- START -->
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-app.js"></script>
@@ -280,17 +283,14 @@
             </div>
             <div id="bill-pdf" class="modal-body">
               <br>
+              <h6 class="text-center">TAX INVOICE</h6>
               <div class="container">
-                <div class="row text-center">
+                <div class="row text-left">
                   <div class="col">
-                    <h6>TAX INVOICE</h6>
                     <h4>{{ bizInfo.name }}</h4>
                     <div v-if="bizInfo.address != ''">Address: {{ bizInfo.address }}</div>
                     <div v-if="bizInfo.phone != ''">Phone: {{ bizInfo.phone }}</div>
                     <div v-if="bizInfo.gstIN != ''">GSTIN: {{ bizInfo.gstIN }}</div>
-                    <br>
-                    <span>Total</span>
-                    <h2 class="text-success">₹ {{ totalAmount }}</h2>
                   </div>
                 </div>
                 <br>
@@ -298,23 +298,22 @@
                   <div class="col">
                     <span>Date: {{ billDate }}</span>
                     <br>
-                    <span v-if="customerName != ''">Customer Name: {{ customerName }}</span>
+                     <span>Bill No: {{ billNo }}</span>
                   </div>
                   <div class="col">
-                    <span v-if="invoiceNum != ''">Invoice No: {{ invoiceNum }}</span>
-                    <br>
-                    <span>Bill ID: {{ billId }}</span>
+                    <span v-if="customerName != ''">Customer Name: {{ customerName }}</span>
                   </div>
                 </div>
               </div>
               <br>
+              <div class="text-center">
               <table class="table">
                 <thead>
                   <tr>
                     <th>Item</th>
                     <th>Qty</th>
-                    <th>Price</th>
-                    <th>Amount</th>
+                    <th>Price(₹)</th>
+                    <th>Amount(₹)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -324,12 +323,16 @@
                     <td>{{ item.price }}</td>
                     <td>{{ item.total }}</td>
                   </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td><h5>Total</h5></td>
+                    <td><h5>{{ totalAmount }}</h5></td>
+                  </tr>
                 </tbody>
               </table>
-              <br>
-              <div class="text-center">
-                <span class="h5">Total Amount = {{ totalAmount }}</span>
               </div>
+              <br>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
