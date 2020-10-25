@@ -258,9 +258,9 @@
                 <div class="row text-left">
                   <div class="col">
                     <h4>{{ bizInfo.name }}</h4>
-                    <div v-if="bizInfo.address != ''">Address: {{ bizInfo.address }}</div>
-                    <div v-if="bizInfo.phone != ''">Phone: {{ bizInfo.phone }}</div>
-                    <div v-if="bizInfo.gstIN != ''">GSTIN: {{ bizInfo.gstIN }}</div>
+                    <div v-if="bizInfo.address">Address: {{ bizInfo.address }}</div>
+                    <div v-if="bizInfo.phone">Phone: {{ bizInfo.phone }}</div>
+                    <div v-if="bizInfo.gstIN">GSTIN: {{ bizInfo.gstIN }}</div>
                   </div>
                 </div>
                 <br>
@@ -271,7 +271,7 @@
                      <span>Bill No: {{ billNo }}</span>
                   </div>
                   <div class="col">
-                    <span v-if="customerName != ''">Customer Name: {{ customerName }}</span>
+                    <span v-if="customerName">Customer Name: {{ customerName }}</span>
                   </div>
                 </div>
               </div>
