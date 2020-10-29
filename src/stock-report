@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <style>
+      [v-cloak]{
+      display: none;
+      }
+      
+      .navbar svg{
+      color: currentColor;
+      width: 1.3em;
+      height: 1.3em;
+      margin-right: 15px;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js" integrity="sha256-KSlsysqp7TXtFo/FHjb1T9b425x3hrvzjMWaJyKbpcI=" crossorigin="anonymous"></script>
+    
+    <!-- Bootstrap CSS -->
+    <link defer rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    
+    <!-- navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand">
+      <img src="https://vipatra.in/images/vipatra-logo-small.png" width="30" height="30" class="d-inline-block align-top" alt="vipatra_logo" loading="lazy">Vipatra</a>
+        
+      <button class="navbar-toggler btn btn-dark" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/store/new-bill">
+              <i data-feather="plus"></i>
+               New Bill
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/store/items">
+              <i data-feather="align-justify"></i>
+              Inventory
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/store/reports">
+              <i fill="currentColor" data-feather="bar-chart"></i>
+              Reports
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/store/account">
+              <i data-feather="user"></i>
+              Account
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/store/help">
+              <i data-feather="help-circle"></i>
+              Help
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    
+    <!-- START -->
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-analytics.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/7.19.1/firebase-performance.js"></script>
+    <script src="/firebase/prod.js"></script>
+    <!--  END Firebase initial -->
+    
+  </head>  
+  <body>
+    <h5 class="text-center my-3">Stock Report</h5>
+    <section v-cloak id="body" class="container">
+    
+      <div v-show="showSpinner" class="text-center">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+      
+      <div v-show="showAlert" class="alert alert-secondary" role="alert">No reports to show. Please add items by going to inventory to see reports.</div>
+      
+      <table v-show="showTable" class="table table-sm table-hover">
+        <thead>
+          <th scope="col">#</th>
+          <th scope="col">Item</th>
+          <th scope="col">Stock</th>
+          <th scope="col">Stock Value</th>
+        </thead>
+        <tbody>
+          <tr v-for="(item, index) in items">
+            <td>{{ ++index }}</td>
+            <td>{{ item.item }}</td>
+            <td>{{ item.stock }}</td>
+            <td>{{ item.stockValue }}</td>
+          </tr>
+        </tbody>
+      </table>
+      
+    </section>
+    
+    <script> 
+             
+      var app = new Vue({
+        el: '#body',
+        data() {
+          return {
+            showSpinner: true,
+            showTable: false,
+            showAlert: false,
+            userId: '',
+            items: []
+          }            
+        },
+        methods: {
+        
+          show_items() {
+            db.collection('biz')
+            .doc(this.userId)
+            .collection('items')
+            .orderBy('item.name', 'asc')
+            .get()
+            .then((snapshot)=>{
+              snapshot.forEach((doc)=>{
+                var val = doc.data().item
+                this.items.push({
+                  item: val.name,
+                  stock: val.stock.current,
+                  stockValue: (val.stock.current * val.costPrice) 
+                })    
+              })
+            }).then(() => {
+              if (this.items != '') {
+                this.showSpinner = false
+                this.showTable = true 
+              }
+              else {
+                this.showSpinner = false
+                this.showAlert = true  
+              }
+            }).catch(() => {
+              this.showSpinner = false
+              this.showAlert = true
+            })
+          },              
+          
+          get_user_id() {
+            auth.onAuthStateChanged((user) => {           
+              if (user) {
+                this.userId = (user.uid)
+                this.show_items()
+              }
+              else {
+                document.write('Please Login')
+                setTimeout(() => {
+                window.location.href = '/store/login' 
+              }, 1000)
+              }
+            })
+          }            
+        
+        } 
+      })
+      document.addEventListener('DOMContentLoaded', () => {
+        app.get_user_id()
+        app.show_items()
+        feather.replace()
+      })
+                             
+    </script>  
+    <!-- jQuery & JS bundle w/ Popper.js -->
+    <script defer src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    
+    <!-- feather icons -->
+    <script defer src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha256-XfzdiC+S1keia+s9l07y7ye5a874sBq67zK4u7LTjvk=" crossorigin="anonymous"></script>
+  </body>
+</html>
