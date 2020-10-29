@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>New bill</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js" integrity="sha256-KSlsysqp7TXtFo/FHjb1T9b425x3hrvzjMWaJyKbpcI=" crossorigin="anonymous"></script>
+    <!-- bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    
+    <style>      
+      .btn{
+      font-weight: bold
+      }
+      
+      [v-cloak] {
+      display: none;
+      }
+      
+      .navbar svg{
+      color: currentColor;
+      width: 1.3em;
+      height: 1.3em;
+      margin-right: 15px;
+      }
+    </style>
+    <!-- START -->
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-analytics.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/7.6.1/firebase-performance.js"></script>
+    <script src="https://vipatra.in/firebase/prod.js"></script>
+    <!--  END Firebase initial -->
+    
+     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand">
+      <img src="https://vipatra.in/images/vipatra-logo-small.png" width="30" height="30" class="d-inline-block align-top" alt="vipatra_logo" loading="lazy">Vipatra</a>
+        
+      <button class="navbar-toggler btn btn-dark" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/store/new-bill">
+              <i data-feather="plus"></i>
+               New Bill
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/store/items">
+              <i data-feather="align-justify"></i>
+              Inventory
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/store/reports">
+              <i fill="currentColor" data-feather="bar-chart"></i>
+              Reports
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/store/account">
+              <i data-feather="user"></i>
+              Account
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/store/help">
+              <i data-feather="help-circle"></i>
+              Help
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    
+    <link rel="manifest" href="/manifest.json">
+  </head>
+  <body>
+    <section v-cloak id="body">
+      <div class="container">
+        <br>
+        <div class="row align-bottom">
+          <div class="col-3">
+            <button class="btn btn-link btn-lg" data-toggle="modal" data-target="#edit-modal">
+              <i color="#000000" data-feather="settings"></i>
+            </button>           
+          </div>
+          <div class="col-9">        
+            <button class="btn btn-primary btn-lg btn-block" data-toggle="modal" data-target="#send-bill-modal">Charge ₹ {{ totalAmount }}</button>    
+          </div>
+        </div>
+        <hr>
+        <div class="row mb-2">
+          <div class="col-5">Customer name</div>
+          <div class="col-4">Bill No.</div>
+        </div>
+        <div class="row">
+          <div class="col-5">
+            <input type="text" v-model="customerName" class="form-control">
+          </div>
+          <div class="col-4">
+            <input type="number" v-model.number="billNo" class="form-control"/>
+          </div>
+          <div class="col-3">
+            <button class="btn btn-danger" @click="reset">
+              <i data-feather="rotate-ccw"></i>
+            </button>
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-7">
+            <div class="form-group">
+              <div id="autocomplete">
+                <label>Item</label>
+                <input id="search-bar" type="text" class="form-control" placeholder="Search item..." v-model.lazy="item">
+              </div>
+            </div>
+          </div>
+          <div class="col-5">
+            <div class="form-group">
+              <label>Quantity</label>
+              <input v-model.number="qty" type="number" class="form-control" placeholder="Qty">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-4">Price</div>
+          <div class="col-4">Discount</div>
+        </div>
+        <div class="row my-2">
+          <div class="col">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">₹</span>
+              </div>
+              <input v-model.number="price" type="number" class="form-control">
+            </div>
+          </div>
+          <div class="col">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">₹</span>
+              </div>
+              <input v-model="discount" type="number" class="form-control">
+            </div>
+          </div>
+          <div class="col text-right">
+            <button @click="add_item" class="btn btn-secondary"><i data-feather="plus"></i> Add</button>
+          </div>
+        </div>
+        <div v-show="false" class="d-none">
+          <input v-model.number="margin">
+        </div>
+        <br>
+        <div class="row">
+          <div class="col">
+            <table class="table table-sm table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Item</th>
+                  <th scope="col">Qty</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Discount</th>
+                  <th scope="col">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in billItems" :key="item.name">
+                  <td scope="row">{{ ++index }}</td>
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.qty }}</td>
+                  <td>{{ item.price }}</td>
+                  <td>{{ item.discount }}</td>
+                  <td>{{ item.total }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <br><br><br><br>
+      <!--Submit modal-->
+      <div id="send-bill-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="submit-modal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Send Bill</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div>
+                <fieldset v-bind:disabled="sendBillDisabled">
+                  <span>Send Digital bill</span>
+                  <br>
+                  <div class="form-row my-2">
+                    <div class="col-8">
+                      <input type="text" class="form-control" placeholder="customer code">
+                    </div>
+                    <div class="col-4">
+                      <button @click="save_bill('NO')" type="button" class="btn btn-primary">Send bill</button>
+                    </div>
+                  </div>
+                  <div class="text-center">
+                    <div class="h5 m-3">OR</div>
+                    <button @click="save_bill('YES')" class="btn btn-danger btn-block">Get PDF</button>
+                  </div>
+              </div>
+              </fieldset>
+              <div v-if="sendBillDisabled" class="text-center">
+                <div class="alert alert-success mt-4">
+                  <div v-show="showSpinner" class="spinner-border" role="status">  
+                    <span class="sr-only">Loading...</span>
+                  </div>
+                  <div class="mt-3">{{ sendBillAlertText }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- edit Modal -->
+      <div class="modal fade" id="edit-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Edit Bill</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="alert alert-secondary" role="alert">Date is set to Todays date automatically. But if you want custom date choose below.</div>
+              <div class="form-group">
+                <label>Date</label>
+                <input v-model="billDate" type="date" class="form-control">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--END submit modal-->
+      <!-- Modal -->    
+      <div class="modal fade" id="view-bill-modal" tabindex="-1" aria-labelledby="bill-modal" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title text-center">Bill</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div id="bill-pdf" class="modal-body">
+              <br>
+              <h6 class="text-center">TAX INVOICE</h6>
+              <div class="container">
+                <div class="row text-left">
+                  <div class="col">
+                    <h4>{{ biz.name }}</h4>
+                    <div v-if="biz.address">Address: {{ biz.address }}</div>
+                    <div v-if="biz.phone">Phone: {{ biz.phone }}</div>
+                    <div v-if="biz.gstIN">GSTIN: {{ biz.gstIN }}</div>
+                  </div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col">
+                    <span>Date: {{ billDate }}</span>
+                    <br>
+                     <span>Bill No: {{ billNo }}</span>
+                  </div>
+                  <div class="col">
+                    <span v-if="customerName">Customer Name: {{ customerName }}</span>
+                  </div>
+                </div>
+              </div>
+              <br>
+              <div class="text-center">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Qty</th>
+                    <th>Price(₹)</th>
+                    <th>Amount(₹)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in billItems" :key="item.item">
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.qty }}</td>
+                    <td>{{ item.price }}</td>
+                    <td>{{ item.total }}</td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td><h5>Total</h5></td>
+                    <td><h5>{{ totalAmount }}</h5></td>
+                  </tr>
+                </tbody>
+              </table>
+              </div>
+              <br>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script>                                                     
+      var app = new Vue({
+        el: '#body',
+        data() {
+          return {
+            userId: '',
+            showItemsTable: false,
+            biz: {
+              name: '',
+              address: '',
+              phone: '',
+              gstIN: ''
+            },
+            item: '',
+            qty: '',
+            price: '',
+            arr: [],
+            invoiceNum: '',
+            discount: '',
+            totalAmount: 0,
+            totalMargin: 0,
+            margin: 0,
+            billDate: '',
+            billNo: '',
+            billId: '',
+            items: [],
+            billItems: [],
+            searchBar: '',
+            customerName: '',
+            customerCode: '',
+            sendBillDisabled: false,
+            itemsArr: [],
+            sendBillAlertText: '',
+            showSpinner: false,
+            json: []                       
+          }            
+        },
+        methods: {
+          
+          get_user_id() {
+            auth.onAuthStateChanged((user) => {
+              if (user) {
+                this.userId = (user.uid);
+                this.get_items();
+                this.get_store_details();
+              }
+              else {
+                document.write('Please Login')
+                setTimeout(() => {
+                window.location.href = '/store/login' 
+                }, 1000)
+              }
+            })
+          },
+          
+          get_items() {
+            db.collection('biz')
+            .doc(this.userId)
+            .collection('items')
+            //.orderBy('item.name', 'asc')
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.docs.forEach((doc) => {
+              let val = doc.data().item
+              this.arr.push(val.name);
+              this.items.push({
+                name: val.name,
+                price: val.salePrice,
+                margin: (val.salePrice - val.costPrice),
+                docId: doc.id                  
+              })       
+              console.log(val.salePrice)  
+            })
+          })
+        },
+                            
+        get_store_details() {
+          db.collection('biz')
+          .doc(this.userId)
+          .get()
+          .then((doc) => {
+            let val = doc.data().biz
+            this.biz.name = val.name
+            this.biz.address = val.address
+            this.biz.phone = val.phone
+            this.biz.gstIN = val.gstIN
+            this.billNo = (doc.data().bill.prevBillNo + 1)
+          })        
+        },
+         
+        add_item() {
+           if (this.discount == '') {
+            this.discount = 0
+          }
+        
+          this.billItems.push({
+            name: this.item,
+            qty: this.qty,
+            price: this.price,
+            discount: this.discount,
+            total: (this.qty * this.price - this.discount),
+            docId: this.docId
+          })
+          this.totalAmount += (this.qty * this.price)
+          this.totalMargin += (this.qty * this.margin)
+          console.log(this.totalMargin)
+          this.item = ''
+          this.qty = ''
+          this.price = ''
+          this.discount = ''
+          this.margin = ''
+          this.docId = ''
+        },      
+         
+        get_data() {               
+          let n = this.items.length
+          for (let i = 0; i < n; i++) {
+            if (this.items[i].name == this.item) {
+              console.log(this.items[i].price)
+              this.price = this.items[i].price
+              this.margin = this.items[i].margin
+              this.docId = this.items[i].docId              
+              break;
+            }
+            else {
+              this.price = ''
+              this.margin = 0
+            }
+          }
+        }, 
+        
+        get_bill_no() {
+          if (this.prevBillNo == '') {
+            return false
+          } 
+          else {
+            db.collection('biz') 
+            .doc(this.userId) 
+            .get()
+            .then((doc) => {
+              this.billNo = (doc.data().billInfo.prevBillNo + 1)
+            })
+          }    
+        },
+                      
+         html2json() {
+           this.json = [];
+           let n = this.billItems.length;
+           for (let i = 0; i < n; i++) {
+             this.json.push({
+               item: this.billItems[i].item,
+               qty: this.billItems[i].qty,
+               price: this.billItems[i].price,
+               discount: this.billItems[i].discount,
+               total: this.billItems[i].total
+             })
+           } 
+           
+         },
+         
+         save_sales() {
+           let sales = parseFloat(this.totalAmount);
+           let margin = parseFloat(this.totalMargin);
+           db.collection('biz')
+           .doc(this.userId)
+           .collection('sales')
+           .doc(this.billDate)
+           .set({
+             date: firebase.firestore.Timestamp.fromDate(new Date(this.billDate)),
+             sale: {
+               total: firebase.firestore.FieldValue.increment((sales)),
+               margin: firebase.firestore.FieldValue.increment(margin),
+               number: firebase.firestore.FieldValue.increment(1)
+           },
+           bizId: this.userId
+         },{merge: true}).then(() => {
+         })        
+       },
+                            
+         save_bill(wantPdf) {
+           app.html2json()
+           app.is_date_null()
+           let cus_code = this.customerCode
+           this.sendBillDisabled = true
+           this.showSpinner = true
+           this.sendBillAlertText = 'Saving bill...'       
+           db.collection('bills')
+           .add({
+             bizId: this.userId,
+             customerCode: this.customerCode,
+             bill: {
+               num: this.billNo,
+               customerName: this.customerName,
+               biz: { 
+                 name: this.biz.name,
+                 address: this.biz.address,
+                 phone: this.biz.phone                                   
+               },
+               totalAmount: this.totalAmount,
+               date: firebase.firestore.Timestamp.fromDate(new Date(this.billDate)),
+               items: this.json
+             }
+           }).then(async function(doc) { 
+             if (wantPdf == 'YES') {
+               var element = document.getElementById('bill-pdf');
+               await html2pdf(element)
+             }      
+             app.update_stock()
+             app.update_bill_no()
+             this.billId = doc.id         
+             app.save_sales();
+           }).then(() => {
+             app.reset()
+             this.showSpinner = false
+             this.sendBillAlertText = 'Bill Saved successfully!'
+             setTimeout(() => {
+               this.sendBillAlertText = ''
+               $('#send-bill-modal').modal('hide');
+               this.sendBillDisabled = false
+             }, 1200)
+           })     
+         },
+          
+          is_date_null() {
+            if (this.billDate == '') {
+              this.billDate = this.todays_date()
+            }
+          },
+         
+          todays_date() {
+            let date = new Date()
+            let dd = String(date.getDate()).padStart(2, '0')
+            let mm = String(date.getMonth() + 1).padStart(2, '0') //January is 0!
+            let yyyy = date.getFullYear()
+      
+            date = yyyy + '-' + mm + '-' + dd
+            return date
+          },          
+                   
+          update_stock() {
+            let n= this.billItems.length;
+            for (let i = 0; i < n; i++) {
+              let docId = this.billItemsList[i].docId
+              let qty = -Math.abs(this.billItems[i].qty)
+              if (docId) {
+                db.collection('biz')
+                .doc(this.userId)
+                .collection('items')
+                .doc(docId)
+                .update({
+                  'item.stock.current': firebase.firestore.FieldValue.increment(qty)
+                });                   
+              } 
+            }
+          },
+          
+          update_bill_no() {
+            db.collection('biz')  
+            .doc(this.userId) 
+            .update({
+              'bill.prevBillNo': this.billNo  
+            })
+            this.billNo = (this.billNo + 1)
+          },
+                              
+          reset() {
+            this.billItems = [];
+            this.item = '';
+            this.customerName = '';
+            this.billDate = '';
+            this.totalAmount = 0;
+            this.totalMargin = 0;
+            this.search = '';
+            this.price = '';
+            this.qty = '';
+          }                                 
+      
+      },
+       
+      watch: {
+       item: function item_watch() {
+         this.get_data()
+       }
+      }
+      
+      })      
+      
+      //app.get_user_id()   
+      var search = document.getElementById('search-bar');  
+      document.addEventListener('DOMContentLoaded', () => {
+        app.get_user_id()
+        app.get_items()
+        autocomplete(search, app.arr)
+        feather.replace()
+      })
+        
+    </script>
+     <!-- bootstrap-autocomplete -->
+    <script defer src="https://cdn.jsdelivr.net/gh/vigneshksaithal/vipatra@6.0/src/plugins/bootstrap-autocomplete.min.js"></script>
+    
+    <!-- jQuery & JS bundle w/ Popper.js -->
+    <script defer src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script> 
+    
+    <!-- feather icons -->
+    <script defer src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha256-XfzdiC+S1keia+s9l07y7ye5a874sBq67zK4u7LTjvk=" crossorigin="anonymous"></script>
+    
+    <!-- html2pdf -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js" integrity="sha512-pdCVFUWsxl1A4g0uV6fyJ3nrnTGeWnZN2Tl/56j45UvZ1OMdm9CIbctuIHj+yBIRTUUyv6I9+OivXj4i0LPEYA==" crossorigin="anonymous"></script>  
+  </body>
+</html>
