@@ -318,7 +318,7 @@
            auth.onAuthStateChanged((user) => {
              if(user){
                this.userId = user.uid
-               this.show_items()
+               this.get_items()
              }
              else{
                document.write('Please Login');
