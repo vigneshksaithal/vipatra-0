@@ -288,30 +288,36 @@
               </div>
               <br>
               <div class="text-center">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Item</th>
-                    <th>Qty</th>
-                    <th>Price(₹)</th>
-                    <th>Amount(₹)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="item in billItems" :key="item.item">
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.qty }}</td>
-                    <td>{{ item.price }}</td>
-                    <td>{{ item.total }}</td>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td></td>
-                    <td><h5>Total</h5></td>
-                    <td><h5>{{ totalAmount }}</h5></td>
-                  </tr>
-                </tbody>
-              </table>
+             <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Item</th>
+                  <th scope="col">Qty</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Discount</th>
+                  <th scope="col">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in billItems" :key="item.name">
+                  <td scope="row">{{ ++index }}</td>
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.qty }}</td>
+                  <td>{{ item.price }}</td>
+                  <td>{{ item.discount }}</td>
+                  <td>{{ item.total }}</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <th>Total</th>
+                  <th>{{ totalAmount }}</th>
+                </tr>
+              </tbody>
+            </table>
               </div>
               <br>
             </div>
@@ -339,7 +345,6 @@
             qty: '',
             price: '',
             arr: [],
-            invoiceNum: '',
             discount: '',
             totalAmount: 0,
             totalMargin: 0,
@@ -381,7 +386,7 @@
             db.collection('biz')
             .doc(this.userId)
             .collection('items')
-            //.orderBy('item.name', 'asc')
+            .orderBy('item.name', 'asc')
             .get()
             .then((querySnapshot) => {
                 querySnapshot.docs.forEach((doc) => {
@@ -403,12 +408,12 @@
           .doc(this.userId)
           .get()
           .then((doc) => {
-            let val = doc.data().biz
+            let val = doc.data().bizInfo
             this.biz.name = val.name
             this.biz.address = val.address
             this.biz.phone = val.phone
             this.biz.gstIN = val.gstIN
-            this.billNo = (doc.data().bill.prevBillNo + 1)
+            this.billNo = (doc.data().billInfo.prevBillNo + 1)
           })        
         },
          
@@ -470,17 +475,17 @@
         },
                       
          html2json() {
-           this.json = [];
-           let n = this.billItems.length;
+           let n = this.billItems.length
            for (let i = 0; i < n; i++) {
              this.json.push({
-               item: this.billItems[i].item,
+               name: this.billItems[i].name,
                qty: this.billItems[i].qty,
                price: this.billItems[i].price,
                discount: this.billItems[i].discount,
                total: this.billItems[i].total
              })
-           } 
+           }
+           console.log(this.json[0]) 
            
          },
          
@@ -500,13 +505,12 @@
                number: firebase.firestore.FieldValue.increment(1)
            },
            bizId: this.userId
-         },{merge: true}).then(() => {
-         })        
+         },{merge: true})        
        },
                             
          save_bill(wantPdf) {
-           app.html2json()
-           app.is_date_null()
+           this.html2json()
+           this.is_date_null()
            let cus_code = this.customerCode
            this.sendBillDisabled = true
            this.showSpinner = true
@@ -560,14 +564,14 @@
             let mm = String(date.getMonth() + 1).padStart(2, '0') //January is 0!
             let yyyy = date.getFullYear()
       
-            date = yyyy + '-' + mm + '-' + dd
+            date = yyyy + '-' + mm + '-' + dd 
             return date
           },          
                    
           update_stock() {
-            let n= this.billItems.length;
+            let n = this.billItems.length;
             for (let i = 0; i < n; i++) {
-              let docId = this.billItemsList[i].docId
+              let docId = this.billItems[i].docId
               let qty = -Math.abs(this.billItems[i].qty)
               if (docId) {
                 db.collection('biz')
@@ -585,16 +589,16 @@
             db.collection('biz')  
             .doc(this.userId) 
             .update({
-              'billInfo.prevBillNo': this.billNo  
+              'billInfo.prevBillNo': firebase.firestore.FieldValue.increment(1) 
             })
             this.billNo = (this.billNo + 1)
           },
                               
           reset() {
+            this.json.length = 0
             this.billItems = []
             this.item = ''
             this.customerName = ''
-            this.billDate = ''
             this.totalAmount = 0
             this.totalMargin = 0
             this.search = ''
@@ -611,8 +615,7 @@
       }
       
       })      
-      
-      //app.get_user_id()   
+       
       var search = document.getElementById('search-bar') 
       document.addEventListener('DOMContentLoaded', () => {
         app.get_user_id()
