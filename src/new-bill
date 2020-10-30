@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <title>New bill</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>New bill</title>
+    
+    <!-- vue@2.6.12 -->
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js" integrity="sha256-KSlsysqp7TXtFo/FHjb1T9b425x3hrvzjMWaJyKbpcI=" crossorigin="anonymous"></script>
-    <!-- bootstrap CSS -->
+    
+    <!-- bootstrap@4.5.3 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
     
     <style>      
@@ -104,7 +107,7 @@
           <div class="col-4">
             <input type="number" v-model.number="billNo" class="form-control"/>
           </div>
-          <div class="col-3">
+          <div class="col-3 text-right">
             <button class="btn btn-danger" @click="reset">
               <i data-feather="rotate-ccw"></i>
             </button>
@@ -361,9 +364,9 @@
           get_user_id() {
             auth.onAuthStateChanged((user) => {
               if (user) {
-                this.userId = (user.uid);
-                this.get_items();
-                this.get_store_details();
+                this.userId = (user.uid)
+                this.get_items()
+                this.get_store_details()
               }
               else {
                 document.write('Please Login')
@@ -433,9 +436,11 @@
           this.docId = ''
         },      
          
-        get_data() {               
+        get_data() { 
+                     
           let n = this.items.length
           for (let i = 0; i < n; i++) {
+          console.log('get',this.items[i].name, this.item)
             if (this.items[i].name == this.item) {
               console.log(this.items[i].price)
               this.price = this.items[i].price
@@ -480,15 +485,16 @@
          },
          
          save_sales() {
-           let sales = parseFloat(this.totalAmount);
-           let margin = parseFloat(this.totalMargin);
+           let sales = parseFloat(this.totalAmount)
+           let margin = parseFloat(this.totalMargin)
+           
            db.collection('biz')
            .doc(this.userId)
            .collection('sales')
            .doc(this.billDate)
            .set({
              date: firebase.firestore.Timestamp.fromDate(new Date(this.billDate)),
-             sale: {
+             sales: {
                total: firebase.firestore.FieldValue.increment((sales)),
                margin: firebase.firestore.FieldValue.increment(margin),
                number: firebase.firestore.FieldValue.increment(1)
@@ -523,13 +529,13 @@
              }
            }).then(async function(doc) { 
              if (wantPdf == 'YES') {
-               var element = document.getElementById('bill-pdf');
+               var element = document.getElementById('bill-pdf')
                await html2pdf(element)
              }      
              app.update_stock()
              app.update_bill_no()
              this.billId = doc.id         
-             app.save_sales();
+             app.save_sales()
            }).then(() => {
              app.reset()
              this.showSpinner = false
@@ -570,7 +576,7 @@
                 .doc(docId)
                 .update({
                   'item.stock.current': firebase.firestore.FieldValue.increment(qty)
-                });                   
+                })                   
               } 
             }
           },
@@ -579,21 +585,21 @@
             db.collection('biz')  
             .doc(this.userId) 
             .update({
-              'bill.prevBillNo': this.billNo  
+              'billInfo.prevBillNo': this.billNo  
             })
             this.billNo = (this.billNo + 1)
           },
                               
           reset() {
-            this.billItems = [];
-            this.item = '';
-            this.customerName = '';
-            this.billDate = '';
-            this.totalAmount = 0;
-            this.totalMargin = 0;
-            this.search = '';
-            this.price = '';
-            this.qty = '';
+            this.billItems = []
+            this.item = ''
+            this.customerName = ''
+            this.billDate = ''
+            this.totalAmount = 0
+            this.totalMargin = 0
+            this.search = ''
+            this.price = ''
+            this.qty = ''
           }                                 
       
       },
@@ -607,24 +613,24 @@
       })      
       
       //app.get_user_id()   
-      var search = document.getElementById('search-bar');  
+      var search = document.getElementById('search-bar') 
       document.addEventListener('DOMContentLoaded', () => {
         app.get_user_id()
-        app.get_items()
         autocomplete(search, app.arr)
         feather.replace()
       })
         
     </script>
+    
      <!-- bootstrap-autocomplete -->
     <script defer src="https://cdn.jsdelivr.net/gh/vigneshksaithal/vipatra@6.0/src/plugins/bootstrap-autocomplete.min.js"></script>
+    
+    <!-- feather icons -->
+    <script defer src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha256-XfzdiC+S1keia+s9l07y7ye5a874sBq67zK4u7LTjvk=" crossorigin="anonymous"></script>
     
     <!-- jQuery & JS bundle w/ Popper.js -->
     <script defer src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script> 
-    
-    <!-- feather icons -->
-    <script defer src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha256-XfzdiC+S1keia+s9l07y7ye5a874sBq67zK4u7LTjvk=" crossorigin="anonymous"></script>
     
     <!-- html2pdf -->
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js" integrity="sha512-pdCVFUWsxl1A4g0uV6fyJ3nrnTGeWnZN2Tl/56j45UvZ1OMdm9CIbctuIHj+yBIRTUUyv6I9+OivXj4i0LPEYA==" crossorigin="anonymous"></script>  
