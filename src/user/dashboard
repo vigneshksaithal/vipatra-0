@@ -1,1 +1,332 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>User dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    
+    <!-- vue@2.6.12 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js" integrity="sha256-KSlsysqp7TXtFo/FHjb1T9b425x3hrvzjMWaJyKbpcI=" crossorigin="anonymous"></script>
+    
+    <!-- bootstrap@4.5.3 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    
+    <style>          
+    [v-cloak] {
+      display: none
+    }         
+    </style>
+    
+    <!-- START -->
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>
+    <script src="https://vipatra.in/firebase/prod.js"></script>
+    <!--  END Firebase initial -->
+    
+  </head>
+  
+  <body>
+  
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">Vipatra</a>
+        <button class="navbar-toggler btn-dark" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div class="navbar-nav">
+      <a onclick="app.sign_out()" class="nav-link">
+      <i width="1.5em" height="1.5em" color="currentColor" data-feather="log-out"></i>
+      Sign out    
+      </a>
+        </div>
+      </div>
+    </nav>
 
+    <section v-cloak id="body" class="container">
+    
+      <div class="card my-3">
+          <div class="card-body">
+            <h5>Customer code = {{ customerCode }}</h5>
+          </div>
+      </div>
+                
+        <h5 class="my-3">Your bills...</h5>
+    
+      <div v-for="bill in bills" @click="row_click(bill)" class="card shadow-sm my-2">
+        <div class="card-body">
+          <h5 class="card-title">{{ bill.bizName }} — ₹ {{ bill.totalAmount }}</h5>        
+          <h6 class="card-subtitle text-muted">{{ bill.date }}</h6>
+        </div>
+      </div>
+      <div class="text-center my-3">
+        <button @click="show_more" class="btn btn-outline-primary">Show more</button>
+      </div>
+    
+      
+    
+      
+       <div id="view-bill" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Bill</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="text-center h5 text-muted mb-3">{{ bizName }}</div>
+              <div class="text-center h3 text-success">₹ {{ totalAmount }}</div>
+              <br>
+              <span>Date: {{ billDate }}</span>
+              <br>
+              <span>Bill No. {{ billNo }}</span>
+              <br>
+              <table class="table table-sm table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Item</th>
+                    <th scope="col">Qty</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Discount</th>
+                    <th scope="col">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(item, index) in items" :key="item.name">
+                    <td scope="row">{{ ++index }}</td>
+                    <td scope="row">{{ item.name }}</td>
+                    <td>{{ item.qty }}</td>
+                    <td>{{ item.price }}</td>
+                    <td>{{ item.discount }}</td>
+                    <td>{{ item.total }}</td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <th>Total</th>
+                    <th>{{ totalAmount }}</th>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal">Back</button>
+            </div>
+          </div>
+        </div>
+      </div>
+               
+    </section>
+    
+    <script>
+    
+      var app = new Vue({
+        el: '#body',
+        data:{
+          bills: [],
+          bizName: '',
+          items: [],
+          billDate: '',
+          billNo: '',
+          totalAmount: '',
+          lastDoc: '',
+          customerCode: '' 
+        },
+        methods:{
+          
+          get_user_id() {
+            auth.onAuthStateChanged((user) => {                                                         
+              if (user) {
+                this.userId = (user.uid)
+                this.get_customer_code()
+              }
+              else {
+                this.verify()
+              }                
+            })
+          },
+          
+          verify() {            
+            if (auth.isSignInWithEmailLink(window.location.href)) {
+  
+              let email = window.localStorage.getItem('emailForSignIn')
+              if (!email) {    
+                email = window.prompt('Please provide your email for confirmation')
+              }
+  
+              auth.signInWithEmailLink(email, window.location.href)
+              .then((result) => {
+                  window.localStorage.removeItem('emailForSignIn')      
+                if (result.additionalUserInfo.isNewUser) {
+                  this.generate_code()
+                  
+                }
+                else {
+                  this.get_customer_code()
+                }
+              })/*.catch((error) => {
+                document.write(error.message , 'Please Login')
+                setTimeout(() => {
+                  window.location.href = '/store/login'
+                }, 10000)
+      
+              })*/
+            }
+          },
+          
+          generate_code() {
+            this.customerCode = ''
+            let num = '1234567890'
+            for (var i = 0; i < 8; i++) {
+              this.customerCode += num.charAt(Math.floor(Math.random() * num.length))
+            }
+            this.is_code_unique()
+          },
+       
+          is_code_unique() {
+            db.collection('users')
+            .where('user.customerCode', '==', this.customerCode)
+            .limit(1)
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                if(doc.exists) {
+                  console.log("doc exists")
+                  this.generate_code()
+                }
+              })
+            }).then(() => {
+        
+              db.collection('users')
+              .doc(this.userId)
+              .set({
+                user: {
+                  customerCode: this.customerCode
+                }
+              }).then(() => {
+                this.get_customer_code()
+              })
+              
+              console.log(this.customerCode)
+            }).catch((error) => {
+              console.log(error)
+            })
+          },
+        
+          show_bills() {
+            db.collection('bills')
+            .where('customerCode','==', this.customerCode)
+            .orderBy('bill.date', 'desc')
+            .limit(5)
+            .get()
+            .then((snapshot) => {
+              snapshot.docs.forEach(doc => {
+                let val = doc.data().bill
+                this.bills.push({
+                  date: this.format_date(val.date.toDate()),
+                  bizName: val.biz.name,
+                  billNo: val.num,
+                  totalAmount: val.totalAmount,
+                  items: val.items,
+                  docId: doc.id     
+                })
+                this.lastDoc = doc
+              })
+            }).catch((error) => {
+              document.write(error)
+            })  
+          },
+          
+          format_date(val) {
+            let date = new Date(val)
+            let dd = String(date.getDate()).padStart(2, '0')
+            let mm = String(date.getMonth() + 1).padStart(2, '0') //January is 0!
+            let yyyy = date.getFullYear()
+         
+            date = dd + '-' + mm + '-' + yyyy
+            return date
+          },
+          
+          get_customer_code() {
+            auth.onAuthStateChanged((user) => {
+              this.userId = user.uid
+            })
+            db.collection('users')  
+            .doc(this.userId)
+            .get()
+            .then((doc) => {
+              this.customerCode = doc.data().user.customerCode
+            }).then(() => {
+              this.show_bills()
+            }).catch((error) => {
+              document.write(error.message)
+            })
+          },  
+        
+          show_more() {
+            db.collection('bills')
+            .where('customerCode','==', this.customerCode)
+            .orderBy('bill.date', 'desc')
+            .startAfter(this.lastDoc)
+            .limit(5)
+            .get()
+            .then((snapshot) => {
+              snapshot.docs.forEach(doc => {
+                let val = doc.data().bill
+                this.bills.push({
+                  date: this.format_date(val.date.toDate()),
+                  bizName: val.biz.name,
+                  billNo: val.num,
+                  totalAmount: val.totalAmount,
+                  items: val.items,
+                  docId: doc.id     
+                })
+                this.lastDoc = doc
+              })
+            }).catch((error) => {
+              document.write(error)
+            }) 
+          },
+          
+          row_click(bill) {
+            $('#view-bill').modal('show')
+            this.bizName = bill.bizName
+            this.items = bill.items
+            this.billDate = bill.date
+            this.totalAmount = bill.totalAmount
+            this.billNo = bill.billNo
+          },
+          
+          sign_out() {
+            auth.signOut().then(() => {
+              console.log('success signout')
+            })
+          }                                                                                
+        
+        }            
+          
+        
+      })
+      
+      document.addEventListener('DOMContentLoaded', () => {                
+        app.get_user_id()        
+        feather.replace()
+      })
+         
+    </script>
+    
+    <!-- feather icons -->
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha256-XfzdiC+S1keia+s9l07y7ye5a874sBq67zK4u7LTjvk=" crossorigin="anonymous"></script>
+    
+    <!-- jQuery & JS bundle w/ Popper.js -->
+    <script defer src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script> 
+  
+  </body>
+</html>
