@@ -155,9 +155,6 @@
             <button @click="add_item" class="btn btn-secondary"><i data-feather="plus"></i> Add</button>
           </div>
         </div>
-        <div v-show="false" class="d-none">
-          <input v-model.number="margin">
-        </div>
         <br>
         <div class="row">
           <div class="col">
@@ -234,9 +231,6 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">Edit Bill</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-              </button>
             </div>
             <div class="modal-body">
               <div class="alert alert-secondary" role="alert">Date is set to Todays date automatically. But if you want custom date choose below.</div>
@@ -246,6 +240,7 @@
               </div>
             </div>
             <div class="modal-footer">
+              <button type="button" class="btn btn-link" data-dismiss="modal" @click="billDate = ''">Cancel</button>
               <button type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
             </div>
           </div>
@@ -258,9 +253,6 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title text-center">Bill</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-              </button>
             </div>
             <div id="bill-pdf" class="modal-body">
               <br>
@@ -445,9 +437,7 @@
                      
           let n = this.items.length
           for (let i = 0; i < n; i++) {
-          console.log('get',this.items[i].name, this.item)
             if (this.items[i].name == this.item) {
-              console.log(this.items[i].price)
               this.price = this.items[i].price
               this.margin = this.items[i].margin
               this.docId = this.items[i].docId              
@@ -626,10 +616,10 @@
     </script>
     
      <!-- bootstrap-autocomplete -->
-    <script defer src="https://cdn.jsdelivr.net/gh/vigneshksaithal/vipatra@6.0/src/plugins/bootstrap-autocomplete.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/vigneshksaithal/vipatra@6.0/src/plugins/bootstrap-autocomplete.min.js"></script>
     
     <!-- feather icons -->
-    <script defer src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha256-XfzdiC+S1keia+s9l07y7ye5a874sBq67zK4u7LTjvk=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha256-XfzdiC+S1keia+s9l07y7ye5a874sBq67zK4u7LTjvk=" crossorigin="anonymous"></script>
     
     <!-- jQuery & JS bundle w/ Popper.js -->
     <script defer src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
