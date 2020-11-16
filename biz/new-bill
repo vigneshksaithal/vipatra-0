@@ -21,10 +21,6 @@
       height: 1.3em;
       margin-right: 15px;
       }
-      
-      .modal-body {
-        background-color: #f7fafc;
-      }
     </style>
     
     <!-- START -->
