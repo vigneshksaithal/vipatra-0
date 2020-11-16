@@ -1,74 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <title>New bill</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>New bill</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js" integrity="sha256-KSlsysqp7TXtFo/FHjb1T9b425x3hrvzjMWaJyKbpcI=" crossorigin="anonymous"></script>
+    
     <!-- bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/gh/vigneshksaithal/autocomplete@main/index.js"></script>
-    <link rel="manifest" href="/manifest.json">
+    
     <style>
-      tbody tr:hover {
-      background-color: #5cb85c;
-      color: white;
-      }
-      #bill-storename {
-      text-transform: uppercase;
-      }
-      .btn{
-      font-weight: bold;
-      }
       [v-cloak] {
-      display: none;
+      display: none
       }
-      * { box-sizing: border-box; }
-      body {
-      font: 16px Arial;
+      
+      .navbar svg{
+      color: currentColor;
+      width: 1.3em;
+      height: 1.3em;
+      margin-right: 15px;
       }
-      .autocomplete {
-      position: relative;
-      display: inline-block;
-      }
-      .autocomplete-items {
-      position: absolute;
-      border: 1px solid #d4d4d4;
-      border-bottom: none;
-      border-top: none;
-      z-index: 99;
-      top: 100%;
-      left: 0;
-      right: 0;
-      }
-      .autocomplete-items div {
-      padding: 10px;
-      cursor: pointer;
-      background-color: #fff;
-      border-bottom: 1px solid #d4d4d4;
-      }
-      .autocomplete-items div:hover {
-      background-color: #e9e9e9;
-      }
-      .autocomplete-active {
-      background-color: DodgerBlue !important;
-      color: #ffffff;
-      }
-      #bill{
-        max-width: 720px;
+      
+      .modal-body {
+        background-color: #f7fafc;
       }
     </style>
+    
     <!-- START -->
-    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-analytics.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/7.6.1/firebase-performance.js"></script>
-    <script src="/firebase/prod.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/8.0.0/firebase-performance.js"></script>
+    <script src="https://vipatra.in/firebase/prod.js"></script>
     <!--  END Firebase initial -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    
+   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand">
       <img src="https://vipatra.in/images/vipatra-logo-small.png" width="30" height="30" class="d-inline-block align-top" alt="vipatra_logo" loading="lazy">Vipatra</a>
+        
       <button class="navbar-toggler btn btn-dark" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
       </button>
@@ -76,51 +47,40 @@
         <ul class="navbar-nav">
           <li class="nav-item">
             <a class="nav-link" href="/store/new-bill">
-              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus-square-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4a.5.5 0 0 0-1 0v3.5H4a.5.5 0 0 0 0 1h3.5V12a.5.5 0 0 0 1 0V8.5H12a.5.5 0 0 0 0-1H8.5V4z"/>
-              </svg>
-              &nbsp; New Bill
+              <i data-feather="plus"></i>
+               New Bill
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/store/items">
-              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-box-seam" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
-              </svg>
-              &nbsp; Inventory
+              <i data-feather="align-justify"></i>
+              Inventory
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/store/reports">
-              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-bar-chart-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <rect width="4" height="5" x="1" y="10" rx="1"/>
-                <rect width="4" height="9" x="6" y="6" rx="1"/>
-                <rect width="4" height="14" x="11" y="1" rx="1"/>
-              </svg>
-              &nbsp; Reports
+              <i fill="currentColor" data-feather="bar-chart"></i>
+              Reports
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/store/account">
-              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-person-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path d="M13.468 12.37C12.758 11.226 11.195 10 8 10s-4.757 1.225-5.468 2.37A6.987 6.987 0 0 0 8 15a6.987 6.987 0 0 0 5.468-2.63z"/>
-                <path fill-rule="evenodd" d="M8 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                <path fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z"/>
-              </svg>
-              &nbsp; Account
+              <i data-feather="user"></i>
+              Account
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/store/help">
-              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-info-circle-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
-              </svg>
-              &nbsp; Help
+              <i data-feather="help-circle"></i>
+              Help
             </a>
           </li>
         </ul>
       </div>
     </nav>
+    
+    <link rel="manifest" href="/manifest.json">
+    
   </head>
   <body>
     <section v-cloak id="body">
@@ -128,83 +88,101 @@
         <br>
         <div class="row align-bottom">
           <div class="col-3">
-            <button class="btn btn-link btn-lg" data-toggle="modal" data-target="#edit-modal">Edit</button>            
+            <button class="btn btn-link btn-lg" data-toggle="modal" data-target="#edit-modal"><i data-feather="settings" color="#000000"></i></button>            
           </div>
           <div class="col-9">        
-            <button class="btn btn-primary btn-lg btn-block" data-toggle="modal" data-target="#send-bill-modal">Charge ₹ {{ totalAmount }}</button>    
+            <button class="btn btn-primary btn-lg btn-block shadow-sm" data-toggle="modal" data-target="#send-bill-modal">Charge ₹ {{ totalAmount }}</button>    
           </div>
         </div>
-        <br>
+        <hr>
         <div class="row">
-          <div class="col-7">
-            <div class="form-group">
-              <label>Customer name</label>
-              <input type="text" v-model="customerName" class="form-control"/>
-            </div>
-          </div>
           <div class="col-5">
-            <div class="form-group">
-              <label>Bill No.</label>
-              <input type="number" v-model.number="billNo" class="form-control"/>
+            <div id="customer-autocomplete">
+              <label>Customer name</label>
+              <input type="text" id="customer-search" v-model.lazy="customerName" class="form-control" placeholder="Search...">
             </div>
           </div>
+          <div class="col-4">
+            <label>Bill no</label>
+            <input type="number" v-model.number="billNo" class="form-control">
+          </div>
+          <div class="col-3 text-right">
+            <button class="btn btn-danger shadow-sm" @click="reset"><i data-feather="rotate-ccw"></i></button>
+          </div>
         </div>
+        <hr>
         <div class="row">
-          <div class="col-7">
+          <div class="col-6">
             <div class="form-group">
-              <div class="autocomplete">
+              <div id="autocomplete">
                 <label>Item</label>
                 <input id="search-bar" type="text" class="form-control" placeholder="Search item..." v-model.lazy="item">
               </div>
             </div>
           </div>
-          <div class="col-5">
-            <div class="form-group">
-              <label>Quantity</label>
-              <input v-model.number="qty" type="number" class="form-control" placeholder="Qty">
-            </div>
+          <div class="col-3">
+              <label>Qty</label>
+              <input v-model.number="qty" type="number" class="form-control">
+          </div>
+          <div class="col-3">
+            <label>Price</label>
+            <input v-model.number="price" type="number" class="form-control">
           </div>
         </div>
-        <div class="text-left">Price</div>
+        <label class="text-left">Discount</label>
         <div class="row my-2">
           <div class="col-5">
-            <div class="form-group">
-              <input v-model.number="price" type="number" class="form-control">
+            <div class="input-group">
+              <div class="input-group-prepend">
+              <span class="input-group-text">₹</span>
+            </div>
+            <input v-model.number="discount" type="number" class="form-control">
             </div>
           </div>
-          <div class="col-2">
-            <button class="btn btn-danger" @click="reset">Reset</button>
-          </div>
-          <div class="col-5 text-right">
-            <button @click="add_item" class="btn btn-secondary">Add Item</button>
+          
+          <div class="col text-right">
+            <button @click="add_item" class="btn btn-secondary px-3 shadow-sm">Add item</button>
           </div>
         </div>
         <div v-show="false" class="d-none">
           <input v-model.number="margin">
         </div>
+        <br>
+        
         <div class="row">
-          <div class="col">
-            <table id="table-bill" class="table">
+          <div class="col table-responsive">
+            <table id="table-bill" class="table table-sm table-hover">
               <thead>
                 <tr>
-                  <th>Item</th>
-                  <th>Qty</th>
-                  <th>Price</th>
-                  <th>Amount</th>
+                  <th scope="col">#</th>
+                  <th scope="col">Item</th>
+                  <th scope="col">HSN/ SAC</th>
+                  <th scope="col">Qty</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Discount</th>
+                  <th scope="col">GST</th>
+                  <th scope="col">Total</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="item in billItemsList" :key="item.item">
+                <tr v-for="(item, index) in billItems" :key="item.item">
+                  <th scope="row">{{ ++index }}</th>
                   <td>{{ item.item }}</td>
+                  <td>{{ item.hsn }}</td>
                   <td>{{ item.qty }}</td>
                   <td>{{ item.price }}</td>
+                  <td>{{ item.discount }}</td>                
+                  <td>{{ item.gst }} ({{ taxPercent }}%)</td>
                   <td>{{ item.total }}</td>
+                  <td></td>
                 </tr>
               </tbody>
             </table>
+        
           </div>
         </div>
       </div>
+      
       <br><br><br><br>
       <!--Submit modal-->
       <div id="send-bill-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="submit-modal" aria-hidden="true">
@@ -223,7 +201,7 @@
                   <br>
                   <div class="form-row my-2">
                     <div class="col-8">
-                      <input type="text" class="form-control" placeholder="customer code">
+                      <input type="number" class="form-control" placeholder="customer code" v-model="customerCode">
                     </div>
                     <div class="col-4">
                       <button @click="save_bill('NO')" type="button" class="btn btn-primary">Send bill</button>
@@ -231,7 +209,7 @@
                   </div>
                   <div class="text-center">
                     <div class="h5 m-3">OR</div>
-                    <button @click="save_bill('YES')" class="btn btn-danger btn-block">Get PDF</button>
+                    <button @click="save_bill('YES')" class="btn btn-danger btn-block shadow-sm">Get PDF</button>
                   </div>
               </div>
               </fieldset>
@@ -247,30 +225,30 @@
           </div>
         </div>
       </div>
+      
       <!-- edit Modal -->
       <div class="modal fade" id="edit-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">Edit Bill</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-              </button>
             </div>
             <div class="modal-body">
-              <div class="alert alert-secondary" role="alert">Date is set to Todays date automatically. But if you want custom date choose below.</div>
               <div class="form-group">
                 <label>Date</label>
                 <input v-model="billDate" type="date" class="form-control">
+                <span class="form-text text-muted">Date is set to Todays date automatically.</span>
               </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+              <button type="button" class="btn btn-light border shadow-sm" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary shadow-sm" data-dismiss="modal">Save</button>
             </div>
           </div>
         </div>
       </div>
       <!--END submit modal-->
+      
       <!-- Modal -->    
       <div class="modal fade" id="view-bill-modal" tabindex="-1" aria-labelledby="bill-modal" aria-hidden="true">
         <div class="modal-dialog">
@@ -284,55 +262,91 @@
             <div id="bill-pdf" class="modal-body">
               <br>
               <h6 class="text-center">TAX INVOICE</h6>
-              <div class="container">
+              <div class="container m-3">
                 <div class="row text-left">
-                  <div class="col">
-                    <h4>{{ bizInfo.name }}</h4>
-                    <div v-if="bizInfo.address != ''">Address: {{ bizInfo.address }}</div>
-                    <div v-if="bizInfo.phone != ''">Phone: {{ bizInfo.phone }}</div>
-                    <div v-if="bizInfo.gstIN != ''">GSTIN: {{ bizInfo.gstIN }}</div>
+                  <div class="col-8">
+                    <div class="h5">{{ biz.name }}</div>
+                    <div v-if="biz.address">Address: {{ biz.address }}</div>
+                    <div v-if="biz.phone">Phone: {{ biz.phone }}</div>
+                    <div v-if="biz.gstIN">GSTIN: {{ biz.gstIN }}</div>
+                  </div>
+                  <div class="col-4">
+                    <span><b>Bill No: </b>{{ billNo }}</span>
+                   <br>
+                   <span><b>Date: </b>{{ billDate }}</span> 
                   </div>
                 </div>
-                <br>
+                <br>                
                 <div class="row">
                   <div class="col">
-                    <span>Date: {{ billDate }}</span>
-                    <br>
-                     <span>Bill No: {{ billNo }}</span>
-                  </div>
-                  <div class="col">
-                    <span v-if="customerName != ''">Customer Name: {{ customerName }}</span>
+                    <span class="font-weight-bold">Bill To:</span>
+                    <div v-if="customerName">Customer: {{ customerName }}</div>
+                    <div v-if="customerAddress">Address: {{ customerAddress }}</div>
+                    <div v-if="customerPhone">Phone: {{ customerPhone }}</div>
+                    <div v-if="customerGSTIN">GSTIN: {{ customerGSTIN }}</div>
                   </div>
                 </div>
               </div>
               <br>
               <div class="text-center">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Item</th>
-                    <th>Qty</th>
-                    <th>Price(₹)</th>
-                    <th>Amount(₹)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="item in billItemsList" :key="item.item">
-                    <td>{{ item.item }}</td>
-                    <td>{{ item.qty }}</td>
-                    <td>{{ item.price }}</td>
-                    <td>{{ item.total }}</td>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td></td>
-                    <td><h5>Total</h5></td>
-                    <td><h5>{{ totalAmount }}</h5></td>
-                  </tr>
-                </tbody>
-              </table>
+              <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Item</th>
+                  <th scope="col">HSN/ SAC</th>
+                  <th scope="col">Qty</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Discount</th>
+                  <th scope="col">GST</th>
+                  <th scope="col">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in billItems" :key="item.item">
+                  <th scope="row">{{ ++index }}</th>
+                  <td>{{ item.item }}</td>
+                  <td>{{ item.hsn }}</td>
+                  <td>{{ item.qty }}</td>
+                  <td>{{ item.price }}</td>
+                  <td>{{ item.discount }}</td>                
+                  <td>{{ item.gst }} ({{ taxPercent }}%)</td>
+                  <td>{{ item.total }}</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <th>Sub Total</th>
+                  <th>₹ {{ totalAmount - totalDiscount }}</th>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <th>Discount</th>
+                  <th>₹ {{ totalDiscount }}</th>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <th>Total</th>
+                  <th>₹ {{ totalAmount }}</th>
+                </tr>
+              </tbody>
+            </table>
+              <div class="text-center">Note: {{ billNote }}</div>
               </div>
-              <br>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -340,6 +354,40 @@
           </div>
         </div>
       </div>
+      
+      <!-- add customer Modal -->
+      <div class="modal fade" id="add-customer-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Add customer</h5>             
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label>Customer Name</label>
+                <input type="text" v-model="customerName" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Address</label>
+                <input type="text" v-model="customerAddress" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Phone</label>
+                <input type="text" v-model.number="customerPhone" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>GSTIN</label>
+                <input type="text" v-model="customerGSTIN" class="form-control">
+              </div>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-light border shadow-sm" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary shadow-sm" @click="add_new_customer">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+      
     </section>
     <script>                                                     
       var app = new Vue({
@@ -348,27 +396,46 @@
           return {
             userId: '',
             showItemsTable: false,
-            bizInfo: {
+            biz: {
               name: '',
               address: '',
               phone: '',
               gstIN: ''
             },
             item: '',
-            qty: '',
-            price: '',
+            hsn: '',
+            qty: 0,
+            price: 0,
+            discount: 0,
+            taxPercent: 0,
+            gst: 0,
+            sgst: 0,
+            cgst: 0,
+            igst: 0,
             arr: [],
-            invoiceNum: '',
+            invoiceNum: 0,
+            billNote: '',
+            taxableValue: 0,
             totalAmount: 0,
             totalMargin: 0,
+            totalDiscount: 0,
+            totalSgst: 0,
+            totalCgst: 0,
+            totalIgst: 0,
             margin: 0,
             billDate: '',
-            billNo: '',
+            billNo: 0,
             billId: '',
-            itemsList: [],
-            billItemsList: [],
+            items: [],
+            billItems: [],
             searchBar: '',
+            customers: [],
             customerName: '',
+            customerAddress: '',
+            customerPhone: 0,
+            customerGSTIN: '',
+            customerCode: '',
+            customerArr: [],
             sendBillDisabled: false,
             itemsArr: [],
             sendBillAlertText: '',
@@ -378,12 +445,13 @@
         },
         methods: {
           
-          get_user_id(){
-            auth.onAuthStateChanged((user) => {
+          get_user_id() {
+            auth.onAuthStateChanged(user => {
               if (user) {
-                this.userId = (user.uid);
-                this.get_items();
-                this.get_store_details();
+                this.userId = user.uid
+                this.get_items()
+                this.get_store_details()
+                this.get_customers_data()
               }
               else {
                 document.write('Please Login')
@@ -398,18 +466,21 @@
             db.collection('biz')
             .doc(this.userId)
             .collection('items')
-            .orderBy('itemInfo.item', 'asc')
             .get()
-            .then((querySnapshot) => {
-                querySnapshot.docs.forEach((doc) => {
-              let val = doc.data().itemInfo;
-              this.arr.push(val.item);
-              this.itemsList.push({
-                item: val.item,
+            .then(query => {
+                query.docs.forEach(doc => {
+              let val = doc.data().item
+              this.arr.push(val.name)
+              this.items.push({
+                item: val.name,
+                hsn: val.hsn,
                 price: val.salePrice,
                 margin: (val.salePrice - val.costPrice),
+                taxType: val.tax.type,
+                taxPercent: val.tax.percent,
+                
                 docId: doc.id                  
-              })         
+              })   
             })
           })
         },
@@ -418,89 +489,131 @@
           db.collection('biz')
           .doc(this.userId)
           .get()
-          .then((doc) => {
+          .then(doc => {
             let val = doc.data().bizInfo
-            this.bizInfo.name = val.name
-            this.bizInfo.address = val.address
-            this.bizInfo.phone = val.phone
-            this.bizInfo.gstIN = val.gstIN
+            this.biz.name = val.name
+            this.biz.address = val.address
+            this.biz.phone = val.phone
+            this.biz.gstIN = val.gstIN
             this.billNo = (doc.data().billInfo.prevBillNo + 1)
+            this.billNote = doc.data().billInfo.note
           })        
         },
          
         add_item() {
-          this.billItemsList.push({
+          let gst = 0
+          if (this.discount == '') {
+            this.discount = 0
+          }
+          if (this.taxPercent  == 'E') {
+            gst = 'Exempted'
+            this.taxPercent = 0
+          }
+          else {
+            gst = this.taxPercent * this.taxableValue / 100
+          }
+          this.taxableValue = ((this.qty * this.price) - this.discount)
+          this.gst = this.taxableValue * this.taxPercent / 100
+          this.calculate_total()
+          this.billItems.push({
             item: this.item,
+            hsn: this.hsn,
             qty: this.qty,
             price: this.price,
-            total: (this.qty * this.price),
+            discount: this.discount,
+            taxableValue: ((this.qty * this.price) - this.discount),
+            gst: gst,
+            total: this.total,
             docId: this.docId
-          })
-          this.totalAmount += (this.qty * this.price)
-          this.totalMargin += this.margin
-          console.log(this.totalMargin)
+          })          
+          this.totalAmount += this.total
+          this.totalMargin += this.qty * this.margin
+          this.totalDiscount += this.discount
+          this.totalSgst += this.sgst * this.taxableValue/100
+          this.totalCgst += this.cgst * this.taxableValue/100
+          this.totalIgst += this.igst * this.taxableValue/100
           this.item = ''
           this.qty = ''
           this.price = ''
-          let i = 0
+          this.discount = ''
+          this.margin = ''
+          this.docId = ''
         },      
          
         get_data() {            
-          let n = this.itemsList.length;
+          let n = this.items.length
           for (let i = 0; i < n; i++) {
-            if (this.item == this.itemsList[i].item) {
-              this.price = this.itemsList[i].price;
-              this.margin = this.itemsList[i].margin;
-              this.docId = this.itemsList[i].docId;              
-              break;
+            if (this.item == this.items[i].item) {
+              this.price = this.items[i].price
+              this.margin = this.items[i].margin
+              this.hsn = this.items[i].hsn
+              this.docId = this.items[i].docId 
+              if (this.items[i].taxType == 'GST') {     
+              this.taxPercent = this.items[i].taxPercent  
+              }   
+              else if (this.items[i].taxType == 'IGST') {
+                this.igst = this.items[i].taxPercent 
+                this.gst = this.igst * this.taxableValue / 100 
+              }      
+              break
             }
             else {
               this.price = ''
+              this.margin = 0
             }
           }
-        }, 
+        },
+        
+        calculate_total() {
+          let totalTax = parseFloat(this.gst) + parseFloat(this.igst)
+          this.total = this.taxableValue + totalTax
+        },
         
         get_bill_no() {
           if (this.prevBillNo == '') {
-            return false;
+            return false
           } 
           else {
             db.collection('biz') 
             .doc(this.userId) 
             .get()
-            .then((doc) => {
+            .then(doc => {
               this.billNo = (doc.data().billInfo.prevBillNo + 1)
             })
           }    
         },
                       
          html2json() {
-           this.json = [];
-           let n = this.billItemsList.length;
+           this.json = []
+           let n = this.billItems.length
            for (let i = 0; i < n; i++) {
              this.json.push({
-               item: this.billItemsList[i].item,
-               qty: this.billItemsList[i].qty,
-               price: this.billItemsList[i].price,
-               total: this.billItemsList[i].total
+               item: this.billItems[i].item,
+               qty: this.billItems[i].qty,
+               price: this.billItems[i].price,
+               discount: this.billItems[i].discount,
+               taxableValue: this.billItems[i].taxableValue,
+               sgst: this.billItems[i].gst / 2,
+               cgst: this.billItems[i].gst / 2,
+               igst: this.billItems[i].gst,
+               total: this.billItems[i].total
              })
-           } 
-           
+           }            
          },
          
          save_sales() {
-           let sales = parseFloat(this.totalAmount);
-           let margin = parseFloat(this.totalMargin);
+           let sales = parseFloat(this.totalAmount)
+           let margin = parseFloat(this.totalMargin)
            db.collection('biz')
            .doc(this.userId)
            .collection('sales')
            .doc(this.billDate)
            .set({
              date: firebase.firestore.Timestamp.fromDate(new Date(this.billDate)),
-             salesInfo: {
-             sales: firebase.firestore.FieldValue.increment((sales)),
-             margin: firebase.firestore.FieldValue.increment(margin),
-             noOfSales: firebase.firestore.FieldValue.increment(1)
+             sales: {
+               total: firebase.firestore.FieldValue.increment((sales)),
+               margin: firebase.firestore.FieldValue.increment(margin),
+               noOfSales: firebase.firestore.FieldValue.increment(1)
            },
            bizId: this.userId
          },{merge: true}).then(() => {
@@ -508,73 +621,79 @@
        },
                             
          save_bill(wantPdf) {
-           app.html2json();
-           app.is_date_null();
-           let cus_code = this.customerCode;
-           this.sendBillDisabled = true;
-           this.showSpinner = true;
-           this.sendBillAlertText = 'Saving bill...';       
+           app.html2json()
+           app.is_date_null()
+           let cus_code = this.customerCode
+           this.sendBillDisabled = true
+           this.showSpinner = true
+           this.sendBillAlertText = 'Saving bill...'       
            db.collection('bills')
            .add({
              bizId: this.userId,
-             bizInfo: { 
-               name: this.bizInfo.name,
-               address: this.bizInfo.address,
-               phone: this.bizInfo.phone                                   
-             },
-             totalAmount: this.totalAmount,
-             date: firebase.firestore.Timestamp.fromDate(new Date(this.billDate)),
-             items: this.json
+             customerCode: this.customerCode,
+             bill: {
+               biz: { 
+                 name: this.biz.name,
+                 address: this.biz.address,
+                 phone: this.biz.phone                                   
+               },
+               billNo: this.billNo,
+               totalAmount: this.totalAmount,
+               totalGST: this.totalSgst + this.totalCgst,
+               totalIGST: this.totalIgst,
+               date: firebase.firestore.Timestamp.fromDate(new Date(this.billDate)),
+               items: this.json
+             }
            }).then(async function(doc) { 
              if (wantPdf == 'YES') {
-               var element = document.getElementById('bill-pdf');
-               await html2pdf(element);
+               var element = document.getElementById('bill-pdf')
+               await html2pdf(element)
              }      
-             app.update_stock();
-             app.update_bill_no();
-             this.billId = doc.id;         
+             app.update_stock()
+             app.update_bill_no()
+             this.billId = doc.id         
              app.save_sales();
            }).then(() => {
-             app.reset();
-             this.showSpinner = false;
-             this.sendBillAlertText = 'Bill Saved successfully!';
+             app.reset()
+             this.showSpinner = false
+             this.sendBillAlertText = 'Bill Saved successfully!'
              setTimeout(() => {
-               this.sendBillAlertText = '';
-               $('#send-bill-modal').modal('hide');
-               this.sendBillDisabled = false;
-             }, 1200);
-           });     
+               this.sendBillAlertText = ''
+               $('#send-bill-modal').modal('hide')
+               this.sendBillDisabled = false
+             }, 1200)
+           })     
          },
           
           is_date_null() {
             if (this.billDate == '') {
-              this.billDate = this.todays_date();
+              this.billDate = this.todays_date()
             }
           },
          
           todays_date() {
-            let date = new Date();
-            let dd = String(date.getDate()).padStart(2, '0');
-            let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
-            let yyyy = date.getFullYear();
+            let date = new Date()
+            let dd = String(date.getDate()).padStart(2, '0')
+            let mm = String(date.getMonth() + 1).padStart(2, '0') //January is 0!
+            let yyyy = date.getFullYear()
       
-            date = yyyy + '-' + mm + '-' + dd;
-            return date;
+            date = yyyy + '-' + mm + '-' + dd
+            return date
           },          
                    
           update_stock() {
-            let n= this.billItemsList.length;
+            let n = this.billItems.length
             for (let i = 0; i < n; i++) {
-              let docId = this.billItemsList[i].docId;
-              let qty = -Math.abs(this.billItemsList[i].qty);
+              let docId = this.billItems[i].docId
+              let qty = -Math.abs(this.billItems[i].qty)
               if (docId) {
                 db.collection('biz')
                 .doc(this.userId)
                 .collection('items')
                 .doc(docId)
                 .update({
-                  'itemInfo.stock': firebase.firestore.FieldValue.increment(qty)
-                });                   
+                  'item.stock': firebase.firestore.FieldValue.increment(qty)
+                })                   
               } 
             }
           },
@@ -585,38 +704,217 @@
             .update({
               'billInfo.prevBillNo': this.billNo  
             })
-            this.billNo = (this.billNo + 1)
+            this.billNo = this.billNo + 1
           },
                               
           reset() {
-            this.billItemsList = [];
-            this.item = '';
-            this.customerName = '';
-            this.billDate = '';
-            this.totalAmount = 0;
-            this.totalMargin = 0;
-            this.search = '';
-            this.price = '';
-            this.qty = '';
-          }                                 
+            this.billItems = []
+            this.item = ''
+            this.customerName = ''
+            this.billDate = ''
+            this.totalAmount = 0
+            this.totalMargin = 0
+            this.search = ''
+            this.price = ''
+            this.qty = ''
+            this.discount = ''
+          },
+          
+          get_customers_data() {
+            db.collection('biz')
+            .doc(this.userId)
+            .collection('customers')
+            .onSnapshot(query => {
+              this.customerArr.length = 0
+              this.customers.length = 0
+              query.docs.forEach(doc => {
+                let val = doc.data().customer
+                this.customerArr.push(val.name)
+                this.customers.push({
+                  id: doc.id,
+                  name: val.name,
+                  address: val.address,
+                  phone: val.phone,
+                  gstIN: val.gstIN
+                })
+              })
+            })
+          },
+          
+          add_customer_data() {
+            let n = this.customers.length
+            for (let i = 0; i < n; i++) {
+              if (this.customers[i].name == this.customerName) {
+                this.customerid = this.customers[i].id
+                this.customerAddress = this.customers[i].address
+                this.customerPhone = this.customers[i].phone
+                this.customerGSTIN = this.customers[i].gstIN              
+                break
+              }
+              else {
+                this.customerId = ''
+                this.customerAddress = ''
+                this.customerPhone = ''
+                this.customerGSTIN = ''
+              }
+            }  
+          },
+          
+          add_new_customer() {
+            db.collection('biz')
+            .doc(this.userId)
+            .collection('customers')
+            .add({
+              customer: {
+                name: this.customerName,
+                address: this.customerAddress,
+                phone: this.customerAddress,
+                gstIN: this.customerGSTIN
+              }
+            }).then((doc) => {
+              $('#add-customer-modal').modal('hide')
+            })
+          }                                       
       
       },
        
       watch: {
        item: function item_watch() {
          this.get_data()
+       },
+       
+       customerName: function get_customer_data() {
+         this.add_customer_data()
        }
       }
       
-      })      
-      
-      app.get_user_id();    
-      autocomplete(document.getElementById('search-bar'), app.arr);
+      })
+       
+      var search = document.getElementById('search-bar') 
+      var customer_search = document.getElementById('customer-search') 
+      document.addEventListener('DOMContentLoaded', () => {       
+        app.get_user_id()
+        feather.replace()
+        autocomplete(search, app.arr)
+        app.customerArr.push('cash')
+        console.log(app.customerArr, '4')     
+            customer_autocomplete(customer_search, app.customerArr)
+      })
         
     </script>
+    
+    <script>
+      function customer_autocomplete(inp, arr) {
+        let d = document.getElementById('customer-autocomplete')
+        d.classList.add('list-group', 'position-relative')
+        let currentFocus
+        inp.addEventListener('input', function(e) {
+          let a, b, i, val = this.value
+          
+          closeAllLists()
+          if (!val) { 
+            return false
+          }
+          currentFocus = -1
+           
+          a = document.createElement('div')
+       a.classList.add('autocomplete-items', 'bg-light', 'position-absolute', 'border', 'mt-1', 'w-100', 'rounded', 'shado')
+    
+    a.style.top = '100%' 
+    a.style.zIndex = 99 
+      
+    this.parentNode.appendChild(a)
+    let btn = document.createElement('div')
+    btn.innerHTML = '<button class="btn" data-toggle="modal" data-target="#add-customer-modal">+ Add customer</button>'
+    for (i = 0; i < arr.length; i++) {
+      if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+        b = document.createElement('li')
+        b.classList.add('list-group-item', 'border-0')
+        b.innerHTML = arr[i].substr(0, val.length)
+        b.innerHTML += '<strong>' + arr[i].substr(val.length) + '</strong>'
+        b.innerHTML += '<input type="hidden" value="' + arr[i] + '">'
+        b.addEventListener('click', function(e) {
+         app.customerName = this.getElementsByTagName('input')[0].value
+          closeAllLists()
+        })
+        a.appendChild(b)
+        a.appendChild(btn)
+      }
+      else {
+        a.appendChild(btn) 
+      }
+    }
+  })
+  inp.addEventListener('keydown', function(e) {
+    var x = document.getElementById(this.id)
+    if (x) {
+      x = x.getElementsByTagName('div')
+    }
+    if (e.keyCode == 40) {
+      currentFocus++
+      addActive(x)
+    } 
+    else if (e.keyCode == 38) { 
+      currentFocus--
+      addActive(x)
+    } 
+    else if (e.keyCode == 13) {
+      e.preventDefault()
+      if (currentFocus > -1) {
+        if (x) {
+          x[currentFocus].click()
+        }
+      }
+    }
+  })
+    
+  function addActive(x) {
+    if (!x) {
+      return false
+    }
+    removeActive(x)
+    if (currentFocus >= x.length) {
+      currentFocus = 0
+    }
+    if (currentFocus < 0) {
+      currentFocus = (x.length - 1)
+    }
+    x[currentFocus].classList.add('active')
+  }
+  
+  function removeActive(x) {
+    for (var i = 0; i < x.length; i++) {
+      x[i].classList.remove('active')
+    }
+  }
+  
+  function closeAllLists(el) {
+    var x = document.getElementsByClassName('autocomplete-items')
+    for (var i = 0; i < x.length; i++) {
+      if (el != x[i] && el != inp) {
+        x[i].parentNode.removeChild(x[i])
+      }
+    }
+  }
+    
+  document.addEventListener('click', function (e) {
+    closeAllLists(e.target)
+  })
+}      
+    </script>
+    
+    <!-- feather icons -->
+    <script defer src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha256-XfzdiC+S1keia+s9l07y7ye5a874sBq67zK4u7LTjvk=" crossorigin="anonymous"></script>
+    
+    <!-- bootstrap-autocomplete -->
+    <script src="https://cdn.jsdelivr.net/gh/vigneshksaithal/vipatra@6.0/src/plugins/bootstrap-autocomplete.min.js"></script>
+    
     <!-- jQuery & JS bundle w/ Popper.js -->
     <script defer src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js" integrity="sha512-pdCVFUWsxl1A4g0uV6fyJ3nrnTGeWnZN2Tl/56j45UvZ1OMdm9CIbctuIHj+yBIRTUUyv6I9+OivXj4i0LPEYA==" crossorigin="anonymous"></script>  
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script> 
+    
+    <!-- html2pdf -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js" integrity="sha512-pdCVFUWsxl1A4g0uV6fyJ3nrnTGeWnZN2Tl/56j45UvZ1OMdm9CIbctuIHj+yBIRTUUyv6I9+OivXj4i0LPEYA==" crossorigin="anonymous"></script> 
+    
   </body>
 </html>
