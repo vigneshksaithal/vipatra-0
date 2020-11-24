@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>New bill</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js" integrity="sha256-KSlsysqp7TXtFo/FHjb1T9b425x3hrvzjMWaJyKbpcI=" crossorigin="anonymous"></script>
+    
+    <!-- bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    
+    <style>
+      [v-cloak] {
+      display: none
+      }
+      
+      .navbar svg{
+      color: currentColor;
+      width: 1.3em;
+      height: 1.3em;
+      margin-right: 15px;
+      }
+    </style>
+    
+    <!-- START -->
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/8.0.0/firebase-performance.js"></script>
+    <script src="https://vipatra.in/firebase/prod.js"></script>
+    <!--  END Firebase initial -->
+    
+   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand">
+      <img src="https://vipatra.in/images/vipatra-logo-small.png" width="30" height="30" class="d-inline-block align-top" alt="vipatra_logo" loading="lazy">Vipatra</a>
+        
+      <button class="navbar-toggler btn btn-dark" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/store/new-bill">
+              <i data-feather="plus"></i>
+               New Bill
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/store/items">
+              <i data-feather="align-justify"></i>
+              Inventory
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/store/reports">
+              <i fill="currentColor" data-feather="bar-chart"></i>
+              Reports
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/store/account">
+              <i data-feather="user"></i>
+              Account
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/store/help">
+              <i data-feather="help-circle"></i>
+              Help
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    
+    <link rel="manifest" href="/manifest.json">
+    
+  </head>
+  <body>
+    <section v-cloak id="body">
+      <div class="container">
+        <br>
+        <div class="row align-bottom">
+          <div class="col-3">
+            <button class="btn btn-link btn-lg" data-toggle="modal" data-target="#edit-modal"><i data-feather="settings" color="#000000"></i></button>            
+          </div>
+          <div class="col-9">        
+            <button class="btn btn-primary btn-lg btn-block shadow-sm" data-toggle="modal" data-target="#send-bill-modal">Charge ₹ {{ totalAmount }}</button>    
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-5">
+            <div id="customer-autocomplete">
+              <label>Customer name</label>
+              <input type="text" id="customer-search" v-model.lazy="customerName" class="form-control" placeholder="Search...">
+            </div>
+          </div>
+          <div class="col-4">
+            <label>Bill no</label>
+            <input type="number" v-model.number="billNo" class="form-control">
+          </div>
+          <div class="col-3 text-right">
+            <button class="btn btn-danger shadow-sm" @click="reset"><i data-feather="rotate-ccw"></i></button>
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-6">
+            <div class="form-group">
+              <div id="autocomplete">
+                <label>Item</label>
+                <input id="search-bar" type="text" class="form-control" placeholder="Search item..." v-model.lazy="item">
+              </div>
+            </div>
+          </div>
+          <div class="col-3">
+              <label>Qty</label>
+              <input v-model.number="qty" type="number" class="form-control">
+          </div>
+          <div class="col-3">
+            <label>Price</label>
+            <input v-model.number="price" type="number" class="form-control">
+          </div>
+        </div>
+        <label class="text-left">Discount</label>
+        <div class="row my-2">
+          <div class="col-5">
+            <div class="input-group">
+              <div class="input-group-prepend">
+              <span class="input-group-text">₹</span>
+            </div>
+            <input v-model.number="discount" type="number" class="form-control">
+            </div>
+          </div>
+          
+          <div class="col text-right">
+            <button @click="add_item" class="btn btn-secondary px-3 shadow-sm">Add item</button>
+          </div>
+        </div>
+        <div v-show="false" class="d-none">
+          <input v-model.number="margin">
+        </div>
+        <br>
+        
+        <div class="row">
+          <div class="col table-responsive">
+            <table id="table-bill" class="table table-sm table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Item</th>
+                  <th scope="col">HSN/ SAC</th>
+                  <th scope="col">Qty</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Discount</th>
+                  <th scope="col">GST</th>
+                  <th scope="col">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in billItems" :key="item.item">
+                  <th scope="row">{{ ++index }}</th>
+                  <td>{{ item.item }}</td>
+                  <td>{{ item.hsn }}</td>
+                  <td>{{ item.qty }}</td>
+                  <td>{{ item.price }}</td>
+                  <td>{{ item.discount }}</td>                
+                  <td>{{ item.gst }} ({{ taxPercent }}%)</td>
+                  <td>{{ item.total }}</td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+        
+          </div>
+        </div>
+      </div>
+      
+      <br><br><br><br>
+      <!--Submit modal-->
+      <div id="send-bill-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="submit-modal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Send Bill</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div>
+                <fieldset v-bind:disabled="sendBillDisabled">
+                  <span>Send Digital bill</span>
+                  <br>
+                  <div class="form-row my-2">
+                    <div class="col-8">
+                      <input type="number" class="form-control" placeholder="customer code" v-model="customerCode">
+                    </div>
+                    <div class="col-4">
+                      <button @click="save_bill('NO')" type="button" class="btn btn-primary">Send bill</button>
+                    </div>
+                  </div>
+                  <div class="text-center">
+                    <div class="h5 m-3">OR</div>
+                    <button @click="save_bill('YES')" class="btn btn-danger btn-block shadow-sm">Get PDF</button>
+                  </div>
+              </div>
+              </fieldset>
+              <div v-if="sendBillDisabled" class="text-center">
+                <div class="alert alert-success mt-4">
+                  <div v-show="showSpinner" class="spinner-border" role="status">  
+                    <span class="sr-only">Loading...</span>
+                  </div>
+                  <div class="mt-3">{{ sendBillAlertText }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- edit Modal -->
+      <div class="modal fade" id="edit-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Edit Bill</h5>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label>Date</label>
+                <input v-model="billDate" type="date" class="form-control">
+                <span class="form-text text-muted">Date is set to Todays date automatically.</span>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-light border shadow-sm" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary shadow-sm" data-dismiss="modal">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--END submit modal-->
+      
+      <!-- Modal -->    
+      <div class="modal fade" id="view-bill-modal" tabindex="-1" aria-labelledby="bill-modal" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title text-center">Bill</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div id="bill-pdf" class="modal-body">
+              <br>
+              <h6 class="text-center">TAX INVOICE</h6>
+              <div class="container m-3">
+                <div class="row text-left">
+                  <div class="col-8">
+                    <div class="h5">{{ biz.name }}</div>
+                    <div v-if="biz.address">Address: {{ biz.address }}</div>
+                    <div v-if="biz.phone">Phone: {{ biz.phone }}</div>
+                    <div v-if="biz.gstIN">GSTIN: {{ biz.gstIN }}</div>
+                  </div>
+                  <div class="col-4">
+                    <span><b>Bill No: </b>{{ billNo }}</span>
+                   <br>
+                   <span><b>Date: </b>{{ billDate }}</span> 
+                  </div>
+                </div>
+                <br>                
+                <div class="row">
+                  <div class="col">
+                    <span class="font-weight-bold">Bill To:</span>
+                    <div v-if="customerName">Customer: {{ customerName }}</div>
+                    <div v-if="customerAddress">Address: {{ customerAddress }}</div>
+                    <div v-if="customerPhone">Phone: {{ customerPhone }}</div>
+                    <div v-if="customerGSTIN">GSTIN: {{ customerGSTIN }}</div>
+                  </div>
+                </div>
+              </div>
+              <br>
+              <div class="text-center">
+              <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Item</th>
+                  <th scope="col">HSN/ SAC</th>
+                  <th scope="col">Qty</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Discount</th>
+                  <th scope="col">GST</th>
+                  <th scope="col">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in billItems" :key="item.item">
+                  <th scope="row">{{ ++index }}</th>
+                  <td>{{ item.item }}</td>
+                  <td>{{ item.hsn }}</td>
+                  <td>{{ item.qty }}</td>
+                  <td>{{ item.price }}</td>
+                  <td>{{ item.discount }}</td>                
+                  <td>{{ item.gst }} ({{ taxPercent }}%)</td>
+                  <td>{{ item.total }}</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <th>Sub Total</th>
+                  <th>₹ {{ totalAmount - totalDiscount }}</th>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <th>Discount</th>
+                  <th>₹ {{ totalDiscount }}</th>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <th>Total</th>
+                  <th>₹ {{ totalAmount }}</th>
+                </tr>
+              </tbody>
+            </table>
+              <div class="text-center">Note: {{ billNote }}</div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- add customer Modal -->
+      <div class="modal fade" id="add-customer-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Add customer</h5>             
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label>Customer Name</label>
+                <input type="text" v-model="customerName" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Address</label>
+                <input type="text" v-model="customerAddress" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Phone</label>
+                <input type="text" v-model.number="customerPhone" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>GSTIN</label>
+                <input type="text" v-model="customerGSTIN" class="form-control">
+              </div>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-light border shadow-sm" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary shadow-sm" @click="add_new_customer">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+      
+    </section>
+    <script>                                                     
+      var app = new Vue({
+        el: '#body',
+        data() {
+          return {
+            userId: '',
+            showItemsTable: false,
+            biz: {
+              name: '',
+              address: '',
+              phone: '',
+              gstIN: ''
+            },
+            item: '',
+            hsn: '',
+            qty: '',
+            price: '',
+            discount: '',
+            taxPercent: 0,
+            gst: 0,
+            sgst: 0,
+            cgst: 0,
+            igst: 0,
+            arr: [],
+            invoiceNum: 0,
+            billNote: '',
+            taxableValue: 0,
+            totalAmount: 0,
+            totalMargin: 0,
+            totalDiscount: 0,
+            totalSgst: 0,
+            totalCgst: 0,
+            totalIgst: 0,
+            margin: 0,
+            billDate: '',
+            billNo: '',
+            billId: '',
+            items: [],
+            billItems: [],
+            searchBar: '',
+            customers: [],
+            customerName: '',
+            customerAddress: '',
+            customerPhone: '',
+            customerGSTIN: '',
+            customerCode: '',
+            customerArr: [],
+            sendBillDisabled: false,
+            itemsArr: [],
+            sendBillAlertText: '',
+            showSpinner: false,
+            json: []                       
+          }            
+        },
+        methods: {
+          
+          get_user_id() {
+            auth.onAuthStateChanged(user => {
+              if (user) {
+                this.userId = user.uid
+                this.get_items()
+                this.get_store_details()
+                this.get_customers_data()
+              }
+              else {
+                document.write('Please Login')
+                setTimeout(() => {
+                window.location.href = '/store/login' 
+                }, 1000)
+              }
+            })
+          },
+          
+          get_items() {
+            db.collection('biz')
+            .doc(this.userId)
+            .collection('items')
+            .get()
+            .then(query => {
+                query.docs.forEach(doc => {
+              let val = doc.data().item
+              this.arr.push(val.name)
+              this.items.push({
+                item: val.name,
+                hsn: val.hsn,
+                price: val.salePrice,
+                margin: (val.salePrice - val.costPrice),
+                taxType: val.tax.type,
+                taxPercent: val.tax.percent,
+                
+                docId: doc.id                  
+              })   
+            })
+          })
+        },
+                            
+        get_store_details() {
+          db.collection('biz')
+          .doc(this.userId)
+          .get()
+          .then(doc => {
+            let val = doc.data().bizInfo
+            this.biz.name = val.name
+            this.biz.address = val.address
+            this.biz.phone = val.phone
+            this.biz.gstIN = val.gstIN
+            this.billNo = (doc.data().billInfo.prevBillNo + 1)
+            this.billNote = doc.data().billInfo.note
+          })        
+        },
+         
+        add_item() {
+          let gst = 0
+          if (this.discount == '') {
+            this.discount = 0
+          }
+          if (this.taxPercent  == 'E') {
+            gst = 'Exempted'
+            this.taxPercent = 0
+          }
+          else {
+            gst = this.taxPercent * this.taxableValue / 100
+          }
+          this.taxableValue = ((this.qty * this.price) - this.discount)
+          this.gst = this.taxableValue * this.taxPercent / 100
+          this.calculate_total()
+          this.billItems.push({
+            item: this.item,
+            hsn: this.hsn,
+            qty: this.qty,
+            price: this.price,
+            discount: this.discount,
+            taxableValue: ((this.qty * this.price) - this.discount),
+            gst: gst,
+            total: this.total,
+            docId: this.docId
+          })          
+          this.totalAmount += this.total
+          this.totalMargin += this.qty * this.margin
+          this.totalDiscount += this.discount
+          this.totalSgst += this.sgst * this.taxableValue/100
+          this.totalCgst += this.cgst * this.taxableValue/100
+          this.totalIgst += this.igst * this.taxableValue/100
+          this.item = ''
+          this.qty = ''
+          this.price = ''
+          this.discount = ''
+          this.margin = ''
+          this.docId = ''
+        },      
+         
+        get_data() {            
+          let n = this.items.length
+          for (let i = 0; i < n; i++) {
+            if (this.item == this.items[i].item) {
+              this.price = this.items[i].price
+              this.margin = this.items[i].margin
+              this.hsn = this.items[i].hsn
+              this.docId = this.items[i].docId 
+              if (this.items[i].taxType == 'GST') {     
+              this.taxPercent = this.items[i].taxPercent  
+              }   
+              else if (this.items[i].taxType == 'IGST') {
+                this.igst = this.items[i].taxPercent 
+                this.gst = this.igst * this.taxableValue / 100 
+              }      
+              break
+            }
+            else {
+              this.price = ''
+              this.margin = 0
+            }
+          }
+        },
+        
+        calculate_total() {
+          let totalTax = parseFloat(this.gst) + parseFloat(this.igst)
+          this.total = this.taxableValue + totalTax
+        },
+        
+        get_bill_no() {
+          if (this.prevBillNo == '') {
+            return false
+          } 
+          else {
+            db.collection('biz') 
+            .doc(this.userId) 
+            .get()
+            .then(doc => {
+              this.billNo = (doc.data().billInfo.prevBillNo + 1)
+            })
+          }    
+        },
+                      
+         html2json() {
+           this.json = []
+           let n = this.billItems.length
+           for (let i = 0; i < n; i++) {
+             this.json.push({
+               item: this.billItems[i].item,
+               qty: this.billItems[i].qty,
+               price: parseFloat(this.billItems[i].price),
+               discount: this.billItems[i].discount,
+               taxableValue: this.billItems[i].taxableValue,
+               sgst: this.billItems[i].gst / 2,
+               cgst: this.billItems[i].gst / 2,
+               igst: this.billItems[i].gst,
+               total: this.billItems[i].total
+             })
+           }            
+         },
+         
+         save_sales() {
+           let sales = parseFloat(this.totalAmount)
+           let margin = parseFloat(this.totalMargin)
+           db.collection('biz')
+           .doc(this.userId)
+           .collection('sales')
+           .doc(this.billDate)
+           .set({
+             date: firebase.firestore.Timestamp.fromDate(new Date(this.billDate)),
+             sales: {
+               total: firebase.firestore.FieldValue.increment((sales)),
+               margin: firebase.firestore.FieldValue.increment(margin),
+               noOfSales: firebase.firestore.FieldValue.increment(1)
+           },
+           bizId: this.userId
+         },{merge: true}).then(() => {
+         })        
+       },
+                            
+         save_bill(wantPdf) {
+           app.html2json()
+           app.is_date_null()
+           let cus_code = this.customerCode
+           this.sendBillDisabled = true
+           this.showSpinner = true
+           this.sendBillAlertText = 'Saving bill...'       
+           db.collection('bills')
+           .add({
+             bizId: this.userId,
+             customerCode: this.customerCode,
+             bill: {
+               biz: { 
+                 name: this.biz.name,
+                 address: this.biz.address,
+                 phone: this.biz.phone                                   
+               },
+               billNo: this.billNo,
+               totalAmount: this.totalAmount,
+               totalGST: this.totalSgst + this.totalCgst,
+               totalIGST: this.totalIgst,
+               date: firebase.firestore.Timestamp.fromDate(new Date(this.billDate)),
+               items: this.json
+             }
+           }).then(async function(doc) { 
+             if (wantPdf == 'YES') {
+               var element = document.getElementById('bill-pdf')
+               await html2pdf(element)
+             }      
+             app.update_stock()
+             app.update_bill_no()
+             this.billId = doc.id         
+             app.save_sales();
+           }).then(() => {
+             app.reset()
+             this.showSpinner = false
+             this.sendBillAlertText = 'Bill Saved successfully!'
+             setTimeout(() => {
+               this.sendBillAlertText = ''
+               $('#send-bill-modal').modal('hide')
+               this.sendBillDisabled = false
+             }, 1200)
+           })     
+         },
+          
+          is_date_null() {
+            if (this.billDate == '') {
+              this.billDate = this.todays_date()
+            }
+          },
+         
+          todays_date() {
+            let date = new Date()
+            let dd = String(date.getDate()).padStart(2, '0')
+            let mm = String(date.getMonth() + 1).padStart(2, '0') //January is 0!
+            let yyyy = date.getFullYear()
+      
+            date = yyyy + '-' + mm + '-' + dd
+            return date
+          },          
+                   
+          update_stock() {
+            let n = this.billItems.length
+            for (let i = 0; i < n; i++) {
+              let docId = this.billItems[i].docId
+              let qty = -Math.abs(this.billItems[i].qty)
+              if (docId) {
+                db.collection('biz')
+                .doc(this.userId)
+                .collection('items')
+                .doc(docId)
+                .update({
+                  'item.stock': firebase.firestore.FieldValue.increment(qty)
+                })                   
+              } 
+            }
+          },
+          
+          update_bill_no() {
+            db.collection('biz')  
+            .doc(this.userId) 
+            .update({
+              'billInfo.prevBillNo': this.billNo  
+            })
+            this.billNo = this.billNo + 1
+          },
+                              
+          reset() {
+            this.billItems = []
+            this.item = ''
+            this.customerName = ''
+            this.billDate = ''
+            this.totalAmount = 0
+            this.totalMargin = 0
+            this.search = ''
+            this.price = ''
+            this.qty = ''
+            this.discount = ''
+          },
+          
+          get_customers_data() {
+            db.collection('biz')
+            .doc(this.userId)
+            .collection('customers')
+            .onSnapshot(query => {
+              this.customerArr.length = 0
+              this.customers.length = 0
+              query.docs.forEach(doc => {
+                let val = doc.data().customer
+                this.customerArr.push(val.name)
+                this.customers.push({
+                  id: doc.id,
+                  name: val.name,
+                  address: val.address,
+                  phone: val.phone,
+                  gstIN: val.gstIN
+                })
+              })
+            })
+          },
+          
+          add_customer_data() {
+            let n = this.customers.length
+            for (let i = 0; i < n; i++) {
+              if (this.customers[i].name == this.customerName) {
+                this.customerid = this.customers[i].id
+                this.customerAddress = this.customers[i].address
+                this.customerPhone = this.customers[i].phone
+                this.customerGSTIN = this.customers[i].gstIN              
+                break
+              }
+              else {
+                this.customerId = ''
+                this.customerAddress = ''
+                this.customerPhone = ''
+                this.customerGSTIN = ''
+              }
+            }  
+          },
+          
+          add_new_customer() {
+            db.collection('biz')
+            .doc(this.userId)
+            .collection('customers')
+            .add({
+              customer: {
+                name: this.customerName,
+                address: this.customerAddress,
+                phone: this.customerAddress,
+                gstIN: this.customerGSTIN
+              }
+            }).then((doc) => {
+              $('#add-customer-modal').modal('hide')
+            })
+          }                                       
+      
+      },
+       
+      watch: {
+       item: function item_watch() {
+         this.get_data()
+       },
+       
+       customerName: function get_customer_data() {
+         this.add_customer_data()
+       }
+      }
+      
+      })
+       
+      var search = document.getElementById('search-bar') 
+      var customer_search = document.getElementById('customer-search') 
+      document.addEventListener('DOMContentLoaded', () => {       
+        app.get_user_id()
+        feather.replace()
+        autocomplete(search, app.arr)
+        app.customerArr.push('cash')
+        console.log(app.customerArr, '4')     
+            customer_autocomplete(customer_search, app.customerArr)
+      })
+        
+    </script>
+    
+    <script>
+      function customer_autocomplete(inp, arr) {
+        let d = document.getElementById('customer-autocomplete')
+        d.classList.add('list-group', 'position-relative')
+        let currentFocus
+        inp.addEventListener('input', function(e) {
+          let a, b, i, val = this.value
+          
+          closeAllLists()
+          if (!val) { 
+            return false
+          }
+          currentFocus = -1
+           
+          a = document.createElement('div')
+       a.classList.add('autocomplete-items', 'bg-light', 'position-absolute', 'border', 'mt-1', 'w-100', 'rounded', 'shado')
+    
+    a.style.top = '100%' 
+    a.style.zIndex = 99 
+      
+    this.parentNode.appendChild(a)
+    let btn = document.createElement('div')
+    btn.innerHTML = '<button class="btn" data-toggle="modal" data-target="#add-customer-modal">+ Add customer</button>'
+    for (i = 0; i < arr.length; i++) {
+      if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+        b = document.createElement('li')
+        b.classList.add('list-group-item', 'border-0')
+        b.innerHTML = arr[i].substr(0, val.length)
+        b.innerHTML += '<strong>' + arr[i].substr(val.length) + '</strong>'
+        b.innerHTML += '<input type="hidden" value="' + arr[i] + '">'
+        b.addEventListener('click', function(e) {
+         app.customerName = this.getElementsByTagName('input')[0].value
+          closeAllLists()
+        })
+        a.appendChild(b)
+        a.appendChild(btn)
+      }
+      else {
+        a.appendChild(btn) 
+      }
+    }
+  })
+  inp.addEventListener('keydown', function(e) {
+    var x = document.getElementById(this.id)
+    if (x) {
+      x = x.getElementsByTagName('div')
+    }
+    if (e.keyCode == 40) {
+      currentFocus++
+      addActive(x)
+    } 
+    else if (e.keyCode == 38) { 
+      currentFocus--
+      addActive(x)
+    } 
+    else if (e.keyCode == 13) {
+      e.preventDefault()
+      if (currentFocus > -1) {
+        if (x) {
+          x[currentFocus].click()
+        }
+      }
+    }
+  })
+    
+  function addActive(x) {
+    if (!x) {
+      return false
+    }
+    removeActive(x)
+    if (currentFocus >= x.length) {
+      currentFocus = 0
+    }
+    if (currentFocus < 0) {
+      currentFocus = (x.length - 1)
+    }
+    x[currentFocus].classList.add('active')
+  }
+  
+  function removeActive(x) {
+    for (var i = 0; i < x.length; i++) {
+      x[i].classList.remove('active')
+    }
+  }
+  
+  function closeAllLists(el) {
+    var x = document.getElementsByClassName('autocomplete-items')
+    for (var i = 0; i < x.length; i++) {
+      if (el != x[i] && el != inp) {
+        x[i].parentNode.removeChild(x[i])
+      }
+    }
+  }
+    
+  document.addEventListener('click', function (e) {
+    closeAllLists(e.target)
+  })
+}      
+    </script>
+    
+    <!-- feather icons -->
+    <script defer src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha256-XfzdiC+S1keia+s9l07y7ye5a874sBq67zK4u7LTjvk=" crossorigin="anonymous"></script>
+    
+    <!-- bootstrap-autocomplete -->
+    <script src="https://cdn.jsdelivr.net/gh/vigneshksaithal/vipatra@6.0/src/plugins/bootstrap-autocomplete.min.js"></script>
+    
+    <!-- jQuery & JS bundle w/ Popper.js -->
+    <script defer src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script> 
+    
+    <!-- html2pdf -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js" integrity="sha512-pdCVFUWsxl1A4g0uV6fyJ3nrnTGeWnZN2Tl/56j45UvZ1OMdm9CIbctuIHj+yBIRTUUyv6I9+OivXj4i0LPEYA==" crossorigin="anonymous"></script> 
+    
+  </body>
+</html>
