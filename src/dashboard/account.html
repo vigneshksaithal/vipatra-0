@@ -113,7 +113,7 @@
           </div>
           <div class="mb-3">
             <label>Phone no.</label>
-            <input type="number" class="form-control" placeholder="n" v-model="phone">
+            <input type="number" class="form-control" v-model="phone">
           </div>
           <div class="mb-3">
             <label>GSTIN (optional)</label>
@@ -242,7 +242,7 @@
           user.updatePassword(this.newPassword)
            .then(() => {
              this.passwordBtn = false
-           }).catch((error) => {
+           }).catch(error => {
              // An error happened.
            })
          },
@@ -268,6 +268,8 @@
                  document.addEventListener('DOMContentLoaded', () => {
         feather.replace()
       })
+           
+      //app.get_user_id()
        
     </script>
     
