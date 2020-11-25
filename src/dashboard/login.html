@@ -101,7 +101,6 @@
       window.localStorage.setItem('emailForSignIn', this.email)
                   
             }).catch(error => {
-              console.log(error.message)
               this.disabled = false   
               this.error = error.message 
             })
