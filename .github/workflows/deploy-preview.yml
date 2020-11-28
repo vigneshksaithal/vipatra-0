@@ -1,4 +1,4 @@
-name: Deploy to Preview Channel
+name: Deploy to Preview Channel firebase
 
 on:
   pull_request:
