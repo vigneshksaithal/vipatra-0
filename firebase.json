@@ -1,0 +1,17 @@
+{
+  "hosting": [ {
+      "target": "/",  // "blog" is the applied target name for the Hosting site "myapp-blog"
+      "public": "website/index.html",  // contents of this folder are deployed to the site "myapp-blog"
+
+      // ...
+    },
+    {
+      "target": "app",  // "app" is the applied target name for the Hosting site "myapp-app"
+      "public": "app/dist",  // contents of this folder are deployed to the site "myapp-app"
+
+      // ...
+
+      "rewrites": [...]  // You can define specific Hosting configurations for each site
+    }
+  ]
+}
