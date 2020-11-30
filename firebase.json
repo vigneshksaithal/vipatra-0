@@ -1,6 +1,6 @@
 {
   "hosting": {
-      "target": "blog",
+      "target": "/",
       "public": "website"
   }
 }
