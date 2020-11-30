@@ -1,8 +1,6 @@
 {
   "hosting": {
       "target": "blog",
-      "public": "website",
-
-      "rewrites": [...]
+      "public": "website"
   }
 }
