@@ -12,3 +12,4 @@ For contributing please clearly explain the issue and it will be accepted if it 
 1. Vuejs
 2. jQuery
 3. Bootstrap
+B
