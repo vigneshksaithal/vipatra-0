@@ -5,22 +5,26 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
      
-     <!-- vue@2.6.12 -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js" integrity="sha256-KSlsysqp7TXtFo/FHjb1T9b425x3hrvzjMWaJyKbpcI=" crossorigin="anonymous"></script>
+    <!-- vue@3.0.2 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.0.2/dist/vue.global.prod.js" integrity="sha256-9A0tu3fG/g3NsSSchTDl6Ady+cfh4cWf2Il+J/rhzkI=" crossorigin="anonymous"></script>
     
     <!-- bootstrap@4.5.3 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
         
-    <style>      
-      [v-cloak]{
-      display: none;
+    <style> 
+      html, body {
+        height: 100%;
+      }
+           
+      [v-cloak] {
+        display: none;
       }
       
       .navbar svg{
-      color: currentColor;
-      width: 1.3em;
-      height: 1.3em;
-      margin-right: 15px;
+        color: currentColor;
+        width: 1.3em;
+        height: 1.3em;
+        margin-right: 15px;
       }
       
       .btn {
@@ -47,31 +51,31 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="/store/new-bill">
+            <a class="nav-link" href="/new-bill">
               <i data-feather="plus"></i>
                New Bill
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/store/items">
+            <a class="nav-link" href="/items">
               <i data-feather="align-justify"></i>
               Inventory
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/store/reports">
+            <a class="nav-link" href="/reports">
               <i fill="currentColor" data-feather="bar-chart"></i>
               Reports
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/store/account">
+            <a class="nav-link" href="/account">
               <i data-feather="user"></i>
               Account
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/store/help">
+            <a class="nav-link" href="/help">
               <i data-feather="help-circle"></i>
               Help
             </a>
@@ -80,18 +84,17 @@
       </div>
     </nav>
     
-     <link defer rel="manifest" href="/manifest.json"> 
+     <link rel="manifest" href="/manifest.json"> 
     
   </head>
-  <body>
-  <section v-cloak id="body">
+  <body v-cloak>
   
     <h4 class="text-center my-3">Items</h4>
     <div class="container">
       <div class="row">
         <div class="col">
         
-          <div v-show="showAlert" class="alert alert-primary" role="alert">{{ alert }}</div>
+          <div v-show="showAlert" class="alert alert-success border-success" role="alert">{{ alert }}</div>
           
           <!-- Button trigger modal -->
           <div class="text-right">
@@ -117,7 +120,7 @@
               <th scope="col">Stock</th>
             </thead>
             <tbody>
-              <tr @click="row_click(item)" v-for="(item, index) in items" :key="item.docId">
+              <tr @click="row_click(item)" v-for="(item, index) in items">
                 <th scope="row">{{ ++index }}</th>
                 <td>{{ item.name }}</td>
                 <td>₹ {{ item.costPrice }}</td>
@@ -150,11 +153,11 @@
               <div class="row">
                 <div class="col">
                   <label>Cost Price</label>
-                  <input v-model="costPrice" type="number" class="form-control">
+                  <input v-model.number="costPrice" type="number" class="form-control">
                 </div>
                 <div class="col">
                   <label>Sale Price</label>
-                  <input v-model="salePrice" type="number" class="form-control">
+                  <input v-model.number="salePrice" type="number" class="form-control">
                 </div>
               </div>
               <hr>
@@ -162,15 +165,15 @@
               <div class="row">
                 <div class="col">
                   <label>Current</label>
-                    <input v-model="currentStock" type="number" class="form-control">
+                    <input v-model.number="currentStock" type="number" class="form-control">
                 </div>
                 <div class="col">
                   <label>Opening</label>
-                    <input v-model="openingStock" type="number" class="form-control">
+                    <input v-model.number="openingStock" type="number" class="form-control">
                 </div>
                 <div class="col">
                   <label>Min.</label>
-                  <input v-model="minStock" type="number" class="form-control">
+                  <input v-model.number="minStock" type="number" class="form-control">
                 </div>
               </div>
               <hr>
@@ -186,8 +189,9 @@
                 </div>
                 <div class="col">
                   <label>Percent(%)</label>
-                  <select class="custom-select" v-model.number="taxPercent">
-                    <option selected>None</option>
+                  <select class="custom-select" v-model="taxPercent">
+                    <option selected></option>
+                    <option value="nil">Nil</option>
                     <option value="E">Exempted</option>
                     <option value="0">0%</option>
                     <option value="0.25">0.25%</option>
@@ -205,17 +209,15 @@
             <button type="button" class="btn btn-light border shadow-sm" data-dismiss="modal">Cancel</button>
             <button v-show="showDeleteBtn" @click="delete_item" type="button" class="btn btn-danger shadow-sm">Delete</button>
             <button v-show="showAddItemBtn" @click="add_item" type="button" class="btn btn-primary shadow-sm">Add Item</button>
-            <button v-if="showSaveBtn" @click="edit_item" type="button" class="btn btn-primary shadow-sm">Save</button>
+            <button v-show="showSaveBtn" @click="edit_item" type="button" class="btn btn-primary shadow-sm">Save</button>
           </div>
         </div>
       </div>
       </div>
-        
-    </section>
+    
     <script>            
       
-      var app = new Vue({
-        el: '#body',
+      var app = Vue.createApp({
         data() {
           return {
             showItems: false,
@@ -242,13 +244,15 @@
         methods: {
         
           get_items() {
+          
             db.collection('biz')
             .doc(this.userId)
             .collection('items')
-            .onSnapshot(query => {
+            .onSnapshot(snapshot => {
               this.items.length = 0              
-              query.forEach(doc => {
+              snapshot.forEach(doc => {
                 let val = doc.data().item
+
                 this.items.push({
                   docId: doc.id,
                   name: val.name,
@@ -260,16 +264,19 @@
                   minStock: val.stock.min,
                   taxType: val.tax.type,
                   taxPercent: val.tax.percent
-                })                
+                })
+                                
                 this.showItems = true
               }) 
             })
             
           },
                                         
-          add_item() {               
-            $('#item-modal').modal('hide')    
-                                 
+          add_item() {  
+          
+            this.check_num()             
+            $('#item-modal').modal('hide') 
+                                                
             db.collection('biz')
             .doc(this.userId)
             .collection('items')
@@ -288,22 +295,25 @@
                   type: this.taxType,
                   percent: this.taxPercent
                 },
-                date: firebase.firestore.Timestamp.fromDate(new Date())
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
              },
              bizId: this.userId             
-           }).then(() => { 
+           })
+           .then(() => { 
              this.clear_modal()                   
              this.showAlert = true
-             this.alert = 'Item Added'
+             this.alert = 'Item Added successfully!'
              setTimeout(() => { 
                this.showAlert = false
-             }, 3000)                                
+             }, 2000)                                
            })
          },
           
          edit_item() {
-         console.log(this.hsn)
+         
+           this.check_num()
            $('#item-modal').modal('hide')
+           
            db.collection('biz')
            .doc(this.userId)
            .collection('items')
@@ -312,29 +322,39 @@
              item: {
                name: this.itemName,
                hsn: this.hsn,
-               costPrice: parseFloat(this.costPrice),
-               salePrice: parseFloat(this.salePrice),
+               costPrice: this.costPrice,
+               salePrice: this.salePrice,
                stock: {
-                 opening: parseFloat(this.openingStock),
-                 current: parseFloat(this.currentStock),
-                 min: parseFloat(this.minStock)
+                 opening: this.openingStock,
+                 current: this.currentStock,
+                 min: this.minStock
                },
                tax: {
                  type: this.taxType,
                  percent: this.taxPercent
                }                
              }            
-           }).then(() => {
+           })
+           .then(() => {
             this.showAlert = true
-            this.alert = 'Item Saved'
+            this.alert = 'Item Saved successfully!'
             setTimeout(() => { 
               this.showAlert = false
-            }, 1500)    
+            }, 2000)    
           })
+        },
+        
+        check_num() {
+        
+          if (isNaN(!this.taxPercent)) {
+            this.taxPercent = parseFloat(this.taxPercent)
+          }
+          
         },
           
         delete_item() {
-          $('#item-modal').modal('hide')            
+          $('#item-modal').modal('hide')  
+                    
           db.collection('biz')
           .doc(this.userId)
           .collection('items')
@@ -343,15 +363,18 @@
           .then(() => {
             this.clear_modal()
             this.showAlert = true
-            this.alert = 'Item Deleted'
+            this.alert = 'Item Deleted successfully!'
             setTimeout(() => { 
               this.showAlert = false
-            }, 1500)
+            }, 2000)
           })
+          
         },
                     
-        row_click(item) {           
+        row_click(item) {  
+                 
           $('#item-modal').modal('show')
+          
           this.modalTitle = 'Edit Item'
           this.showSaveBtn = true
           this.showAddItemBtn = false
@@ -365,21 +388,25 @@
           this.currentStock = item.currentStock
           this.minStock = item.minStock  
           this.taxType = item.taxType
-          this.taxPercent = item.taxPercent        
+          this.taxPercent = item.taxPercent
+                  
         },
       
         get_user_id() {
           auth.onAuthStateChanged(user => {
-            if(user){
-              this.userId = user.uid
+          
+            if (user) {
+              this.userId =  user.uid
               this.get_items()
             }
+            
             else {
               document.write('Please Login');
               setTimeout(() => {
-              window.location.href = '/store/login'; 
+              window.location.href = '/login'; 
               }, 1000)
             }
+            
           })
         },
           
@@ -400,13 +427,13 @@
             this.taxType = ''
           }                          
         }
-      })
+      }).mount(document.body)
       
-      document.addEventListener('DOMContentLoaded', () => {
-        app.get_user_id()
-        feather.replace()
+      app.get_user_id() 
+     document.addEventListener('DOMContentLoaded', () => {
+       feather.replace()
       }) 
-        
+              
     </script> 
     
     <!-- feather icons -->
@@ -414,6 +441,7 @@
     
    <!-- jQuery & JS bundle w/ Popper.js -->
     <script defer src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
     
   </body>
