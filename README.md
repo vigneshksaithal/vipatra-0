@@ -3,12 +3,11 @@ Vipatra is a billing software for small business
 For contributing please clearly explain the issue and it will be accepted if it solves the problem.
 
 
-#languages used
+#languages
 1. HTML
 2. CSS
 3. Javascript
 
-#framework used
+#frameworks
 1. Vuejs
-2. jQuery
-3. Bootstrap
+2. Bootstrap
