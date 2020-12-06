@@ -1,121 +1,100 @@
+
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>User login</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<head>
+  <title>Login</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">    
+  <!-- vue@3.0.2 -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.0.2/dist/vue.global.prod.js" integrity="sha256-9A0tu3fG/g3NsSSchTDl6Ady+cfh4cWf2Il+J/rhzkI=" crossorigin="anonymous"></script>    
+  <!-- bootstrap@5.3 alpha CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-CuOF+2SnTUfTwSZjCXf01h7uYhfOBuxIhGKPbfEJ3+FqH/s6cIFN9bGr1HmAg4fQ" crossorigin="anonymous">
+      
+  <style>    
+  [v-cloak] {
+    display: none;
+  }     
+  </style>    
+  
+  <!-- START -->
+  <script defer src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/8.0.0/firebase-performance.js"></script>
+  <script defer src="/firebase/prod.js"></script>
+  <!--  END Firebase initial -->
     
-    <!-- vue@3.0.2 -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@3.0.2/dist/vue.global.prod.js" integrity="sha256-9A0tu3fG/g3NsSSchTDl6Ady+cfh4cWf2Il+J/rhzkI=" crossorigin="anonymous"></script>
-    
-    <!-- bootstrap@5.3 alpha CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-CuOF+2SnTUfTwSZjCXf01h7uYhfOBuxIhGKPbfEJ3+FqH/s6cIFN9bGr1HmAg4fQ" crossorigin="anonymous">
-    <style>
-      [v-cloak] {
-      display: none;
-      }
-    </style>
-  </head>
-  <body>
-    <!-- START -->
-    <script defer src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>
-    <script defer src="https://vipatra.in/firebase/prod.js"></script>
-    <!--  END Firebase initial -->
-    <section v-cloak id="body" class="container">
+</head>
+<body>
+  <section id="body">    
+    <div class="container">
       <div class="row">
         <div class="col-sm">
-          <h4 class="text-center text-muted my-2">Vipatra</h4>
-          <div class="card my-4">
-            <div class="card-body">
-              <div class="fw-bold">
-                <div class="h3">Collect all your bills</div>
-                <span class="h2 text-primary">Digitally</span>
-                <span class="h3 text-secondary"> with Vipatra</span> 
-                <span class="h4">
-                <span class="badge bg-danger my-2">100% FREE</span>
+          <h4 class="text-center mt-3 mb-5">Vipatra</h4>
+          <span class="fs-5">Log in to your account</span>           
+          <div class="form-floating mt-3">
+            <input type="email" class="form-control" placeholder="Enter email" v-model="email">
+            <label>Email</label>
+          </div>            
+          <div class="form-floating mt-3">
+            <input type="password" class="form-control" placeholder="Password" v-model="password">
+            <label>Password</label>
+          </div>            
+          <div class="d-grid mt-4">
+            <button class="btn btn-success btn-lg fw-bold bg-gradient shadow-sm" @click.prevent="login" :disabled="disabled">
+              <div class="spinner-border spinner-border-sm" role="status" v-show="disabled">                  
+                <span class="visually-hidden">Loading...</span>                    
               </div>
-              <form class="text-center">
-                <div class="form-floating my-3">
-                  <input 
-                    type="email" class="form-control" 
-                    :class="[validate_email ? 'is-valid': 'is-invalid']" 
-                    placeholder="email" 
-                    v-model="email"/>
-                  <label>Enter your email</label>
-                </div>
-                <div class="d-grid">
-                  <button 
-                  class="btn btn-success btn-lg bg-gradient my-3" 
-                  @click.prevent="login" 
-                  :disabled="disabled">
-                    <div v-show="disabled" class="spinner-border spinner-border-sm m-1" role="status">
-                      <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <span class="fw-bold" v-show="!disabled">Get started</span>
-                  </button>
-                </div>
-              </form>
-            </div>
+              Login            
+            </button>
           </div>
-          <div v-show="error" class="alert alert-info my-5">{{ error }}</div>
-        </div>
+          <div class="alert alert-danger mt-3" v-show="alertText">{{ alertText }}</div>
       </div>
-      <br>
+      </div>
       <div class="row">
-        <div class="col text-center my-2">
-          <span>© Vipatra</span>
-          &nbsp;
-          <a href="https://vipatra.in/#help-and-support">Help</a>
+        <div class="col text-center my-5">
+          <span>© Vipatra </span>
+          <a href="/#help-and-support">Help</a>
         </div>
       </div>
+    </div>    
     </section>
-    <script>
-      var app = Vue.createApp({
+  <script>
+  var auth
+    
+    var app = Vue.createApp({
         data() {
-          return {
-            email: '',
-            disabled: false,
-            error: ''
-          }          
-        },
-        methods: {
-          login() {
-            this.error = ''
-            this.disabled = true
-            this.send_link()           
-          },
-          
-          send_link() {
-            var actionCodeSettings = {   
-              url: 'https://vipatra.in/bill/verify-email',
-              handleCodeInApp: true
-            }
-           auth.sendSignInLinkToEmail(this.email, actionCodeSettings)
-            .then(() => {    
-              console.log('sent')
-              this.disabled = false
-              this.error = 'Go to email and open email sent by Vipatra. Then click on link.'
-      window.localStorage.setItem('emailForSignIn', this.email)
-                  
-            }).catch(error => {
-              this.disabled = false   
-              this.error = error.message 
-            })
-          }          
-        },
-        computed: {
-          validate_email() {
-            const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-           return    re.test(String(this.email).toLowerCase())
-         }
+        return {
+          email: '',
+          password: '',
+          disabled: false,
+          alertText: ''    
+        }  
+      },
+      methods: {
+        login() {
+          this.disabled = true
+          auth.signInWithEmailAndPassword(this.email, this.password)
+          .then(() => {
+            console.log('success login')
+            window.location.href = '/'
+          })
+          .catch(error => {
+            this.showError = true
+            this.disabled = false
+            this.alertText = error.message  
+          })
         }
-      }).mount('#body')
+      }
+    }).mount(document.body)
+    document.addEventListener('DOMContentLoaded', () => {
+      auth = firebase.auth()
+      const perf = firebase.performance()
+      const analytics = firebase.analytics()
+    })
          
-    </script>
-    <!-- JavaScript Bundle with Popper.js -->
-    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-popRpmFF9JQgExhfw5tZT4I9/CI5e2QcuUZPOVXb1m7qUmeR2b50u+YFEYe1wgzy" crossorigin="anonymous"></script>
+  </script>    
+  <!-- JavaScript Bundle with Popper.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-popRpmFF9JQgExhfw5tZT4I9/CI5e2QcuUZPOVXb1m7qUmeR2b50u+YFEYe1wgzy" crossorigin="anonymous"></script>  
   </body>
 </html>
