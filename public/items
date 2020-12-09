@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Items</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+     
+    <!-- vue@3.0.2 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.0.2/dist/vue.global.prod.js" integrity="sha256-9A0tu3fG/g3NsSSchTDl6Ady+cfh4cWf2Il+J/rhzkI=" crossorigin="anonymous"></script>
+    
+    <!-- bootstrap@4.5.3 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+        
+    <style> 
+      html, body {
+        height: 100%;
+      }
+           
+      [v-cloak] {
+        display: none;
+      }
+      
+      .navbar svg{
+        color: currentColor;
+        width: 1.3em;
+        height: 1.3em;
+        margin-right: 15px;
+      }
+      
+      .btn {
+        font-weight: bold;
+      }
+      
+      .alert-enter-active,
+.alert-leave-active {
+        transition: opacity 0.5s ease;
+      }
+
+      .alert-enter-from,
+.alert-leave-to {
+        opacity: 0;
+      }
+    
+    </style>
+    
+    <!-- START -->
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/8.0.0/firebase-performance.js"></script>
+    <script src="/firebase/prod.js"></script>
+    <!--  END Firebase initial -->
+    
+   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand">
+      <img src="/images/vipatra-logo-small.png" width="30" height="30" class="d-inline-block align-top" alt="vipatra_logo" loading="lazy">Vipatra</a>
+        
+      <button class="navbar-toggler btn btn-dark" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/new-bill">
+              <i data-feather="plus"></i>
+               New Bill
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/items">
+              <i data-feather="align-justify"></i>
+              Inventory
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/reports">
+              <i fill="currentColor" data-feather="bar-chart"></i>
+              Reports
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/account">
+              <i data-feather="user"></i>
+              Account
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/help">
+              <i data-feather="help-circle"></i>
+              Help
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    
+     <link rel="manifest" href="/manifest.json"> 
+    
+  </head>
+  <body v-cloak>
+  
+    <h4 class="text-center my-3">Items</h4>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+        
+          <transition name="alert">
+            <div v-show="showAlert" class="alert alert-success border-success" role="alert">{{ alert }}</div>
+          </transition>
+          
+          <!-- Button trigger modal -->
+          <div class="text-right">
+            <button @click="clear_modal" class="btn btn-primary shadow-sm" data-toggle="modal" data-target="#item-modal">+ Add item</button>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col">
+          <div class="text-center">
+            <div v-show="!showItems" class="spinner-border text-dark m-5" role="status">
+  <span class="sr-only">Loading...</span>
+</div>
+          </div>
+          
+          <table v-show="showItems" class="table table-sm table-hover">
+            <thead>
+              <th scope="col">#</th>
+              <th scope="col">Item</th>
+              <th scope="col">Cost Price</th>
+              <th scope="col">Sale Price</th>
+              <th scope="col">Stock</th>
+            </thead>
+            <tbody>
+              <tr @click="row_click(item)" v-for="(item, index) in items">
+                <th scope="row">{{ ++index }}</th>
+                <td>{{ item.name }}</td>
+                <td>₹ {{ item.costPrice }}</td>
+                <td>₹ {{ item.salePrice }}</td>
+                <td>{{ item.currentStock }}</td>
+              </tr>
+            </tbody>
+          </table>
+          
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal fade" id="item-modal" tabindex="-1" role="dialog" aria-labelledby="add-item-modal" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">{{ modalTitle }}</h5>
+          </div>
+          <div class="modal-body">
+            <form id="modal-form">
+              <div class="form-group">
+                <label>Item Name</label>
+                <input type="text" class="form-control" v-model="itemName">
+              </div>
+              <div class="form-group">
+                <label>HSN/ SAC</label>
+                <input type="text" class="form-control" v-model="hsn">
+              </div>
+              <div class="row">
+                <div class="col">
+                  <label>Cost Price</label>
+                  <input v-model.number="costPrice" type="number" class="form-control">
+                </div>
+                <div class="col">
+                  <label>Sale Price</label>
+                  <input v-model.number="salePrice" type="number" class="form-control">
+                </div>
+              </div>
+              <hr>
+              <div class="h5 my-2">Stock</div>
+              <div class="row">
+                <div class="col">
+                  <label>Current</label>
+                    <input v-model.number="currentStock" type="number" class="form-control">
+                </div>
+                <div class="col">
+                  <label>Opening</label>
+                    <input v-model.number="openingStock" type="number" class="form-control">
+                </div>
+                <div class="col">
+                  <label>Min.</label>
+                  <input v-model.number="minStock" type="number" class="form-control">
+                </div>
+              </div>
+              <hr>
+              <div class="h5 my-2">Tax</div>
+              <div class="row">
+                <div class="col">
+                  <label>Type</label>
+                  <select class="custom-select" v-model="taxType">
+                    <option selected value="None">None</option>
+                    <option value="GST">GST (SGST + CGST)</option>
+                    <option value="IGST">IGST</option>
+                  </select>
+                </div>
+                <div class="col">
+                  <label>Percent(%)</label>
+                  <select class="custom-select" v-model="taxPercent">
+                    <option selected></option>
+                    <option value="nil">Nil</option>
+                    <option value="E">Exempted</option>
+                    <option value="0">0%</option>
+                    <option value="0.25">0.25%</option>
+                    <option value="3">3%</option>
+                    <option value="5">5%</option>
+                    <option value="12">12%</option>
+                    <option value="18">18%</option>
+                    <option value="28">28%</option>
+                  </select>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light border shadow-sm" data-dismiss="modal">Cancel</button>
+            <button v-show="showDeleteBtn" @click="delete_item" type="button" class="btn btn-danger shadow-sm">Delete</button>
+            <button v-show="showAddItemBtn" @click="add_item" type="button" class="btn btn-primary shadow-sm">Add Item</button>
+            <button v-show="showSaveBtn" @click="edit_item" type="button" class="btn btn-primary shadow-sm">Save</button>
+          </div>
+        </div>
+      </div>
+      </div>
+    
+    <script>  
+    
+    const auth = firebase.auth()
+    const db = firebase.firestore()           
+      
+      var app = Vue.createApp({
+        data() {
+          return {
+            showItems: false,
+            items: [],
+            itemName: '',
+            hsn: '',
+            salePrice: '',
+            costPrice: '',
+            currentStock: '',
+            openingStock: '',
+            minStock: '',
+            taxType: '',
+            taxPercent: '',
+            docId: '',
+            showAlert: false,
+            alert: '',
+            modalTitle: '',
+            showAddItemBtn: false,
+            showSaveBtn: false,
+            showStockInput: false,
+            showDeleteBtn: true     
+          }     
+        },
+        methods: {
+        
+          get_items() {
+          
+            db.collection('biz')
+            .doc(this.userId)
+            .collection('items')
+            .onSnapshot(snapshot => {
+              this.items.length = 0              
+              snapshot.forEach(doc => {
+                let val = doc.data().item
+
+                this.items.push({
+                  docId: doc.id,
+                  name: val.name,
+                  hsn: val.hsn,
+                  costPrice: val.costPrice,
+                  salePrice: val.salePrice,
+                  currentStock: val.stock.current,
+                  openingStock: val.stock.opening,
+                  minStock: val.stock.min,
+                  taxType: val.tax.type,
+                  taxPercent: val.tax.percent
+                })
+                                
+                this.showItems = true
+              }) 
+            })
+            
+          },
+                                        
+          add_item() {  
+          
+            this.check_num()             
+            $('#item-modal').modal('hide') 
+                                                
+            db.collection('biz')
+            .doc(this.userId)
+            .collection('items')
+            .add({
+              item: {
+                name: this.itemName, 
+                hsn: this.hsn,     
+                costPrice: this.costPrice,
+                salePrice: this.salePrice,
+                stock: {
+                  opening: this.openingStock,
+                  current: this.currentStock,
+                  min: this.minStock
+                },
+                tax: {
+                  type: this.taxType,
+                  percent: this.taxPercent
+                },
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+             },
+             bizId: this.userId             
+           })
+           .then(() => { 
+             this.clear_modal()                   
+             this.showAlert = true
+             this.alert = 'Item Added successfully!'
+             setTimeout(() => { 
+               this.showAlert = false
+             }, 2000)                                
+           })
+         },
+          
+         edit_item() {
+         
+           this.check_num()
+           $('#item-modal').modal('hide')
+           
+           db.collection('biz')
+           .doc(this.userId)
+           .collection('items')
+           .doc(this.docId)
+           .update({
+             item: {
+               name: this.itemName,
+               hsn: this.hsn,
+               costPrice: this.costPrice,
+               salePrice: this.salePrice,
+               stock: {
+                 opening: this.openingStock,
+                 current: this.currentStock,
+                 min: this.minStock
+               },
+               tax: {
+                 type: this.taxType,
+                 percent: this.taxPercent
+               }                
+             }            
+           })
+           .then(() => {
+            this.showAlert = true
+            this.alert = 'Item Saved successfully!'
+            setTimeout(() => { 
+              this.showAlert = false
+            }, 2000)    
+          })
+        },
+        
+        check_num() {
+        
+          if (!isNaN(this.taxPercent)) {
+            this.taxPercent = parseFloat(this.taxPercent)
+          }
+          
+        },
+          
+        delete_item() {
+          $('#item-modal').modal('hide')  
+                    
+          db.collection('biz')
+          .doc(this.userId)
+          .collection('items')
+          .doc(this.docId)
+          .delete()
+          .then(() => {
+            this.clear_modal()
+            this.showAlert = true
+            this.alert = 'Item Deleted successfully!'
+            setTimeout(() => { 
+              this.showAlert = false
+            }, 2000)
+          })
+          
+        },
+                    
+        row_click(item) {  
+                 
+          $('#item-modal').modal('show')
+          
+          this.modalTitle = 'Edit Item'
+          this.showSaveBtn = true
+          this.showAddItemBtn = false
+          this.showDeleteBtn = true
+          this.docId = item.docId
+          this.itemName = item.name
+          this.hsn = item.hsn
+          this.costPrice = item.costPrice
+          this.salePrice = item.salePrice
+          this.openingStock = item.openingStock
+          this.currentStock = item.currentStock
+          this.minStock = item.minStock  
+          this.taxType = item.taxType
+          this.taxPercent = item.taxPercent
+                  
+        },
+      
+        get_user_id() {
+          auth.onAuthStateChanged(user => {
+          
+            if (user) {
+              this.userId = user.uid
+              this.get_items()
+            }
+            
+            else {
+              document.write('Please Login');
+              setTimeout(() => {
+              window.location.href = '/store/login'; 
+              }, 1000)
+            }
+            
+          })
+        },
+          
+          clear_modal() {
+            this.modalTitle = 'Add item'
+            this.showAddItemBtn = true
+            this.showSaveBtn = false
+            this.showDeleteBtn = false
+            this.docId = ''
+            this.itemName = ''
+            this.hsn = ''
+            this.costPrice = ''
+            this.salePrice = ''
+            this.openingStock = ''
+            this.currentStock = ''
+            this.minStock = ''
+            this.taxPercent = '' 
+            this.taxType = ''
+          }                          
+        }
+      }).mount(document.body)
+      
+      app.get_user_id() 
+     document.addEventListener('DOMContentLoaded', () => {
+       feather.replace()
+       const perf = firebase.performance()
+       const analytics = firebase.analytics()
+      }) 
+              
+    </script> 
+    
+    <!-- feather icons -->
+    <script defer src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha256-XfzdiC+S1keia+s9l07y7ye5a874sBq67zK4u7LTjvk=" crossorigin="anonymous"></script>
+    
+   <!-- jQuery & JS bundle w/ Popper.js -->
+    <script defer src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    
+  </body>
+</html>
