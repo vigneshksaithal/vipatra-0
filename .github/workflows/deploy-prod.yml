@@ -20,5 +20,5 @@ jobs:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
           expires: 30d
-          projectId: vipatra-3d522
+          projectId: your-Firebase-project-ID
           channelId: live
