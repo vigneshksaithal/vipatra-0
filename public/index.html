@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+  <head>
+
+    <title>Dashboard</title>
+
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    
+
+    <link rel="manifest" href="/manifest.json">
+
+    
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+    
+
+    <style>
+
+      .container {
+
+        font-size: 20px;
+
+      }
+
+      .col {
+
+        padding: 10px;  
+
+      }
+
+    </style>
+
+        
+
+    <!-- feather icons -->
+
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha256-XfzdiC+S1keia+s9l07y7ye5a874sBq67zK4u7LTjvk=" crossorigin="anonymous"></script>
+
+    </head>
+
+    <body>
+
+    <div class="text-center">
+
+      <img src="https://dashboard.vipatra.in/images/vipatra-logo-small.png" width="35" height="35">
+
+      <span class="h3 align-middle">Vipatra</span>
+
+    </div>
+
+    <br><br>
+
+    <div class="text-center">
+
+      <h4>Dashboard</h4>
+
+    </div>
+
+    <br><br>
+
+    <div class="container text-center">
+
+      <div class="row">
+
+        <div class="col" onClick=window.location.href="/new-bill">
+
+          <i data-feather="file-text"></i>
+
+          <div>New Bill</div>
+
+        </div>
+
+        
+
+        <div class="col" onClick=window.location.href="/items">
+
+          <i data-feather="box"></i>
+
+          <div>Inventory</div>
+
+        </div>
+
+      </div> 
+
+           
+
+      <hr>
+
+            
+
+      <div class="row">
+
+        <div class="col" onClick=window.location.href="/reports">
+
+          <i data-feather="bar-chart"></i>
+
+          <div>Reports</div>
+
+        </div>                
+
+      </div>
+
+      
+
+      <hr>
+
+      <div class="row">
+
+        <div class="col" onClick=window.location.href="/account">
+
+          <i data-feather="user"></i>
+
+          <div>Account</div>
+
+        </div>
+
+        <div class="col" onClick=window.location.href="/help">
+
+          <i data-feather="help-circle"></i>
+
+          <div>Help</div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <script>
+
+      feather.replace()
+
+    </script>
+
+        
+
+    </body>
+
+</html>
