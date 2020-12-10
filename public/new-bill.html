@@ -480,11 +480,10 @@
       </div>
     </div>
       
-  <script> 
-    
+  <script>     
     const auth = firebase.auth()
     const db = firebase.firestore() 
-                                                  
+                                                      
     var app = Vue.createApp({
       data() {
         return {
@@ -599,10 +598,8 @@
                 
       },
          
-      add_item() {
-        
-        let gst = 0
-          
+      add_item() {        
+        let gst = 0          
         if (this.discount == '') {
           this.discount = 0
           this.discount = parseFloat(this.discount)
@@ -760,11 +757,14 @@
              items: this.json
            }
          })           
-         .then(async function(doc) {              
-           if (wantPdf == 'YES') {
+         .then(async function(doc) {            
+           if (wantPdf === 'YES') {
              let element = document.getElementById('bill-pdf')
+             let billFileName = 'vipatra_' + this.billNo + '.pdf'
              let opt = {
-               filename: 'vipatra_' + this.billNo + '.pdf'
+               filename: billFileName, 
+               margin: 1,
+               jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
              }
              html2pdf().set(opt)
              .from(element).save()
