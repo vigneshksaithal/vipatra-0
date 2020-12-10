@@ -756,26 +756,25 @@
              items: this.json
            }
          })           
-         .then(async function(doc) {            
+         .then(async (doc) => {            
            if (wantPdf === 'YES') {
              let element = document.getElementById('bill-pdf')
-             let billFileName = 'vipatra_' + app.billNo + '.pdf'
              let opt = {
-               filename: billFileName, 
-               margin: 5,
+               filename: 'vipatra_' + this.billNo + '.pdf', 
+               margin: 1,
                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
              }
              html2pdf().set(opt)
              .from(element).save()
            }                   
-           app.update_stock()
-           app.update_bill_no()        
+           this.update_stock()
+           this.update_bill_no()        
          })
          .catch(error => {
            document.write(error.message)
          })
          .then(() => {
-           app.reset()
+           this.reset()
            this.showSpinner = false
            this.sendBillAlertText = 'Bill Saved successfully!'
              
@@ -788,7 +787,7 @@
        },
           
         is_date_null() {          
-          if (this.billDate == '') {
+          if (this.billDate === '') {
             this.billDate = this.todays_date()
           }                        
         },
@@ -862,9 +861,10 @@
           this.price = ''
           this.qty = ''
           this.discount = ''
-          this.taxType = ""
+          this.taxType = ''
           this.taxPercent = 0
           this.taxAmount = 0
+          this.customerCode = ''
         },
           
         get_customers_data() {
