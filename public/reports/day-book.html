@@ -23,6 +23,16 @@
     margin-right: 15px;
   }
   </style>
+  
+  <!-- START -->
+  <script src="/__/firebase/8.0.0/firebase-app.js"></script>
+  <script src="/__/firebase/8.0.0/firebase-auth.js"></script>
+  <script src="/__/firebase/8.0.0/firebase-firestore.js"></script>
+  <script src="/__/firebase/init.js"></script>
+  <script defer src="/__/firebase/8.0.0/firebase-analytics.js"></script>
+  <script defer src="/__/firebase/8.0.0/firebase-performance.js"></script>
+    <!--  END Firebase initial -->
+  
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand">
     <img 
@@ -79,14 +89,6 @@
         </ul>
       </div>
     </nav>
-    <!-- START -->
-    <script src="/__/firebase/8.0.0/firebase-app.js"></script>
-    <script src="/__/firebase/8.0.0/firebase-auth.js"></script>
-    <script src="/__/firebase/8.0.0/firebase-firestore.js"></script>
-    <script src="/__/firebase/,init.js"></script>
-    <script defer src="/__/firebase/8.0.0/firebase-analytics.js"></script>
-    <script defer src="/__/firebase/8.0.0/firebase-performance.js"></script>
-    <!--  END Firebase initial -->
 </head>
 <body v-cloak>
   <h4 class="text-center my-3">Day Book</h4>
@@ -203,10 +205,9 @@
              let date = new Date()
              let dd = String(date.getDate()).padStart(2, '0')
              let mm = String(date.getMonth() + 1).padStart(2, '0') //January is 0!
-             let yyyy = date.getFullYear()
-         
+             let yyyy = date.getFullYear()         
              date = yyyy + '-' + mm + '-' + dd
-             return (new Date(date))
+             return new Date(date)
            },
            
            get_user_id() {
