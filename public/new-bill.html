@@ -387,7 +387,7 @@
                 <tr v-for="(item, index) in billItems" :key="item.item">
                   <th scope="row">{{ ++index }}</th>
                   <td>{{ item.name }}</td>
-                  <td>{{ item.hsn }}</td>
+                  <td v-show="enableGST">{{ item.hsn }}</td>
                   <td>{{ item.qty }}</td>
                   <td>{{ item.price }}</td>
                   <td>{{ item.discount }}</td>                
@@ -397,30 +397,30 @@
                 <tr>
                   <td></td>
                   <td></td>
+                  <td v-show="enableGST"></td>
                   <td></td>
                   <td></td>
-                  <td></td>
-                  <td></td>
+                  <td v-show="enableGST"></td>
                   <th>Sub Total</th>
                   <th>₹ {{ totalAmount}}</th>
                 </tr>
                 <tr>
                   <td></td>
                   <td></td>
+                  <td v-show="enableGST"></td>
                   <td></td>
                   <td></td>
-                  <td></td>
-                  <td></td>
+                  <td v-show="enableGST"></td>
                   <th>Discount</th>
                   <th>₹ {{ totalDiscount }}</th>
                 </tr>
                 <tr>
                   <td></td>
                   <td></td>
+                  <td v-show="enableGST"></td>
                   <td></td>
                   <td></td>
-                  <td></td>
-                  <td></td>
+                  <td v-show="enableGST"></td>
                   <th>Total</th>
                   <th>₹ {{ totalAmount - totalDiscount }}</th>
                 </tr>
@@ -764,11 +764,7 @@
            if (wantPdf == 'YES') {
              let element = document.getElementById('bill-pdf')
              let opt = {
-               margin: 1,
-               filename: 'vipatra_' + this.billNo + '.pdf',
-               image: { type: 'jpeg', quality: 0.98 },
-               html2canvas: { scale: 2 },
-               jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+               filename: 'vipatra_' + this.billNo + '.pdf'
              }
              html2pdf().set(opt)
              .from(element).save()
