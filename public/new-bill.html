@@ -620,7 +620,6 @@
           this.taxPercent = parseFloat(this.taxPercent)
           this.taxAmount = (this.taxPercent * this.taxableValue / 100)
             .toFixed(2)
-          console.log('taxb', typeof this.taxAmount, typeof this.taxableValue)
         }
         
         this.taxAmount = parseFloat(this.taxAmount)          
@@ -682,7 +681,7 @@
       },
         
       get_bill_no() {        
-        if (this.prevBillNo == '') {
+        if (this.prevBillNo === '') {
           return false
         }     
         else {
@@ -728,7 +727,7 @@
          this.sendBillDisabled = true
          this.showSpinner = true
          this.sendBillAlertText = 'Saving bill...'           
-         if (this.customerName != '') {
+         if (this.customerName !== '') {
            this.customer = {
               name: this.customerName,
               address: this.customerAddress,
@@ -760,10 +759,10 @@
          .then(async function(doc) {            
            if (wantPdf === 'YES') {
              let element = document.getElementById('bill-pdf')
-             let billFileName = 'vipatra_' + this.billNo + '.pdf'
+             let billFileName = 'vipatra_' + app.billNo + '.pdf'
              let opt = {
                filename: billFileName, 
-               margin: 10,
+               margin: 5,
                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
              }
              html2pdf().set(opt)
