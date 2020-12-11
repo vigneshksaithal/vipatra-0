@@ -103,7 +103,7 @@
     </div>
     <div class="row">
       <div class="col">
-        <h6>₹{{ totalSales.toFixed(2) }}</h6>
+        <h6>₹ {{ totalSales.toFixed(2) }}</h6>
       </div>
       <div class="col">
         <h6>{{ noOfSales }}</h6>
@@ -172,9 +172,9 @@
       
            db.collection('bills')
            .where('bizId','==', this.userId)
-           .where('timestamp', '<=', new Date())
-           .where('timestamp', '>=', todaysDate)
-           .orderBy('timestamp', 'desc')
+           .where('createdAt', '<=', new Date())
+           .where('createdAt', '>=', todaysDate)
+           .orderBy('createdAt', 'desc')
            .limit(200)
            .get()
            .then(snapshot => {             
