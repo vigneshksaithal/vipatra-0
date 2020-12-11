@@ -538,8 +538,8 @@
              
         get_user_id() {
           auth.onAuthStateChanged(user => {
-            if (!user) {
-              this.userId = 'UgBUXc2JvzWE1zFWjlgwSo2MFLn1'//user.uid
+            if (user) {
+              this.userId = user.uid
               this.get_items()
               this.get_store_details()
               this.get_customers_data()
