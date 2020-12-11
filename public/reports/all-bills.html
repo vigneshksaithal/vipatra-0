@@ -221,16 +221,16 @@
           
           db.collection('bills')
           .where('bizId','==', this.userId)
-          .where('timestamp', '>=', fromDate)
-          .where('timestamp', '<=', toDate)
-          .orderBy('timestamp', 'desc')
+          .where('createdAt', '>=', fromDate)
+          .where('createdAt', '<=', toDate)
+          .orderBy('createdAt', 'desc')
           .get()
           .then(snapshot => {
             this.bills.length = 0
             snapshot.forEach(doc => {
               let bill = doc.data().bill                       
               this.bills.push({
-                date: this.format_date(doc.data().timestamp.toDate()),
+                date: this.format_date(doc.data().createdAt.toDate()),
                 billNo: bill.num,
                 totalAmount: bill.totalAmount,
                 items: bill.items,
