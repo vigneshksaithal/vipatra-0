@@ -3,7 +3,7 @@
 <head>
   <title>New bill</title>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="manifest" href="manifest.json">    
   <!-- vue@3.0.2 -->
   <script src="https://cdn.jsdelivr.net/npm/vue@3.0.2/dist/vue.global.prod.js" integrity="sha256-9A0tu3fG/g3NsSSchTDl6Ady+cfh4cWf2Il+J/rhzkI=" crossorigin="anonymous"></script>    
@@ -40,7 +40,8 @@
     
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand">
-      <img src="/images/vipatra-logo-small.png" width="30" height="30" class="d-inline-block align-top" alt="vipatra_logo" loading="lazy">Vipatra</a>       
+      <img src="/images/vipatra-logo-small.png" width="30" height="30" class="d-inline-block align-top" alt="vipatra_logo" loading="lazy">Vipatra</a>
+        
     <button 
       class="navbar-toggler btn btn-dark" 
       type="button" 
@@ -271,7 +272,7 @@
                   <div class="text-center">
                     <div class="h5 m-3">OR</div>
                     <button 
-                      @click="save_bill('YES')" 
+                      @click="save_bill(true)" 
                       class="btn btn-danger btn-block shadow-sm"
                       >Get PDF</button>
                   </div>
@@ -387,7 +388,7 @@
                 <tr v-for="(item, index) in billItems" :key="item.item">
                   <th scope="row">{{ ++index }}</th>
                   <td>{{ item.name }}</td>
-                  <td v-show="enableGST">{{ item.hsn }}</td>
+                  <td>{{ item.hsn }}</td>
                   <td>{{ item.qty }}</td>
                   <td>{{ item.price }}</td>
                   <td>{{ item.discount }}</td>                
@@ -397,30 +398,30 @@
                 <tr>
                   <td></td>
                   <td></td>
-                  <td v-show="enableGST"></td>
                   <td></td>
                   <td></td>
-                  <td v-show="enableGST"></td>
+                  <td></td>
+                  <td></td>
                   <th>Sub Total</th>
                   <th>₹ {{ totalAmount}}</th>
                 </tr>
                 <tr>
                   <td></td>
                   <td></td>
-                  <td v-show="enableGST"></td>
                   <td></td>
                   <td></td>
-                  <td v-show="enableGST"></td>
+                  <td></td>
+                  <td></td>
                   <th>Discount</th>
                   <th>₹ {{ totalDiscount }}</th>
                 </tr>
                 <tr>
                   <td></td>
                   <td></td>
-                  <td v-show="enableGST"></td>
                   <td></td>
                   <td></td>
-                  <td v-show="enableGST"></td>
+                  <td></td>
+                  <td></td>
                   <th>Total</th>
                   <th>₹ {{ totalAmount - totalDiscount }}</th>
                 </tr>
@@ -480,10 +481,11 @@
       </div>
     </div>
       
-  <script>     
+  <script> 
+    
     const auth = firebase.auth()
     const db = firebase.firestore() 
-                                                      
+                                                  
     var app = Vue.createApp({
       data() {
         return {
@@ -536,8 +538,8 @@
              
         get_user_id() {
           auth.onAuthStateChanged(user => {
-            if (user) {
-              this.userId = user.uid
+            if (!user) {
+              this.userId = 'UgBUXc2JvzWE1zFWjlgwSo2MFLn1'//user.uid
               this.get_items()
               this.get_store_details()
               this.get_customers_data()
@@ -598,8 +600,10 @@
                 
       },
          
-      add_item() {        
-        let gst = 0          
+      add_item() {
+        
+        let gst = 0
+          
         if (this.discount == '') {
           this.discount = 0
           this.discount = parseFloat(this.discount)
@@ -620,6 +624,7 @@
           this.taxPercent = parseFloat(this.taxPercent)
           this.taxAmount = (this.taxPercent * this.taxableValue / 100)
             .toFixed(2)
+          console.log('taxb', typeof this.taxAmount, typeof this.taxableValue)
         }
         
         this.taxAmount = parseFloat(this.taxAmount)          
@@ -681,7 +686,7 @@
       },
         
       get_bill_no() {        
-        if (this.prevBillNo === '') {
+        if (this.prevBillNo == '') {
           return false
         }     
         else {
@@ -727,7 +732,7 @@
          this.sendBillDisabled = true
          this.showSpinner = true
          this.sendBillAlertText = 'Saving bill...'           
-         if (this.customerName !== '') {
+         if (this.customerName != '') {
            this.customer = {
               name: this.customerName,
               address: this.customerAddress,
@@ -756,25 +761,27 @@
              items: this.json
            }
          })           
-         .then(async (doc) => {            
-           if (wantPdf === 'YES') {
+         .then(async function(doc) {              
+           if (wantPdf) {
              let element = document.getElementById('bill-pdf')
              let opt = {
-               filename: 'vipatra_' + this.billNo + '.pdf', 
                margin: 1,
-               jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+               filename: 'vipatra_' + this.billNo + '.pdf',
+               image: { type: 'jpeg', quality: 0.98 },
+               html2canvas: { scale: 2 },
+               jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
              }
              html2pdf().set(opt)
              .from(element).save()
            }                   
-           this.update_stock()
-           this.update_bill_no()        
+           app.update_stock()
+           app.update_bill_no()        
          })
          .catch(error => {
            document.write(error.message)
          })
          .then(() => {
-           this.reset()
+           app.reset()
            this.showSpinner = false
            this.sendBillAlertText = 'Bill Saved successfully!'
              
@@ -787,7 +794,7 @@
        },
           
         is_date_null() {          
-          if (this.billDate === '') {
+          if (this.billDate == '') {
             this.billDate = this.todays_date()
           }                        
         },
@@ -861,10 +868,9 @@
           this.price = ''
           this.qty = ''
           this.discount = ''
-          this.taxType = ''
+          this.taxType = ""
           this.taxPercent = 0
           this.taxAmount = 0
-          this.customerCode = ''
         },
           
         get_customers_data() {
