@@ -1,0 +1,28 @@
+html, body {
+    height: 100%;
+  }
+      
+  [v-cloak] {
+    display: none;
+  }
+      
+  .navbar svg{
+    color: currentColor;
+    width: 1.3em;
+    height: 1.3em;
+    margin-right: 15px;
+  }
+      
+  .btn {
+    font-weight: bold;
+  }
+      
+  .fade-enter-active, 
+  .fade-leave-active {
+    transition: opacity .5s;
+  }
+      
+  .fade-enter, 
+  .fade-leave-to {
+    opacity: 0;
+  }      
