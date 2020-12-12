@@ -9,6 +9,6 @@ function json_to_csv_download(data, fileName) {
   var hiddenElement = document.createElement('a')
   hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv)
   hiddenElement.target = '_blank'
-  hiddenElement.download = fileName
+  hiddenElement.download = fileName + '.csv'
   hiddenElement.click()
 } 
