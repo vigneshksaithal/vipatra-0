@@ -283,8 +283,9 @@
         },
         
         download_csv() {
-          let date = dayjs().format('DD-MM-YYYY')
-          json_to_csv_download(this.bills, date)
+          let date = dayjs().format('DD_MM_YYYY')
+          let fileName = 'GST_Sales_Report'
+          json_to_csv_download(this.bills, fileName)
         },
         
         check_date() {
