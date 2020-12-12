@@ -59,14 +59,13 @@
     </div>
   </nav>    
   <!-- START -->
-    <script defer src="/__/firebase/8.2.0/firebase-app.js"></script>
-    <script defer src="/__/firebase/8.2.0/firebase-auth.js"></script>
-    <script defer src="/__/firebase/8.2.0/firebase-firestore.js"></script>
-    <script defer src="/__/firebase/8.2.0/firebase-analytics.js"></script>
-    <script defer src="/__/firebase/8.2.0/firebase-performance.js"></script>
-    <script defer src="/__/firebase/init.js"></script>
-    <!--  END Firebase initial -->
-    
+  <script defer src="/__/firebase/8.2.0/firebase-app.js"></script>
+  <script defer src="/__/firebase/8.2.0/firebase-auth.js"></script>   
+  <script defer src="/__/firebase/8.2.0/firebase-firestore.js"></script>
+  <script defer src="/__/firebase/8.2.0/firebase-analytics.js"></script>
+  <script defer src="/__/firebase/8.2.0/firebase-performance.js"></script>
+  <script defer src="/__/firebase/init.js"></script>
+  <!--  END Firebase initial -->    
 </head>  
 <body v-cloak>   
   <div class="container">
@@ -202,9 +201,9 @@
                  
         show_bills() {
           let from = 
-          dayjs(this.fromDate).startOf('day')
+          dayjs(this.fromDate).startOf('day').toDate()
           let to = 
-          dayjs(this.toDate).endOf('day')
+          dayjs(this.toDate).endOf('day').toDate()
           
           this.bills.length = 0
          
