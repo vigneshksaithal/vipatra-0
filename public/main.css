@@ -1,38 +1,38 @@
-html, body {
+html,
+body {
   height: 100%;
 }
-      
+
 [v-cloak] {
   display: none;
 }
-      
-.navbar svg{
+
+.navbar svg {
   color: currentColor;
   width: 1.3em;
   height: 1.3em;
   margin-right: 15px;
 }
-      
+
 .btn {
   font-weight: bold;
 }
-      
-.fade-enter-active, 
+
+.fade-enter-active,
 .fade-leave-active {
-  transition: opacity .5s;
+  transition: opacity 0.5s;
 }
-      
-.fade-enter, 
+
+.fade-enter,
 .fade-leave-to {
   opacity: 0;
-}      
-
-table 
-  th:nth-child(n+3),
-  td:nth-child(n+3) {
-    text-align: right;    
 }
-    
+
+table th:nth-child(n + 3),
+td:nth-child(n + 3) {
+  text-align: right;
+}
+
 table {
-  font-size: 15px;  
+  font-size: 15px;
 }
