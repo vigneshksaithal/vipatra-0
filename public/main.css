@@ -26,3 +26,13 @@ html, body {
 .fade-leave-to {
   opacity: 0;
 }      
+
+table 
+  th:nth-child(n+3),
+  td:nth-child(n+3) {
+    text-align: right;    
+}
+    
+table {
+  font-size: 15px;  
+}
