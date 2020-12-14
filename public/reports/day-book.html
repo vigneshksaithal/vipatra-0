@@ -119,8 +119,8 @@
         <tbody>
           <tr v-for="(bill, index) in bills" :key="bill.docid">
             <th scope="row">{{ ++index }}</th>
-            <td class="text-right">{{ bill.billNum }}</td>
-            <td class="text-right">₹ {{ bill.totalAmount }}</td>
+            <td>{{ bill.billNum }}</td>
+            <td>₹ {{ bill.totalAmount }}</td>
           </tr>
         </tbody>
       </table>
