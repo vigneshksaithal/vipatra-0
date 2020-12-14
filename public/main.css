@@ -18,13 +18,13 @@ body {
   font-weight: bold;
 }
 
-.fade-enter-active,
-.fade-leave-active {
+.alert-enter-active,
+.alert-leave-active {
   transition: opacity 0.5s;
 }
 
-.fade-enter,
-.fade-leave-to {
+.alert-enter,
+.alert-leave-to {
   opacity: 0;
 }
 
