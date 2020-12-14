@@ -5,8 +5,8 @@ on:
     branches:
       - main
     # Optionally configure to run only for specific files. For example:
-          paths:
-            - public/**
+      paths:
+        - public/**
  
 jobs:
   build_and_preview:
