@@ -112,15 +112,15 @@
         <thead>
           <tr>
             <th scope="col">#</th>
-            <th scope="col" class="text-right">Bill No</th>
-            <th scope="col" class="text-right">Amount</th>
+            <th scope="col">Bill No</th>
+            <th scope="col">Amount</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(bill, index) in bills" :key="bill.docid">
             <th scope="row">{{ ++index }}</th>
             <td class="text-right">{{ bill.billNum }}</td>
-            <td class="text-right">₹ {{ bill.totalAmount }}</td>
+            <td class="text-right">₹  {{ bill.totalAmount }}</td>
           </tr>
         </tbody>
       </table>
