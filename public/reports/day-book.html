@@ -26,6 +26,9 @@
     <script defer src="/__/firebase/8.0.0/firebase-analytics.js"></script>
     <script defer src="/__/firebase/8.0.0/firebase-performance.js"></script>
     <!--  END Firebase initial -->
+    
+    <!-- day js -->
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.9.7/dayjs.min.js" integrity="sha256-qfCZG+wE1Jm81YLd0GFjGWiOSEnBFyBwFt/MyFNbxPI=" crossorigin="anonymous"></script>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand">Vipatra</a>
@@ -118,9 +121,11 @@
         </tbody>
       </table>
 
-      <div class="alert alert-warning my-3" role="alert" v-show="showAlert">
-        No bills to show! {{ alertText }}
+      <transition name="alert">
+        <div class="alert alert-warning my-3" role="alert" v-show="showAlert">
+        No bills to show! Error: {{ alertText }}
       </div>
+      </transition>
     </div>
     <script>
       const auth = firebase.auth();
@@ -143,14 +148,14 @@
         },
         methods: {
           show_bills() {
-            let todaysDate = this.get_todays_date();
+            let startDate = dayjs().startOf('day').toDate()
+            let endDate = dayjs().endOf('day').toDate()
 
             db.collection("bills")
               .where("bizId", "==", this.userId)
-              .where("createdAt", "<=", new Date())
-              .where("createdAt", ">=", todaysDate)
+              .where("createdAt", ">=", startDate)
+              .where("createdAt", "<=", endDate)
               .orderBy("createdAt", "desc")
-              .limit(200)
               .get()
               .then((snapshot) => {
                 snapshot.forEach((doc) => {
@@ -165,23 +170,21 @@
                 });
               })
               .then(() => {
-                this.showSpinner = false;
-                this.showTable = true;
+                if (this.bills !== []) {
+                  this.showSpinner = false;
+                  this.showTable = true;  
+                }
+                else {
+                  this.showSpinner = false;
+                  this.showAlert = true;
+                  this.alertText = error.message;  
+                }
               })
               .catch((error) => {
                 this.showSpinner = false;
                 this.showAlert = true;
                 this.alertText = error.message;
               });
-          },
-
-          get_todays_date() {
-            let date = new Date();
-            let dd = String(date.getDate()).padStart(2, "0");
-            let mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
-            let yyyy = date.getFullYear();
-            date = yyyy + "-" + mm + "-" + dd;
-            return new Date(date);
           },
 
           get_user_id() {
