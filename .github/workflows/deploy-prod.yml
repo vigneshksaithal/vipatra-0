@@ -5,9 +5,9 @@ on:
     branches:
       - main
     # Optionally configure to run only for specific files. For example:
-    # paths:
-    # - "website/**"
-
+          paths:
+            - "public/**"
+ 
 jobs:
   build_and_preview:
     runs-on: ubuntu-latest
