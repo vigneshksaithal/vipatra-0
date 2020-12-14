@@ -32,8 +32,7 @@ table {
   font-size: 15px;
 }
 
-#day-book,
-#stock-report th:nth-child(n + 3),
+table th:nth-child(n + 3),
 td:nth-child(n + 3) {
   text-align: right;
 }
