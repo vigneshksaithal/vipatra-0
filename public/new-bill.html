@@ -14,14 +14,14 @@
   <link rel="stylesheet" href="/main.css">
   
   <!-- START -->
-  <script src="/__/firebase/8.0.0/firebase-app.js"></script>
-  <script src="/__/firebase/8.0.0/firebase-auth.js"></script>
-  <script src="/__/firebase/8.0.0/firebase-firestore.js"></script>
+  <script src="/__/firebase/8.2.0/firebase-app.js"></script>
+  <script src="/__/firebase/8.2.0/firebase-auth.js"></script>
+  <script src="/__/firebase/8.2.0/firebase-firestore.js"></script>
   <script src="/__/firebase/init.js"></script>
-  <script defer src="/__/firebase/8.0.0/firebase-analytics.js"></script>
-  <script defer src="/__/firebase/8.0.0/firebase-performance.js"></script>
-  <!--  END Firebase initial -->
-    
+  <script defer src="/__/firebase/8.2.0/firebase-analytics.js"></script>
+  <script defer src="/__/firebase/8.2.0/firebase-performance.js"></script>
+  <!--  END Firebase initial -->  
+     
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand">Vipatra</a>       
     <button 
@@ -70,19 +70,19 @@
     </div>
   </nav>    
 </head>
+
 <body v-cloak>
   <div class="container">
-    <br>
-    <div class="row align-bottom">
+    <div class="row align-bottom mt-3">
       <div class="col-3">
         <button 
           class="btn btn-link btn-lg" 
           data-toggle="modal" 
           data-target="#edit-modal">            
           <i 
-             data-feather="settings" 
+           data-feather="settings" 
              color="#000000"
-           ></i>                  
+          ></i>                  
         </button>            
       </div>          
       <div class="col-9">        
@@ -93,268 +93,265 @@
         >Charge ₹ {{ totalAmount }}</button>    
       </div>
     </div>
-        <hr>
-        <div class="row">
-          <div class="col-6">
-            <div id="customer-autocomplete">
-              <label>Customer name</label>
-              <input 
-                type="text" 
-                class="form-control" 
-                id="customer-search" 
-                v-model.lazy="customerName" 
-                placeholder="Search..." 
-                autocomplete="off"
-              >
-            </div>
-          </div>
-          <div class="col-3">
-            <label>Bill no</label>
-            <input 
+    <hr>
+    <div class="row">
+      <div class="col-6">
+        <div id="customer-autocomplete">
+          <label>Customer name</label>
+          <input 
+            type="text" 
+            class="form-control" 
+            id="customer-search" 
+            v-model.lazy="customerName" 
+            placeholder="Search..." 
+            autocomplete="off"
+          >
+        </div>
+      </div>
+      <div class="col-3">
+        <label>Bill no</label>
+        <input 
               type="number" 
               v-model.number="billNo" 
               class="form-control"
-            >
-          </div>
-          <div class="col-3 text-right">
-            <button 
-              class="btn btn-danger shadow-sm" 
-              @click="reset"
-              ><i                
-                data-feather="rotate-ccw">                    
-              </i>                  
-            </button>
-          </div>
+        >
+      </div>
+      <div class="col-3 text-right">
+        <button 
+          class="btn btn-danger shadow-sm" 
+          @click="reset"
+          ><i                
+            data-feather="rotate-ccw">                    
+          </i>                  
+        </button>
+      </div>
+    </div>
+    <hr>
+    <div class="row mt-3">
+      <div class="col-6">
+        <div id="autocomplete" autocomplete="off">
+          <label>Item</label>
+          <input 
+            id="search-bar" 
+            type="text" 
+            class="form-control" 
+            placeholder="Search item..." 
+            v-model.lazy="itemName" 
+            autocomplete="off"
+          >
         </div>
-        <hr>
-        <div class="row">
-          <div class="col-6">
-            <div class="form-group">
-              <div id="autocomplete" autocomplete="off">
-                <label>Item</label>
-                <input 
-                  id="search-bar" 
-                  type="text" 
-                  class="form-control" 
-                  placeholder="Search item..." 
-                  v-model.lazy="itemName" 
-                  autocomplete="off"
-                >
-              </div>
-            </div>
-          </div>
-          <div class="col-3">
-            <label>Qty</label>
-            <input 
+      </div>
+      <div class="col-3">
+        <label>Qty</label>
+        <input 
               v-model.number="qty" 
               type="number" 
               class="form-control"
-            >
-          </div>
-          <div class="col-3">
-            <label>Price</label>
-            <input 
+        >
+      </div>
+      <div class="col-3">
+        <label>Price</label>
+        <input 
               type="number" 
               class="form-control"
               v-model.number="price" 
-            >
-          </div>
-        </div>
-        <label class="text-left">Discount</label>
-        <div class="row my-2">
-          <div class="col-5">
-            <div class="input-group">
-              <div class="input-group-prepend">
-              <span class="input-group-text">₹</span>
-            </div>
-            <input
-              type="number" 
-              class="form-control"
-              v-model.number="discount"  
-            >
-            </div>
-          </div>
-          
-          <div class="col text-right">
-            <button
-              class="btn btn-secondary px-3 shadow-sm" 
-              @click="add_item" 
-            >Add item</button>
-          </div>
-        </div>        
-        <div class="row">
-          <div class="col table-responsive">
-            <table id="table-bill" class="table table-sm table-hover mt-2">
-              <thead>
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Item</th>
-                  <th scope="col" v-show="enableGST">HSN/ SAC</th>
-                  <th scope="col">Qty</th>
-                  <th scope="col">Price</th>
-                  <th scope="col">Discount</th>
-                  <th v-show="enableGST" scope="col">GST</th>
-                  <th scope="col">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(item, index) in billItems" :key="item.name">
-                  <th scope="row">{{ ++index }}</th>
-                  <td>{{ item.name }}</td>
-                  <td v-show="enableGST">{{ item.hsn }}</td>
-                  <td>{{ item.qty }}</td>
-                  <td>{{ item.price }}</td>
-                  <td>{{ item.discount }}</td>                
-                  <td v-show="enableGST">{{ item.tax.amount }} ({{ item.tax.percent }}%)</td>
-                  <td>{{ item.total }}</td>
-                  <td></td>
-                </tr>
-              </tbody>
-            </table>
-        
-          </div>
-        </div>
+        >
       </div>
+    </div>
+    <label class="text-left">Discount</label>
+    <div class="row my-2">
+      <div class="col-5">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">₹</span>
+          </div>
+          <input
+            type="number" 
+            class="form-control"
+            v-model.number="discount"  
+          >
+        </div>
+      </div>          
+      <div class="col text-right">
+        <button
+          class="btn btn-secondary px-3 shadow-sm" 
+          @click="add_item" 
+        >Add item</button>
+      </div>
+    </div>        
+    <div class="row">
+      <div class="col table-responsive">
+        <table id="table-bill" class="table table-sm table-hover mt-2">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Item</th>
+              <th scope="col" v-show="enableGST">HSN/ SAC</th>
+              <th scope="col">Qty</th>
+              <th scope="col">Price</th>
+              <th scope="col">Discount</th>
+              <th v-show="enableGST" scope="col">GST</th>
+              <th scope="col">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, index) in billItems" :key="item.name">
+              <th scope="row">{{ ++index }}</th>
+              <td>{{ item.name }}</td>
+              <td v-show="enableGST">{{ item.hsn }}</td>
+              <td>{{ item.qty }}</td>
+              <td>{{ item.price }}</td>
+              <td>{{ item.discount }}</td>                
+              <td v-show="enableGST">{{ item.tax.amount }} ({{ item.tax.percent }}%)</td>
+              <td>{{ item.total }}</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>        
+      </div>
+    </div>
+  </div>
       
-      <!--Submit modal-->
-      <div id="send-bill-modal" 
+    <!--Submit modal-->
+    <div id="send-bill-modal" 
         class="modal fade" 
         tabindex="-1" 
         role="dialog" 
         aria-labelledby="submit-modal" 
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Send Bill</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        aria-hidden="true">            
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Send Bill</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div>
-                <fieldset v-bind:disabled="sendBillDisabled">
-                  <span>Send Digital bill</span>
-                  <br>
-                  <div class="form-row my-2">
-                    <div class="col-8">
-                      <input type="number" 
+            </button>
+          </div>
+          <div class="modal-body">
+            <fieldset v-bind:disabled="sendBillDisabled">
+              <span>Send Digital bill</span>
+                <div class="form-row my-3">
+                  <div class="col-8">
+                    <input type="number" 
                         class="form-control" 
                        placeholder="customer code" 
-                     v-model="customerCode">
-                    </div>
-                    <div class="col-4">
-                      <button 
+                    v-model="customerCode">
+                  </div>
+                  <div class="col-4">
+                    <button 
                         @click="save_bill(false)" 
                         type="button" 
                         class="btn btn-primary"
-                      >Send bill</button>
-                    </div>
+                    >Send bill</button>
                   </div>
-                  <div class="text-center">
-                    <div class="h5 m-3">OR</div>
-                    <button 
+                </div>
+                <div class="text-center">
+                  <div class="h5 m-3">OR</div>
+                  <button 
                       @click="save_bill(true)" 
                       class="btn btn-danger btn-block"
-                      >Get PDF</button>
-                  
-              </div>
-              </fieldset>
+                  >Get PDF</button>                  
+               </div>
+             </fieldset>
               
-              <div v-if="sendBillDisabled" class="text-center">
-                <div class="alert alert-success border-success mt-4">
-                  <div v-show="showSpinner" class="spinner-border" role="status">  
-                    <span class="sr-only">Loading...</span>
-                  </div>
-                  <div class="mt-3">{{ sendBillAlertText }}</div>
-                </div>
-              </div>
-          </div>
-        </div>
-      </div>
+             <div 
+               v-if="sendBillDisabled" 
+               class="text-center">
+               <div class="alert alert-success border-success mt-4">
+                 <div v-show="showSpinner" class="spinner-border" role="status">  
+                   <span class="sr-only">Loading...</span>
+                 </div>
+                 <div class="mt-3">{{ sendBillAlertText }}</div>
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
+     </div>
+        
       
-      <!-- edit Modal -->
-      <div class="modal fade" id="edit-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Edit Bill</h5>
-            </div>
-            <div class="modal-body">
-              <div class="form-group">
-                <label>Date</label>
-                <input 
+      
+    <!-- edit Modal -->
+    <div class="modal fade" id="edit-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Bill</h5>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label>Date</label>
+              <input 
                   type="date" 
                   class="form-control" 
                   v-model="billDate"
-                >
-                <small class="form-text text-muted">
-                <i data-feather="alert-circle" height="1em" width="1em" class="text-alert"></i>
+              >
+              <small class="form-text text-muted">
+                <i data-feather="alert-circle" height="1em" width="1em" class="text-warning"></i>
                 Date is set to todays date automatically.</small>
-              </div>
-              <div class="form-group">
-                <label>Bill Note</label>
-                <textarea 
+            </div>
+            <div class="mb-3">
+              <label>Bill Note</label>
+              <textarea 
                   class="form-control" 
                   v-model="billNote"
-                ></textarea>
-              </div>
+              ></textarea>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-light border" data-dismiss="modal">Cancel</button>
-              <button type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
-            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light border" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
           </div>
         </div>
       </div>
-      <!--END submit modal-->
+    </div>
+    <!--END submit modal-->
       
-      <!-- Modal -->    
-      <div 
+    <!-- bill Modal -->    
+    <div 
         class="modal fade" 
         id="view-bill-modal" 
         tabindex="-1" 
         aria-labelledby="bill-modal" 
         aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title text-center">Bill</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-center">Bill</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div id="bill-pdf" class="modal-body">
-              <br>
-              <h6 class="text-center">TAX INVOICE</h6>
-              <div class="container m-3">
-                <div class="row text-left">
-                  <div class="col-8">
-                    <div class="h5">{{ biz.name }}</div>
-                    <div v-if="biz.address">Address: {{ biz.address }}</div>
-                    <div v-if="biz.phone">Phone: {{ biz.phone }}</div>
-                    <div v-if="biz.gstIN">GSTIN: {{ biz.gstIN }}</div>
-                  </div>
-                  <div class="col-4">
-                    <span><b>Bill No: </b>{{ billNo }}</span>
-                   <br>
-                   <span><b>Date: </b>{{ billDate }}</span> 
-                  </div>
+            </button>
+          </div>
+          <div id="bill-pdf" class="modal-body">
+            <h6 class="text-center mt-3">TAX INVOICE</h6>
+            <div class="container m-3">
+              <div class="row text-left">
+                <div class="col-8">
+                  <div class="h5">{{ biz.name }}</div>
+                  <div v-if="biz.address">Address: {{ biz.address }}</div>
+                  <div v-if="biz.phone">Phone: {{ biz.phone }}</div>
+                  <div v-if="biz.gstIN">GSTIN: {{ biz.gstIN }}</div>
                 </div>
-                <br>                
-                <div class="row">
-                  <div class="col">
-                    <span class="font-weight-bold">Bill To:</span>
-                    <div v-if="customerName">Customer: {{ customerName }}</div>
-                    <div v-if="customerAddress">Address: {{ customerAddress }}</div>
-                    <div v-if="customerPhone">Phone: {{ customerPhone }}</div>
-                    <div v-if="customerGSTIN">GSTIN: {{ customerGSTIN }}</div>
-                  </div>
+                <div class="col-4">
+                  <span><b>Bill No: </b>{{ billNo }}</span>
+                 <br>
+                 <span><b>Date: </b>{{ billDate }}</span> 
                 </div>
               </div>
-              <br>
-              <div class="text-center">
-              <table class="table table-sm">
+              <br>                
+              <div class="row">
+                <div class="col">
+                  <span class="font-weight-bold">Bill To:</span>
+                  <div v-if="customerName">Customer: {{ customerName }}</div>
+                  <div v-if="customerAddress">Address: {{ customerAddress }}</div>
+                  <div v-if="customerPhone">Phone: {{ customerPhone }}</div>
+                  <div v-if="customerGSTIN">GSTIN: {{ customerGSTIN }}</div>
+                </div>
+              </div>
+            </div>
+            <br>
+            <div class="text-center">
+            <table class="table table-sm">
               <thead>
                 <tr>
                   <th scope="col">#</th>
@@ -391,74 +388,72 @@
                 <tr>
                   <td></td>
                   <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <th>Discount</th>
-                  <th>₹ {{ totalDiscount }}</th>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <th>Total</th>
-                  <th>₹ {{ totalAmount - totalDiscount }}</th>
-                </tr>
-              </tbody>
-            </table>
-              <div class="text-center">Note: {{ billNote }}</div>
-              </div>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <th>Discount</th>
+                <th>₹ {{ totalDiscount }}</th>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <th>Total</th>
+                <th>₹ {{ totalAmount - totalDiscount }}</th>
+              </tr>
+          </tbody>
+          </table>
+            <div class="text-center">Note: {{ billNote }}</div>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           </div>
         </div>
       </div>
+    </div>
       
-      <!-- add customer Modal -->
-      <div class="modal fade" id="add-customer-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Add customer</h5>             
+    <!-- add customer Modal -->
+    <div class="modal fade" id="add-customer-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add customer</h5>             
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label>Customer Name</label>
+              <input type="text" v-model="customerName" class="form-control">
             </div>
-            <div class="modal-body">
-              <div class="form-group">
-                <label>Customer Name</label>
-                <input type="text" v-model="customerName" class="form-control">
-              </div>
-              <div class="form-group">
-                <label>Address</label>
-                <input type="text" class="form-control" v-model="customerAddress">
-              </div>
-              <div class="form-group">
-                <label>Phone</label>
-                <input type="text" class="form-control" v-model.number="customerPhone">
-              </div>
-              <div class="form-group">
-                <label>GSTIN</label>
-                <input type="text" class="form-control" v-model="customerGSTIN">
-              </div>
+            <div class="mb-3">
+              <label>Address</label>
+              <input type="text" class="form-control" v-model="customerAddress">
             </div>
-            <div class="modal-footer">
-            
+            <div class="mb-3">
+              <label>Phone</label>
+              <input type="text" class="form-control" v-model.number="customerPhone">
+            </div>
+            <div class="mb-3">
+              <label>GSTIN</label>
+              <input type="text" class="form-control" v-model="customerGSTIN">
+            </div>
+          </div>
+          <div class="modal-footer">            
             <button 
               type="button" 
-              class="btn btn-light border shadow-sm" 
+              class="btn btn-light border" 
               data-dismiss="modal"
             >Cancel</button>
             
             <button 
               type="button" 
-              class="btn btn-primary shadow-sm" 
+              class="btn btn-primary" 
               @click="add_new_customer"
-            >Save changes</button>
-            
+            >Save changes</button>            
           </div>
         </div>
       </div>
@@ -744,7 +739,7 @@
              items: this.json
            }
          })           
-         .then(async () => {              
+         .then(() => {              
            if (wantPdf) {
              let element = document.getElementById('bill-pdf')
              let opt = {
@@ -756,6 +751,7 @@
              }
              html2pdf().set(opt)
              .from(element).save()
+             console.log(this.billNo)
            }                   
            this.update_stock()
            this.update_bill_no()        
@@ -776,14 +772,10 @@
          })     
        },
           
-        is_date_null() {          
-          if (this.billDate === '') {
-            this.billDate = this.todays_date()
-          }                        
-        },
+        
         
         date_to_timestamp() {
-          if (this.billDate == this.todays_date()) {
+          if (this.billDate === dayjs().format('YYYY-MM-DD').toDate()) {
           this.timestamp = 
             firebase.firestore
             .Timestamp
@@ -796,15 +788,6 @@
             .fromDate(new Date(this.billDate))   
           }
         },
-         
-        todays_date() {
-          let date = new Date()
-          let dd = String(date.getDate()).padStart(2, '0')
-          let mm = String(date.getMonth() + 1).padStart(2, '0') //January is 0!
-          let yyyy = date.getFullYear()      
-          date = yyyy + '-' + mm + '-' + dd
-          return date
-        },   
                    
         update_stock() {          
           let increment =                 
@@ -914,6 +897,8 @@
         }                                       
       
       },
+      
+      
        
       watch: {
         itemName: function item_watch() {
@@ -922,11 +907,6 @@
        
         customerName: function customer() {
           this.add_customer_data()
-        },
-        billDate: function isNull() {
-          if (this.billDate == '')  {
-            this.billDate == this.todays_date()
-          }
         }
       }
       
@@ -935,27 +915,31 @@
     app.get_user_id()             
       
     var search = document.getElementById('search-bar') 
+    
     var customer_search = document.getElementById('customer-search') 
-    document.addEventListener('DOMContentLoaded', () => {       
+    
+        document.addEventListener('DOMContentLoaded', () => {  
       feather.replace()
       autocomplete(search, app.arr)
       app.customerArr.push('cash')   
-      app.is_date_null() 
+      app.billDate = dayjs().format('YYYY-MM-DD')
          customer_autocomplete(customer_search, app.customerArr)
       const perf = firebase.performance()
       const analytics = firebase.analytics()
     })
     
   </script>
+  <!-- feather icons -->
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha256-XfzdiC+S1keia+s9l07y7ye5a874sBq67zK4u7LTjvk=" crossorigin="anonymous"></script> 
+  <!-- day js -->
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1.9.7/dayjs.min.js" integrity="sha256-qfCZG+wE1Jm81YLd0GFjGWiOSEnBFyBwFt/MyFNbxPI=" crossorigin="anonymous"></script>
   <!-- item-autocomplete -->
   <script src="/plugins/items-autocomplete.min.js"></script>    
   <!-- customer bootstrap-autocomplete -->
-  <script src="/plugins/customer-autocomplete.min.js"></script>    
-  <!-- feather icons -->
-  <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha256-XfzdiC+S1keia+s9l07y7ye5a874sBq67zK4u7LTjvk=" crossorigin="anonymous"></script>    
+  <script src="/plugins/customer-autocomplete.min.js"></script>     
   <!-- jQuery & JS bundle w/ Popper.js -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>     
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>      
   <!-- html2pdf -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js" integrity="sha512-pdCVFUWsxl1A4g0uV6fyJ3nrnTGeWnZN2Tl/56j45UvZ1OMdm9CIbctuIHj+yBIRTUUyv6I9+OivXj4i0LPEYA==" crossorigin="anonymous"></script>     
 </body>
