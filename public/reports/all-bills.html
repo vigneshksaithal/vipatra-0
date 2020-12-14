@@ -209,8 +209,8 @@
           },
 
           show_bills() {
-            let fromDate = new Date(this.fromDate);
-            let toDate = new Date(this.toDate);
+            let fromDate = dayjs(this.fromDate).startOf('day').toDate();
+            let toDate = dayjs(this.toDate).endOf('day').toDate();
 
             db.collection("bills")
               .where("bizId", "==", this.userId)
@@ -223,7 +223,7 @@
                 snapshot.forEach((doc) => {
                   let bill = doc.data().bill;
                   this.bills.push({
-                    date: this.format_date(doc.data().createdAt.toDate()),
+                    date: dayjs(doc.data().createdAt.toDate()).format('DD-MM-YYYY'),
                     billNo: bill.num,
                     totalAmount: bill.totalAmount,
                     items: bill.items,
@@ -235,15 +235,6 @@
               .catch((error) => {
                 document.write(error.message);
               });
-          },
-
-          format_date(val) {
-            let date = new Date(val);
-            let dd = String(date.getDate()).padStart(2, "0");
-            let mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
-            let yyyy = date.getFullYear();
-            date = dd + "-" + mm + "-" + yyyy;
-            return date;
           },
 
           row_click(bill) {
@@ -281,5 +272,6 @@
       integrity="sha256-XfzdiC+S1keia+s9l07y7ye5a874sBq67zK4u7LTjvk="
       crossorigin="anonymous"
     ></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.9.7/dayjs.min.js" integrity="sha256-qfCZG+wE1Jm81YLd0GFjGWiOSEnBFyBwFt/MyFNbxPI=" crossorigin="anonymous"></script>
   </body>
 </html>
