@@ -26,9 +26,13 @@
     <script defer src="/__/firebase/8.0.0/firebase-analytics.js"></script>
     <script defer src="/__/firebase/8.0.0/firebase-performance.js"></script>
     <!--  END Firebase initial -->
-    
+
     <!-- day js -->
-    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.9.7/dayjs.min.js" integrity="sha256-qfCZG+wE1Jm81YLd0GFjGWiOSEnBFyBwFt/MyFNbxPI=" crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/dayjs@1.9.7/dayjs.min.js"
+      integrity="sha256-qfCZG+wE1Jm81YLd0GFjGWiOSEnBFyBwFt/MyFNbxPI="
+      crossorigin="anonymous"
+    ></script>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand">Vipatra</a>
@@ -123,8 +127,8 @@
 
       <transition name="alert">
         <div class="alert alert-warning my-3" role="alert" v-show="showAlert">
-        No bills to show! Error: {{ alertText }}
-      </div>
+          No bills to show! Error: {{ alertText }}
+        </div>
       </transition>
     </div>
     <script>
@@ -148,8 +152,8 @@
         },
         methods: {
           show_bills() {
-            let startDate = dayjs().startOf('day').toDate()
-            let endDate = dayjs().endOf('day').toDate()
+            let startDate = dayjs().startOf("day").toDate();
+            let endDate = dayjs().endOf("day").toDate();
 
             db.collection("bills")
               .where("bizId", "==", this.userId)
@@ -172,12 +176,11 @@
               .then(() => {
                 if (this.bills !== []) {
                   this.showSpinner = false;
-                  this.showTable = true;  
-                }
-                else {
+                  this.showTable = true;
+                } else {
                   this.showSpinner = false;
                   this.showAlert = true;
-                  this.alertText = error.message;  
+                  this.alertText = error.message;
                 }
               })
               .catch((error) => {
