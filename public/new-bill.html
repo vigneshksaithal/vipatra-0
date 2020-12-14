@@ -813,7 +813,7 @@
           },
 
           date_to_timestamp() {
-            if (this.billDate === dayjs().format("YYYY-MM-DD").toDate()) {
+            if (this.billDate === dayjs().format("YYYY-MM-DD")) {
               this.timestamp = firebase.firestore.Timestamp.fromDate(
                 new Date()
               );
