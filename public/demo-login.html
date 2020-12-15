@@ -28,9 +28,10 @@
           // Leave the lines as is for the providers you want to offer your users.
           firebase.auth.GoogleAuthProvider.PROVIDER_ID,
           {
-      provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
-      signInMethod: firebase.auth.EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD
-    }
+            provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
+            signInMethod:
+              firebase.auth.EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD,
+          },
         ],
         // tosUrl and privacyPolicyUrl accept either url string or a callback
         // function.
@@ -46,14 +47,14 @@
       var ui = new firebaseui.auth.AuthUI(firebase.auth());
       // The start method will wait until the DOM is loaded.
       ui.start("#firebaseui-auth-container", uiConfig);
-    // Is there an email link sign-in?
-if (ui.isPendingRedirect()) {
-  ui.start('#firebaseui-auth-container', uiConfig);
-}
-// This can also be done via:
-if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
-  ui.start('#firebaseui-auth-container', uiConfig);
-}
+      // Is there an email link sign-in?
+      if (ui.isPendingRedirect()) {
+        ui.start("#firebaseui-auth-container", uiConfig);
+      }
+      // This can also be done via:
+      if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
+        ui.start("#firebaseui-auth-container", uiConfig);
+      }
     </script>
   </head>
   <body>
