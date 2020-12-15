@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Dashboard</title>
+    <title>Vipatra • dashboard</title>
     <meta charset="utf-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+      content="width=device-width, initial-scale=1"
     />
 
     <link rel="manifest" href="/manifest.json" />
@@ -20,6 +20,10 @@
     <style>
       .container {
         font-size: 20px;
+
+      }
+      a {
+        color: black;
       }
 
       .col {
@@ -28,7 +32,6 @@
     </style>
 
     <!-- feather icons -->
-
     <script
       src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"
       integrity="sha256-XfzdiC+S1keia+s9l07y7ye5a874sBq67zK4u7LTjvk="
@@ -51,43 +54,43 @@
 
     <div class="container text-center">
       <div class="row">
-        <div class="col" onClick="window.location.href" ="/new-bill">
+        <a class="col" href="/new-bill">
           <i data-feather="file-text"></i>
 
           <div>New Bill</div>
-        </div>
+        </a>
 
-        <div class="col" onclick="window.location.href" ="/items">
+        <a class="col" href="/items">
           <i data-feather="box"></i>
 
           <div>Inventory</div>
-        </div>
+        </a>
       </div>
 
       <hr />
 
       <div class="row">
-        <div class="col" onClick="window.location.href" ="/reports">
+        <a class="col" href="/reports">
           <i data-feather="bar-chart"></i>
 
           <div>Reports</div>
-        </div>
+        </a>
       </div>
 
       <hr />
 
       <div class="row">
-        <div class="col" onClick="window.location.href" ="/account">
+        <a class="col" href="/account">
           <i data-feather="user"></i>
 
           <div>Account</div>
-        </div>
+        </a>
 
-        <div class="col" onClick="window.location.href" ="/help">
+        <a class="col" href="/help">
           <i data-feather="help-circle"></i>
 
           <div>Help</div>
-        </div>
+        </a>
       </div>
     </div>
 
