@@ -23,18 +23,22 @@
     <script type="text/javascript">
       // FirebaseUI config.
       var uiConfig = {
-        signInSuccessUrl: "<url-to-redirect-to-on-success>",
+        signInSuccessUrl: "/",
         signInOptions: [
           // Leave the lines as is for the providers you want to offer your users.
           firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+          {
+            provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
+            signInMethod: firebase.auth.EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD
+          }
         ],
         // tosUrl and privacyPolicyUrl accept either url string or a callback
         // function.
         // Terms of service url/callback.
-        tosUrl: "/terms-of-service",
+        tosUrl: "https://vipatra.in/terms-of-service",
         // Privacy policy url/callback.
         privacyPolicyUrl: function () {
-          window.location.assign("/privacy-policy");
+          window.location.assign("https://vipatra.in/privacy-policy");
         },
       };
 
