@@ -306,9 +306,9 @@
             db.collection("biz")
               .doc(this.userId)
               .collection("items")
-              .onSnapshot((snapshot) => {
-                this.items.length = 0;
-                snapshot.forEach((doc) => {
+              .onSnapshot((querySnapshot) => {
+                this.items = [];
+                querySnapshot.forEach((doc) => {
                   let item = doc.data().item;
 
                   this.items.push({
@@ -323,9 +323,11 @@
                     taxType: item.tax.type,
                     taxPercent: item.tax.percent,
                   });
-                });
-                this.showItems = true;
+                });         
               });
+              if (this.items !== []) {
+      this.showItems = true;
+}
           },
 
           add_item() {
