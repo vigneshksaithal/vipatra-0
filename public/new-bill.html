@@ -607,22 +607,22 @@
               .doc(this.userId)
               .get()
               .then((doc) => {
-                let val = doc.data().bizInfo;
+                let account = doc.data().account;
 
-                this.biz.name = val.name;
-                this.biz.address = val.address;
-                this.biz.phone = val.phone;
-                this.biz.gstIN = val.gstIN;
-                this.billNo = doc.data().billInfo.prevBillNo + 1;
-                this.billNote = doc.data().billInfo.note;
-                this.enableGST = val.enableGST;
+                this.biz.name = account.biz.name;
+                this.biz.address = account.biz.address;
+                this.biz.phone = account.biz.phone;
+                this.biz.gstIN = account.biz.GSTIN;
+                this.billNo = account..settings.bill.prevBillNo + 1;
+                this.billNote = account.settings.bill.note;
+                this.enableGST = account.settings.enableGST;
               });
           },
 
           add_item() {
             let gst = 0;
 
-            if (this.discount == "") {
+            if (this.discount === "") {
               this.discount = 0;
               this.discount = parseFloat(this.discount);
             }
@@ -681,7 +681,7 @@
 
           get_data() {
             this.items.find((item) => {
-              if (this.itemName == item.name) {
+              if (this.itemName === item.name) {
                 this.price = item.price;
                 this.hsn = item.hsn;
                 this.docId = item.docId;
@@ -711,7 +711,7 @@
                 .doc(this.userId)
                 .get()
                 .then((doc) => {
-                  this.billNo = doc.data().billInfo.prevBillNo + 1;
+                  this.billNo = doc.data().account.settings.bill.prevBillNo + 1;
                 });
             }
           },
@@ -800,7 +800,7 @@
             let billSettings = db.collection("biz").doc(this.userId);
 
             batch.update(billSettings, {
-              "settings.prevBillNo": this.billNo,
+              "account.settings.bill.prevBillNo": this.billNo,
             });
 
             batch
