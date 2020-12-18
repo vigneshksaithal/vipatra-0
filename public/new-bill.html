@@ -21,11 +21,6 @@
     />
 
     <link rel="stylesheet" href="/main.css" />
-    <style>
-      .small-text {
-        font-size: 14px;
-      }
-    </style>
 
     <!-- START -->
     <script src="/__/firebase/8.2.0/firebase-app.js"></script>
@@ -398,7 +393,7 @@
                   <tr v-for="(item, index) in billItems" :key="item.item">
                     <th scope="row">{{ ++index }}</th>
                     <td>{{ item.name }}</td>
-                    <td v-show="enableGST">{{ item.hsn }}</td>
+                    <td>{{ item.hsn }}</td>
                     <td>{{ item.qty }}</td>
                     <td>{{ item.price }}</td>
                     <td>{{ item.discount }}</td>
@@ -410,30 +405,30 @@
                   <tr>
                     <td></td>
                     <td></td>
-                    <td v-show="enableGST"></td>
                     <td></td>
                     <td></td>
-                    <td v-show="enableGST"></td>
+                    <td></td>
+                    <td></td>
                     <th>Sub Total</th>
                     <th>₹ {{ totalAmount}}</th>
                   </tr>
                   <tr>
                     <td></td>
                     <td></td>
-                    <td v-show="enableGST"></td>
                     <td></td>
                     <td></td>
-                    <td v-show="enableGST"></td>
+                    <td></td>
+                    <td></td>
                     <th>Discount</th>
                     <th>₹ {{ totalDiscount }}</th>
                   </tr>
                   <tr>
                     <td></td>
                     <td></td>
-                    <td v-show="enableGST"></td>
                     <td></td>
                     <td></td>
-                    <td v-show="enableGST"></td>
+                    <td></td>
+                    <td></td>
                     <th>Total</th>
                     <th>₹ {{ totalAmount - totalDiscount }}</th>
                   </tr>
@@ -612,22 +607,22 @@
               .doc(this.userId)
               .get()
               .then((doc) => {
-                let val = doc.data().bizInfo;
+                let account = doc.data().account;
 
-                this.biz.name = val.name;
-                this.biz.address = val.address;
-                this.biz.phone = val.phone;
-                this.biz.gstIN = val.gstIN;
-                this.billNo = doc.data().billInfo.prevBillNo + 1;
-                this.billNote = doc.data().billInfo.note;
-                this.enableGST = val.enableGST;
+                this.biz.name = account.biz.name;
+                this.biz.address = account.biz.address;
+                this.biz.phone = account.biz.phone;
+                this.biz.gstIN = account.biz.GSTIN;
+                this.billNo = account.settings.bill.prevBillNo + 1;
+                this.billNote = account.settings.bill.note;
+                this.enableGST = account.settings.enableGST;
               });
           },
 
           add_item() {
             let gst = 0;
 
-            if (this.discount == "") {
+            if (this.discount === "") {
               this.discount = 0;
               this.discount = parseFloat(this.discount);
             }
@@ -686,7 +681,7 @@
 
           get_data() {
             this.items.find((item) => {
-              if (this.itemName == item.name) {
+              if (this.itemName === item.name) {
                 this.price = item.price;
                 this.hsn = item.hsn;
                 this.docId = item.docId;
@@ -716,7 +711,7 @@
                 .doc(this.userId)
                 .get()
                 .then((doc) => {
-                  this.billNo = doc.data().billInfo.prevBillNo + 1;
+                  this.billNo = doc.data().account.settings.bill.prevBillNo + 1;
                 });
             }
           },
@@ -752,7 +747,8 @@
             this.sendBillDisabled = true;
             this.showSpinner = true;
             this.sendBillAlertText = "Saving bill...";
-            if (this.customerName != "") {
+
+            if (this.customerName !== "") {
               this.customer = {
                 name: this.customerName,
                 address: this.customerAddress,
@@ -763,23 +759,53 @@
               this.customer = "cash";
             }
 
-            db.collection("bills")
-              .add({
-                bizId: this.userId,
-                customerCode: this.customerCode,
-                createdAt: this.timestamp,
-                bill: {
-                  num: this.billNo,
-                  customer: this.customer,
-                  biz: {
-                    name: this.biz.name,
-                    address: this.biz.address,
-                    phone: this.biz.phone,
-                  },
-                  totalAmount: this.totalAmount,
-                  items: this.json,
+            let batch = db.batch();
+
+            let billRef = db.collection("bills").doc();
+            batch.set(billRef, {
+              bizId: this.userId,
+              customerCode: this.customerCode,
+              createdAt: this.timestamp,
+              bill: {
+                num: this.billNo,
+                customer: this.customer,
+                biz: {
+                  name: this.biz.name,
+                  address: this.biz.address,
+                  phone: this.biz.phone,
                 },
-              })
+                totalAmount: this.totalAmount,
+                items: this.json,
+              },
+            });
+
+            let increment = firebase.firestore.FieldValue.increment;
+
+            let n = this.billItems.length;
+            for (i = 0; i < n; i++) {
+              let docId = this.billItems[i].docId;
+              let qty = -Math.abs(this.billItems[i].qty);
+
+              let itemRef = db
+                .collection("biz")
+                .doc(this.userId)
+                .collection("items")
+                .doc(docId);
+
+              batch.update(itemRef, {
+                "item.stock.current": increment(qty),
+              });
+            }
+
+            let billSettings = db.collection("biz").doc(this.userId);
+
+            batch.update(billSettings, {
+              "account.settings.bill.prevBillNo": this.billNo,
+            });
+
+            batch
+              .commit()
+
               .then(() => {
                 if (wantPdf) {
                   let element = document.getElementById("bill-pdf");
@@ -797,14 +823,13 @@
                   html2pdf().set(opt).from(element).save();
                   console.log(this.billNo);
                 }
-                this.update_stock();
-                this.update_bill_no();
               })
               .catch((error) => {
                 document.write(error.message);
               })
               .then(() => {
                 this.reset();
+                this.billNo = this.billNo + 1;
                 this.showSpinner = false;
                 this.sendBillAlertText = "Bill Saved successfully!";
 
@@ -830,39 +855,6 @@
                 new Date(this.billDate)
               );
             }
-          },
-
-          update_stock() {
-            let increment = firebase.firestore.FieldValue.increment;
-
-            this.billItems.forEach((item) => {
-              let docId = item.docId;
-              let qty = -Math.abs(item.qty);
-              if (docId) {
-                db.collection("biz")
-                  .doc(this.userId)
-                  .collection("items")
-                  .doc(docId)
-                  .update({
-                    "item.stock.current": increment(qty),
-                  })
-                  .catch((error) => {
-                    console.log(error.message);
-                  });
-              }
-            });
-          },
-
-          update_bill_no() {
-            db.collection("biz")
-              .doc(this.userId)
-              .update({
-                "billInfo.prevBillNo": this.billNo,
-              })
-              .catch((error) => {
-                console.log(error.message);
-              });
-            this.billNo = this.billNo + 1;
           },
 
           reset() {
