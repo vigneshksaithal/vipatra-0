@@ -20,7 +20,7 @@ body {
 
 .alert-enter-active,
 .alert-leave-active {
-  transition: opacity .5s;
+  transition: opacity 0.5s;
 }
 
 .alert-enter,
