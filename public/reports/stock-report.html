@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- vue@3.0.2 -->
+    <link rel="manifest" href="/manifest.json" />
     <script
       src="https://cdn.jsdelivr.net/npm/vue@3.0.2/dist/vue.global.prod.js"
       integrity="sha256-9A0tu3fG/g3NsSSchTDl6Ady+cfh4cWf2Il+J/rhzkI="
@@ -70,21 +71,23 @@
       </div>
     </nav>
     <!-- START -->
-    <script src="/__/firebase/8.2.0/firebase-app.js"></script>
-    <script src="/__/firebase/8.2.0/firebase-auth.js"></script>
-    <script src="/__/firebase/8.2.0/firebase-firestore.js"></script>
+    <script src="/__/firebase/8.2.1/firebase-app.js"></script>
+    <script src="/__/firebase/8.2.1/firebase-auth.js"></script>
+    <script src="/__/firebase/8.2.1/firebase-firestore.js"></script>
     <script src="/__/firebase/init.js"></script>
-    <script defer src="/__/firebase/8.2.0/firebase-analytics.js"></script>
-    <script defer src="/__/firebase/8.2.0/firebase-performance.js"></script>
+    <script defer src="/__/firebase/8.2.1/firebase-analytics.js"></script>
+    <script defer src="/__/firebase/8.2.1/firebase-performance.js"></script>
     <!--  END Firebase initial -->
+    
+    
   </head>
 
   <body v-cloak>
-    <h4 class="text-center my-3">Stock Report</h4>
-    <br />
     <section class="container">
+      <h4 class="text-secondary my-3">Stock Report</h4>
+      <hr>
       <div v-show="showSpinner" class="text-center">
-        <div class="spinner-border" role="status">
+        <div class="spinner-border spinner-border-sm" role="status">
           <span class="sr-only">Loading...</span>
         </div>
       </div>
@@ -94,7 +97,7 @@
         role="alert"
         v-show="showAlert"
       >
-        No reports available. Please add items to see reports. Error: {{
+        No reports available. Please add items to see reports. Error:( {{
         alertText }}
       </div>
 
@@ -106,17 +109,19 @@
         <thead>
           <th scope="col">#</th>
           <th scope="col">Item</th>
+          <th scope="col">Sale price</th>
           <th scope="col">Stock</th>
-          <th scope="col">Stock Value</th>
+          <th scope="col">Stock value</th>
         </thead>
         <tbody>
           <tr
-            :class="[is_stock_negative(item.stock) ? '' : 'table-danger' ]"
+            :class="[is_stock_negative(item.stock) ? 'table-danger' : '']"
             v-for="(item, index) in items"
             :key="item.docId"
           >
             <th scope="row">{{ ++index }}</th>
             <td>{{ item.name }}</td>
+            <td>₹ {{ item.salePrice }}</td>
             <td>{{ item.stock }}</td>
             <td>₹ {{ item.stockValue.toFixed(2) }}</td>
           </tr>
@@ -146,31 +151,40 @@
               .collection("items")
               .orderBy("item.name", "asc")
               .get()
-              .then((snapshot) => {
-                snapshot.forEach((doc) => {
-                  var val = doc.data().item;
+              .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                  var item = doc.data().item;
                   this.items.push({
-                    name: val.name,
-                    stock: val.stock.current,
-                    stockValue: val.stock.current * val.costPrice,
+                    name: item.name,
+                    salePrice: item.salePrice,
+                    stock: item.stock.current,
+                    stockValue: item.stock.current * item.costPrice,
                     docId: doc.id,
                   });
                 });
               })
               .then(() => {
-                if (this.items != []) {
-                  this.showSpinner = false;
-                  this.showTable = true;
-                } else {
-                  this.showSpinner = false;
-                  this.showAlert = true;
-                }
+                this.is_items_empty()
               })
               .catch((error) => {
                 this.showSpinner = false;
-                this.showAlert = true;
-                this.alertText = error.message;
+                this.showAlert(error.message)
               });
+          },
+          
+          is_items_empty() {
+            if (this.items === []) {
+              this.showSpinner = false;
+              this.showAlert()
+            } else {
+              this.showSpinner = false;
+              this.showTable = true;  
+            }    
+          },
+          
+          show_alert(text) {
+            this.showAlert = true;
+            this.alertText = text;    
           },
 
           get_user_id() {
@@ -188,7 +202,7 @@
           },
 
           is_stock_negative(stock) {
-            if (stock > 0) return true;
+            if (stock < 0) return true;
           },
         },
       }).mount(document.body);
