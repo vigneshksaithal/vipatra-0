@@ -5,7 +5,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- vue@3.0.2 -->
-    <link rel="manifest" href="/manifest.json" />
     <script
       src="https://cdn.jsdelivr.net/npm/vue@3.0.2/dist/vue.global.prod.js"
       integrity="sha256-9A0tu3fG/g3NsSSchTDl6Ady+cfh4cWf2Il+J/rhzkI="
@@ -78,12 +77,13 @@
     <script defer src="/__/firebase/8.2.1/firebase-analytics.js"></script>
     <script defer src="/__/firebase/8.2.1/firebase-performance.js"></script>
     <!--  END Firebase initial -->
+       
   </head>
 
   <body v-cloak>
     <section class="container">
       <h4 class="text-secondary my-3">Stock Report</h4>
-      <hr />
+      <hr>
       <div v-show="showSpinner" class="text-center">
         <div class="spinner-border spinner-border-sm" role="status">
           <span class="sr-only">Loading...</span>
@@ -107,20 +107,20 @@
         <thead>
           <th scope="col">#</th>
           <th scope="col">Item</th>
-          <th scope="col">Sale price</th>
           <th scope="col">Stock</th>
+          <th scope="col">Sale price</th>
           <th scope="col">Stock value</th>
         </thead>
         <tbody>
           <tr
-            :class="[is_stock_negative(item.stock) ? 'table-danger' : '']"
+            :class="[is_stock_negative(item.currentStock, item.minStock) ? 'table-danger' : '']"
             v-for="(item, index) in items"
             :key="item.docId"
           >
             <th scope="row">{{ ++index }}</th>
             <td>{{ item.name }}</td>
-            <td>₹ {{ item.salePrice }}</td>
             <td>{{ item.stock }}</td>
+            <td>₹ {{ item.salePrice }}</td>
             <td>₹ {{ item.stockValue.toFixed(2) }}</td>
           </tr>
         </tbody>
@@ -147,7 +147,6 @@
             db.collection("biz")
               .doc(this.userId)
               .collection("items")
-              .orderBy("item.name", "asc")
               .get()
               .then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
@@ -155,34 +154,49 @@
                   this.items.push({
                     name: item.name,
                     salePrice: item.salePrice,
-                    stock: item.stock.current,
+                    currentStock: item.stock.current,
+                    minStock: item.stock.min,
                     stockValue: item.stock.current * item.costPrice,
                     docId: doc.id,
                   });
                 });
               })
               .then(() => {
-                this.is_items_empty();
+                this.is_items_empty()
               })
               .catch((error) => {
                 this.showSpinner = false;
-                this.showAlert(error.message);
+                this.show_alert(error)
               });
           },
-
+          
           is_items_empty() {
-            if (this.items === []) {
+            if (this.items.length === 0) {
               this.showSpinner = false;
-              this.showAlert();
+              this.show_alert()
             } else {
               this.showSpinner = false;
-              this.showTable = true;
-            }
+              this.sort_items_asc(this.items)
+              this.showTable = true;  
+            }    
           },
-
+          
+          sort_items_asc(items) {
+            function compare(a, b) {
+              if ( a.name < b.name ){
+                return -1;
+              }
+              if ( a.name > b.name ){
+                return 1;
+              }
+              return 0;
+            }
+            items.sort(compare);    
+          },
+          
           show_alert(text) {
             this.showAlert = true;
-            this.alertText = text;
+            this.alertText = text;    
           },
 
           get_user_id() {
@@ -199,8 +213,8 @@
             });
           },
 
-          is_stock_negative(stock) {
-            if (stock < 0) return true;
+          is_stock_negative(current, min) {
+            if (current < min || current < 0) return true;
           },
         },
       }).mount(document.body);
