@@ -78,14 +78,12 @@
     <script defer src="/__/firebase/8.2.1/firebase-analytics.js"></script>
     <script defer src="/__/firebase/8.2.1/firebase-performance.js"></script>
     <!--  END Firebase initial -->
-    
-    
   </head>
 
   <body v-cloak>
     <section class="container">
       <h4 class="text-secondary my-3">Stock Report</h4>
-      <hr>
+      <hr />
       <div v-show="showSpinner" class="text-center">
         <div class="spinner-border spinner-border-sm" role="status">
           <span class="sr-only">Loading...</span>
@@ -164,27 +162,27 @@
                 });
               })
               .then(() => {
-                this.is_items_empty()
+                this.is_items_empty();
               })
               .catch((error) => {
                 this.showSpinner = false;
-                this.showAlert(error.message)
+                this.showAlert(error.message);
               });
           },
-          
+
           is_items_empty() {
             if (this.items === []) {
               this.showSpinner = false;
-              this.showAlert()
+              this.showAlert();
             } else {
               this.showSpinner = false;
-              this.showTable = true;  
-            }    
+              this.showTable = true;
+            }
           },
-          
+
           show_alert(text) {
             this.showAlert = true;
-            this.alertText = text;    
+            this.alertText = text;
           },
 
           get_user_id() {
