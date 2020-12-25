@@ -82,21 +82,21 @@
   <body v-cloak>
     <div class="container">
       <div class="row">
-      <div class="col">
-      <h4 class="text-secondary my-3">Items</h4>
+        <div class="col">
+          <h4 class="text-secondary my-3">Items</h4>
+        </div>
+
+        <div class="col text-right">
+          <button
+            class="btn btn-primary shadow-sm"
+            @click="clear_modal"
+            data-toggle="modal"
+            data-target="#item-modal"
+          >
+            + Add item
+          </button>
+        </div>
       </div>
-     
-      <div class="col text-right">
-            <button
-              class="btn btn-primary shadow-sm"
-              @click="clear_modal"
-              data-toggle="modal"
-              data-target="#item-modal"
-            >
-              + Add item
-            </button>
-          </div>
-</div>
       <hr />
       <div class="row">
         <div class="col">
@@ -109,8 +109,6 @@
               {{ alert }}
             </div>
           </transition>
-
- 
         </div>
       </div>
       <br />
