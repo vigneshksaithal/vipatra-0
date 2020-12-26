@@ -36,3 +36,9 @@ th:nth-child(n + 3),
 td:nth-child(n + 3) {
   text-align: right;
 }
+
+.spinner-border {
+  position: fixed;
+  top: 50%;
+  bottom: 50%;
+}
