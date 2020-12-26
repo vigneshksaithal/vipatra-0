@@ -150,13 +150,13 @@
         },
         methods: {
           show_bills() {
-            db.collection("bills")
-              .where("bizId", "==", this.userId)
-
-              .where("createdAt", ">=", dayjs().startOf("day").toDate())
-              .where("createdAt", "<=", dayjs().endOf("day").toDate())
-
-              .orderBy("createdAt", "desc")
+            db.collection('biz')
+           .doc(this.userId)
+           .collection('bills')            
+           .where('createdAt', '>=', dayjs().startOf('day').toDate())
+           .where('createdAt', '<=', dayjs().endOf('day').toDate())
+          
+           .orderBy('createdAt', 'desc')
               .get()
               .then((snapshot) => {
                 snapshot.forEach((doc) => {
