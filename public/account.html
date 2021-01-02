@@ -17,8 +17,7 @@
   <script defer src="/__/firebase/8.2.1/firebase-analytics.js"></script>
   <script defer src="/__/firebase/8.2.1/firebase-performance.js"></script>  
   <!--  END Firebase initial -->
-  
-  
+ 
     
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand">Vipatra</a>
@@ -37,7 +36,7 @@
           <li class="nav-item">
             <a class="nav-link" href="/items">
               <i data-feather="align-justify"></i>
-              Items
+              Inventory
             </a>
           </li>
           <li class="nav-item">
@@ -63,7 +62,8 @@
   </nav>        
 </head>
 <body v-cloak>      
-  <form class="container">            
+  <form class="container">      
+      
     <div class="card mt-3">
       <div class="card-body">
         <h5 class="card-title mb-3">Account</h5>          
@@ -103,41 +103,24 @@
             v-model="billNote"
           ></textarea>
         </div>
-          
-        <div class="text-right mt-4">
-          <button 
-            class="btn btn-primary" 
-            @click.prevent="update_biz_data"
-          >Save</button>
-        </div>
-         <transition name="fade">
+        <transition name="fade">
       <div 
         class="alert alert-info my-3" 
         role="alert"
         v-show="showAlert"
       >{{ alertText }}</div>
     </transition>
+          
+        <div class="text-right mt-4">
+          <button 
+            class="btn btn-primary px-3" 
+            @click.prevent="update_biz_data"
+          >Save</button>
+        </div>
       </div>
     </div>
-    <br>
-    <div class="card">
-      <div class="card-body">
-        <div class="card-title fs-6">Update password</div>
-          <label>New Password</label>
-          <input 
-            type="password" 
-            class="form-control" 
-            v-model="newPassword"
-          > 
-          <div class="text-right mt-4">
-            <button 
-              class="btn btn-primary" 
-              @click.prevent="update_password" 
-              :disabled="passwordBtn"
-            >Change Password</button>
-          </div>           
-      </div>
-    </div>
+    <br><br><br>
+    
   </form>    
   <script>    
     const auth = firebase.auth() 
@@ -152,10 +135,6 @@
           phone: '',
           GSTIN: '',
           billNote: '',
-          newPassword: '', 
-          updateBtn: false,
-          emailBtn: false,
-          passwordBtn: false,
           showAlert: false,
           alertText: ''  
           
@@ -188,7 +167,7 @@
             this.address = bizInfo.address
             this.phone = bizInfo.phone
             this.GSTIN = bizInfo.GSTIN
-            this.billNote = doc.data().settings.billNote
+            this.billNote = bizInfo.billNote
           })
         },
           
@@ -202,8 +181,6 @@
               address: this.address,
               phone: this.phone,
               GSTIN: this.GSTIN,
-            },
-            settings: {
               billNote: this.billNote
             }
           }, {merge: true})
@@ -221,19 +198,9 @@
           this.alertText = text 
           setTimeout(() => {
             this.showAlert = false
-          }, 5000)  
+          }, 2000)  
         },
           
-        update_password() {
-          this.passwordBtn = true
-          let user = auth.currentUser     
-          user.updatePassword(this.newPassword)
-         .then(() => {
-           this.passwordBtn = false
-         }).catch(error => {
-             // An error happened.
-         })
-       }                      
       }
     })
       
@@ -257,11 +224,11 @@
       const perf = firebase.performance()
       const analytics = firebase.analytics()        
     })               
-  </script>    
+  </script> 
+  <!-- feather icons -->
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha256-XfzdiC+S1keia+s9l07y7ye5a874sBq67zK4u7LTjvk=" crossorigin="anonymous"></script>       
   <!-- jQuery & JS bundle w/ Popper.js -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>     
-  <!-- feather icons -->
-  <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha256-XfzdiC+S1keia+s9l07y7ye5a874sBq67zK4u7LTjvk=" crossorigin="anonymous"></script>    
 </body>
 </html>
