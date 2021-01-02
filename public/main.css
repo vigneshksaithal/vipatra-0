@@ -7,6 +7,10 @@ body {
   display: none;
 }
 
+.navbar {
+  background-color: #000;
+}
+
 .navbar svg {
   color: currentColor;
   width: 1.3em;
