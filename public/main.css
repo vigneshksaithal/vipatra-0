@@ -7,10 +7,6 @@ body {
   display: none;
 }
 
-.navbar {
-  background-color: #000;
-}
-
 .navbar svg {
   color: currentColor;
   width: 1.3em;
@@ -30,10 +26,6 @@ body {
 .alert-enter,
 .alert-leave-to {
   opacity: 0;
-}
-
-table {
-  font-size: 15px;
 }
 
 th:nth-child(n + 3),
