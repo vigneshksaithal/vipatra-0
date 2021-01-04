@@ -126,17 +126,15 @@
             <thead class="border-top-0">
               <th scope="col">#</th>
               <th scope="col">Item</th>
-             
+
               <th scope="col">Sale price</th>
-             
             </thead>
             <tbody>
               <tr v-for="(item, index) in items" @click="row_click(item)">
                 <th scope="row">{{ ++index }}</th>
                 <td>{{ item.name }}</td>
-              
+
                 <td>₹ {{ item.salePrice }}</td>
-         
               </tr>
             </tbody>
           </table>
