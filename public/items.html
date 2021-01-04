@@ -122,21 +122,21 @@
               <span class="sr-only">Loading...</span>
             </div>
           </div>
-          <table v-show="showItems" class="table table-hover">
+          <table v-show="showItems" class="table table-sm table-hover">
             <thead class="border-top-0">
               <th scope="col">#</th>
               <th scope="col">Item</th>
-              <th scope="col">Cost price</th>
+             
               <th scope="col">Sale price</th>
-              <th scope="col">Stock</th>
+             
             </thead>
             <tbody>
               <tr v-for="(item, index) in items" @click="row_click(item)">
                 <th scope="row">{{ ++index }}</th>
                 <td>{{ item.name }}</td>
-                <td>₹ {{ item.costPrice }}</td>
+              
                 <td>₹ {{ item.salePrice }}</td>
-                <td>{{ item.currentStock }}</td>
+         
               </tr>
             </tbody>
           </table>
