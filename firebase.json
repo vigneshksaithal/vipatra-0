@@ -1,6 +1,10 @@
 {
   "hosting": {
     "public": "public",
-    "cleanUrls": true
+    "cleanUrls": true,
+    "rewrites": [{
+      "source": "/card/*",
+      "destination": "/card/index.html"
+    }]
    }
 }
