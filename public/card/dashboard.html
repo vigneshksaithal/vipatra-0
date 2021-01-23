@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Page Title</title>
+    <style>
+      #login-form {
+      margin: 20px;
+      }
+    </style>
+    <!--START-Bootstrap-cdn-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script  src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script defer src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <!--END_Bootstarap_cdn-->
+    <!-- START -->
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-analytics.js"></script>
+    <script>
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+      apiKey: "AIzaSyBbfOCfYFDttY0ikOun_0D4NyNPbZB6q6Q",
+      authDomain: "vipatra-card.firebaseapp.com",
+      databaseURL: "https://vipatra-card.firebaseio.com",
+      projectId: "vipatra-card",
+      storageBucket: "vipatra-card.appspot.com",
+      messagingSenderId: "445204060707",
+      appId: "1:445204060707:web:918c54d5dd96b1e7b92f96",
+      measurementId: "G-CC8XF337BQ"
+      };
+      /*Change till here*/
+      /* Initialize Firebase*/
+      firebase.initializeApp(firebaseConfig);
+      firebase.analytics();
+      const db = firebase.firestore();
+      const auth = firebase.auth();
+    </script>
+    <!--  END Firebase initial -->
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <h3 class="text-center">Welcome</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="card">
+            <div class="card-body text-center">
+              <h6 class="card-title">Your Card Link</h6>
+              <a id="card-link"  class="card-link">Click here!</a>
+            </div>
+          </div>
+          <br>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <form>
+            <progress value="0" max="100" id="uploader" class="progress">0%</progress>
+            <div class="form-group">
+              <label>Your photo/logo</label>
+              <input id="b-logo" type="file" accept=".jpg, .jpeg, .png">
+            </div>
+            <div class="form-group">
+              <label>Business Name</label>
+              <input id="b-name" type="text" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea id="b-description" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Your Name</label>
+              <input id="your-name" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Designation</label>
+              <input id="designation" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Phone</label>
+              <input id="b-phone" type="number" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Whatsapp</label>
+              <input id="b-whatsapp" type="number" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input id="b-email" type="email" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Address</label>
+              <textarea id="b-address" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+              <label>About us</label>
+              <textarea id="b-aboutus" class="form-control"></textarea>
+            </div>
+            <span>Services</span>
+            <ol id="product-input">
+            </ol>
+            <div class="form-group">
+              <button id="add-item" class="btn btn-secondary">+ Add Service</button>
+            </div>
+          </form>
+          <br>
+          <div class="form-group text-center">
+            <button id="save" class="btn btn-primary btn-block">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      var card_name, user_id;
+      $(document).ready(() => {
+      isUser();
+      });
+      function isUser(){
+        auth.onAuthStateChanged((user) => {
+          if(user){          
+          user_id = user.uid;
+          getData(user.uid);
+        }
+        });
+      }   
+        function getData(user_uid){
+         var docRef = db.collection('card')
+             .doc(user_uid)
+             .get()
+             .then((doc) => {
+               $('#b-name').val(doc.data().name);
+               $('#b-description').val(doc.data().description);
+               $('#b-phone').val(doc.data().phone);
+               $('#b-whatsapp').val(doc.data().whatsapp);
+               $('#b-email').val(doc.data().email);
+               $('#b-address').val(doc.data().address);
+               $('#your-name').val(doc.data().owner);
+               $('#designation').val(doc.data().designation);              console.log(doc.data().designation);
+               $('#b-aboutus').val(doc.data().about);
+               card_name = doc.data().cardName;
+               var card_link = 'https://vipatra.in/card/' + card_name;
+      $('#card-link').attr('href', card_link);  
+      $('#card-link').text(card_link);        console.log(doc.data().services[0]);
+               var s_arr = doc.data().services;
+               s_arr.forEach((arr) => {
+                 console.log(s_arr);
+                 var newdiv = document.createElement('div');
+                 newdiv.innerHTML = '<li class="form-group"><input id="input-services" type="text" value="' + arr + '" class="form-control" name="services[]"></li>';
+                 
+                           document.getElementById('product-input').appendChild(newdiv);  
+               });
+                     
+             }); 
+        }
+           
+        $('#b-logo').change((e) => {
+           var logo = e.target.files[0];
+           var storageRef = firebase.storage().ref('card/' + card_name + '/logo.png');
+           var task = storageRef.put(logo); 
+           task.on('state_changed', function progress(snapshot) {
+           var percentage = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
+           uploader.value = percentage;
+         }, function error(err) {
+        documwnt.write('error uploading img');
+        
+         },function complete() {
+        
+         });
+        });  
+        $('#add-item').click((e) => {
+         e.preventDefault();
+         addInput('product-input');
+        });
+        $('#save').click((e) => {
+         e.preventDefault();
+         $('#save').attr('disabled', true);
+         $('#save').text('Saving');
+         values = $("input[name='services[]']")
+                     .map(function(){
+                     return $(this).val();
+                     }).get();
+                     console.log(values);
+                 
+         var form_name = $('#b-name').val();
+         var form_description = $('#b-description').val();
+         var form_phone = $('#b-phone').val();
+         var form_email = $('#b-email').val();
+         var form_whatsapp = $('#b-whatsapp').val();
+         var form_address = $('#b-address').val();
+         var form_about = $('#b-aboutus').val();
+         var form_your_name = $('#your-name').val();
+         var form_designation = $('#designation').val();
+         db.collection('card')
+         .doc(user_id)
+         .set({
+           name: form_name,
+           description: form_description,
+           owner: form_your_name,
+           designation: form_designation,
+           phone: form_phone,
+           email: form_email,
+           whatsapp: form_whatsapp,
+           address: form_address,
+           about: form_about,
+           services: values
+            
+         }, {merge: true}).then($('#save').text('Saved Successfully'));         
+        })
+        var counter = 0;
+        var limit = 15;
+        var values = '';
+        function addInput(divName){
+            if (counter == limit)  {
+                 alert("You have reached the limit of adding " + counter + " inputs");
+            }
+            else {
+                 var newdiv = document.createElement('div');
+                 newdiv.innerHTML = '<li class="form-group"><input type="text" class="form-control" name="services[]"></li>';
+                           document.getElementById(divName).appendChild(newdiv);
+                 counter++;
+            }
+        }         
+    </script>
+  </body>
+</html>
