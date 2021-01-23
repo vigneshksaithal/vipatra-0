@@ -2,45 +2,51 @@
 <html>
   <head>
     <title>Vipatra Card</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
-      h4{
-      color: #17a2b8;
-      text-align: center;
+      h4 {
+        color: #17a2b8;
+        text-align: center;
       }
-      #qr-code{
-      text-align: center;          
+      #qr-code {
+        text-align: center;
       }
-      #contact-us{
-      font-size: 17px;
-      } 
-      .modal{
-      text-align: center;
-      } 
-      #qr-code-icon{
-      font-size: 24px;
+      #contact-us {
+        font-size: 17px;
       }
-      #share-icon{
-      font-size: 20px;
+      .modal {
+        text-align: center;
       }
-      #url{
-      font-size: 13px;
+      #qr-code-icon {
+        font-size: 24px;
       }
-      #logo{
-      border-radius: 50%;
-      height: 125px;
-      width: 125px;
+      #share-icon {
+        font-size: 20px;
       }
-      body{
-      background-image: linear-gradient(45deg, #f9ffa3, #faff99, #ffff87);
-      } 
-      #call-wa-button{
-      font-size: 16px;
-      }   
+      #url {
+        font-size: 13px;
+      }
+      #logo {
+        border-radius: 50%;
+        height: 125px;
+        width: 125px;
+      }
+      body {
+        background-image: linear-gradient(45deg, #f9ffa3, #faff99, #ffff87);
+      }
+      #call-wa-button {
+        font-size: 16px;
+      }
     </style>
     <!-- CSS only -->
-    <link defer rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link
+      defer
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+      integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+      crossorigin="anonymous"
+    />
     <!-- START -->
     <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-firestore.js"></script>
@@ -49,14 +55,14 @@
     <script>
       /*Firebase config*/
       const firebaseConfig = {
-      apiKey: "AIzaSyBbfOCfYFDttY0ikOun_0D4NyNPbZB6q6Q",
-      authDomain: "vipatra-card.firebaseapp.com",
-      databaseURL: "https://vipatra-card.firebaseio.com",
-      projectId: "vipatra-card",
-      storageBucket: "vipatra-card.appspot.com",
-      messagingSenderId: "445204060707",
-      appId: "1:445204060707:web:918c54d5dd96b1e7b92f96",
-      measurementId: "G-CC8XF337BQ"
+        apiKey: "AIzaSyBbfOCfYFDttY0ikOun_0D4NyNPbZB6q6Q",
+        authDomain: "vipatra-card.firebaseapp.com",
+        databaseURL: "https://vipatra-card.firebaseio.com",
+        projectId: "vipatra-card",
+        storageBucket: "vipatra-card.appspot.com",
+        messagingSenderId: "445204060707",
+        appId: "1:445204060707:web:918c54d5dd96b1e7b92f96",
+        measurementId: "G-CC8XF337BQ",
       };
       /*Change till here*/
       /* Initialize Firebase*/
@@ -69,141 +75,253 @@
   <body>
     <nav class="navbar navbar-light bg-light">
       <a class="navbar-brand" href="/card/home">
-      <img src="https://1.bp.blogspot.com/-ox52xvcGYFk/XwbJe-Xk4nI/AAAAAAAAACg/s5Lf51Vy2G81lLf9vhnOyZp9io3t2BhsACK4BGAsYHg/s500/20200611_101417_0000.png" width="30" height="30" class="d-inline-block align-top" alt="Vipatra-logo" loading="lazy">
-      <span>
-      <b>Vipatra</b>
-      </span>
+        <img
+          src="https://1.bp.blogspot.com/-ox52xvcGYFk/XwbJe-Xk4nI/AAAAAAAAACg/s5Lf51Vy2G81lLf9vhnOyZp9io3t2BhsACK4BGAsYHg/s500/20200611_101417_0000.png"
+          width="30"
+          height="30"
+          class="d-inline-block align-top"
+          alt="Vipatra-logo"
+          loading="lazy"
+        />
+        <span>
+          <b>Vipatra</b>
+        </span>
       </a>
       <span id="qr-code-icon" data-toggle="modal" data-target="#qr-code-modal">
-        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-upc-scan" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-          <path fill-rule="evenodd" d="M1.5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 1-1 0v-3A1.5 1.5 0 0 1 1.5 0h3a.5.5 0 0 1 0 1h-3zM11 .5a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 1 16 1.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 1-.5-.5zM.5 11a.5.5 0 0 1 .5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 1 0 1h-3A1.5 1.5 0 0 1 0 14.5v-3a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v3a1.5 1.5 0 0 1-1.5 1.5h-3a.5.5 0 0 1 0-1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 1 .5-.5z"/>
-          <path d="M3 4.5a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7zm2 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7zm2 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7zm2 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-7zm3 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7z"/>
+        <svg
+          width="1em"
+          height="1em"
+          viewBox="0 0 16 16"
+          class="bi bi-upc-scan"
+          fill="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M1.5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 1-1 0v-3A1.5 1.5 0 0 1 1.5 0h3a.5.5 0 0 1 0 1h-3zM11 .5a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 1 16 1.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 1-.5-.5zM.5 11a.5.5 0 0 1 .5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 1 0 1h-3A1.5 1.5 0 0 1 0 14.5v-3a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v3a1.5 1.5 0 0 1-1.5 1.5h-3a.5.5 0 0 1 0-1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 1 .5-.5z"
+          />
+          <path
+            d="M3 4.5a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7zm2 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7zm2 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7zm2 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-7zm3 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7z"
+          />
         </svg>
       </span>
       <span id="share-icon" data-toggle="modal" data-target="#share-modal">
-        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-share-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-          <path fill-rule="evenodd" d="M12.024 3.797L4.499 7.56l-.448-.895 7.525-3.762.448.894zm-.448 9.3L4.051 9.335 4.5 8.44l7.525 3.763-.448.894z"/>
-          <path fill-rule="evenodd" d="M13.5 5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zm0 11a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zm-11-5.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
+        <svg
+          width="1em"
+          height="1em"
+          viewBox="0 0 16 16"
+          class="bi bi-share-fill"
+          fill="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M12.024 3.797L4.499 7.56l-.448-.895 7.525-3.762.448.894zm-.448 9.3L4.051 9.335 4.5 8.44l7.525 3.763-.448.894z"
+          />
+          <path
+            fill-rule="evenodd"
+            d="M13.5 5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zm0 11a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zm-11-5.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"
+          />
         </svg>
       </span>
     </nav>
-    <br>
+    <br />
     <div>
       <div class="container d-none">
         <div class="row text-center">
           <div class="col">
             <!--##### IMAGE #####-->
-            <img id="logo">
-            <br><br>
+            <img id="logo" />
+            <br /><br />
             <span id="owner-name" class="h4"></span>
-            <br>
+            <br />
             <small id="designation"></small>
             <h5 id="name" class="text-primary"></h5>
             <p id="description"></p>
           </div>
         </div>
-        <hr>
+        <hr />
         <div id="call-wa-button" class="row text-center">
           <div class="col">
             <!--## Add number ##-->
             <a onclick="call()">
-              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-telephone-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" d="M2.267.98a1.636 1.636 0 0 1 2.448.152l1.681 2.162c.309.396.418.913.296 1.4l-.513 2.053a.636.636 0 0 0 .167.604L8.65 9.654a.636.636 0 0 0 .604.167l2.052-.513a1.636 1.636 0 0 1 1.401.296l2.162 1.681c.777.604.849 1.753.153 2.448l-.97.97c-.693.693-1.73.998-2.697.658a17.47 17.47 0 0 1-6.571-4.144A17.47 17.47 0 0 1 .639 4.646c-.34-.967-.035-2.004.658-2.698l.97-.969z"/>
+              <svg
+                width="1em"
+                height="1em"
+                viewBox="0 0 16 16"
+                class="bi bi-telephone-fill"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M2.267.98a1.636 1.636 0 0 1 2.448.152l1.681 2.162c.309.396.418.913.296 1.4l-.513 2.053a.636.636 0 0 0 .167.604L8.65 9.654a.636.636 0 0 0 .604.167l2.052-.513a1.636 1.636 0 0 1 1.401.296l2.162 1.681c.777.604.849 1.753.153 2.448l-.97.97c-.693.693-1.73.998-2.697.658a17.47 17.47 0 0 1-6.571-4.144A17.47 17.47 0 0 1 .639 4.646c-.34-.967-.035-2.004.658-2.698l.97-.969z"
+                />
               </svg>
-              <br>
+              <br />
               Call
             </a>
           </div>
           <div class="col">
             <!--##### WHATSAPP #####-->
             <a onclick="whatsapp()">
-              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chat-left-text-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4.414a1 1 0 0 0-.707.293L.854 15.146A.5.5 0 0 1 0 14.793V2zm3.5 1a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1h-9zm0 2.5a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1h-9zm0 2.5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5z"/>
+              <svg
+                width="1em"
+                height="1em"
+                viewBox="0 0 16 16"
+                class="bi bi-chat-left-text-fill"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4.414a1 1 0 0 0-.707.293L.854 15.146A.5.5 0 0 1 0 14.793V2zm3.5 1a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1h-9zm0 2.5a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1h-9zm0 2.5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5z"
+                />
               </svg>
-              <br>
+              <br />
               Whatsapp
             </a>
           </div>
         </div>
-        <hr>
+        <hr />
         <div id="h-services" class="row d-none">
           <div class="col">
             <h4>Services</h4>
             <div id="services-list"></div>
-            <hr>
+            <hr />
           </div>
         </div>
         <div id="contact-us" class="row">
           <div class="col">
             <h4>Contact Us</h4>
             <!--phone-->
-            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-telephone-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" d="M2.267.98a1.636 1.636 0 0 1 2.448.152l1.681 2.162c.309.396.418.913.296 1.4l-.513 2.053a.636.636 0 0 0 .167.604L8.65 9.654a.636.636 0 0 0 .604.167l2.052-.513a1.636 1.636 0 0 1 1.401.296l2.162 1.681c.777.604.849 1.753.153 2.448l-.97.97c-.693.693-1.73.998-2.697.658a17.47 17.47 0 0 1-6.571-4.144A17.47 17.47 0 0 1 .639 4.646c-.34-.967-.035-2.004.658-2.698l.97-.969z"/>
+            <svg
+              width="1em"
+              height="1em"
+              viewBox="0 0 16 16"
+              class="bi bi-telephone-fill"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M2.267.98a1.636 1.636 0 0 1 2.448.152l1.681 2.162c.309.396.418.913.296 1.4l-.513 2.053a.636.636 0 0 0 .167.604L8.65 9.654a.636.636 0 0 0 .604.167l2.052-.513a1.636 1.636 0 0 1 1.401.296l2.162 1.681c.777.604.849 1.753.153 2.448l-.97.97c-.693.693-1.73.998-2.697.658a17.47 17.47 0 0 1-6.571-4.144A17.47 17.47 0 0 1 .639 4.646c-.34-.967-.035-2.004.658-2.698l.97-.969z"
+              />
             </svg>
             &nbsp;
             <!--##### PHONE NUMBER #####-->
             <span id="phone" onclick="call()"></span>
-            <br><br>
+            <br /><br />
             <!--email-->
-            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-envelope-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555zM0 4.697v7.104l5.803-3.558L0 4.697zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757zm3.436-.586L16 11.801V4.697l-5.803 3.546z"/>
+            <svg
+              width="1em"
+              height="1em"
+              viewBox="0 0 16 16"
+              class="bi bi-envelope-fill"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555zM0 4.697v7.104l5.803-3.558L0 4.697zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757zm3.436-.586L16 11.801V4.697l-5.803 3.546z"
+              />
             </svg>
             &nbsp;
             <!--##### EMAIL #####-->
             <span id="email" onclick="openEmail()"></span>
-            <br><br>
+            <br /><br />
             <!--address-->
-            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-geo-alt" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+            <svg
+              width="1em"
+              height="1em"
+              viewBox="0 0 16 16"
+              class="bi bi-geo-alt"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"
+              />
             </svg>
             &nbsp;
             <!--##### ADDRESS #####-->
             <span id="address"></span>
           </div>
         </div>
-        <hr>
+        <hr />
         <div class="row">
           <div class="col">
             <h4>About us</h4>
             <p id="about-us"></p>
           </div>
         </div>
-        <hr>
-        <br>
-        <br>
+        <hr />
+        <br />
+        <br />
       </div>
     </div>
     <!--qr code modal-->
-    <div class="modal fade" id="qr-code-modal" tabindex="-1" role="dialog" aria-labelledby="qr-code-modal-label" aria-hidden="true">
+    <div
+      class="modal fade"
+      id="qr-code-modal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="qr-code-modal-label"
+      aria-hidden="true"
+    >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">QR code</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
             <span>Scan this code to view Digital Card</span>
-            <br><br>
+            <br /><br />
             <div id="qrcode"></div>
-            <br>
+            <br />
             <span id="url">url</span>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Back</button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Back
+            </button>
           </div>
         </div>
       </div>
     </div>
     <!-- Share Modal -->
-    <div class="modal fade" id="share-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div
+      class="modal fade"
+      id="share-modal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">Share</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
@@ -214,11 +332,21 @@
               <a class="a2a_button_twitter"></a>
               <a class="a2a_button_email"></a>
             </div>
-            <script defer async src="https://static.addtoany.com/menu/page.js"></script>
+            <script
+              defer
+              async
+              src="https://static.addtoany.com/menu/page.js"
+            ></script>
             <!-- AddToAny END -->
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
           </div>
         </div>
       </div>
@@ -228,91 +356,117 @@
       <div class="spinner-border" role="status">
         <span class="sr-only">Loading...</span>
       </div>
-      <br>
+      <br />
       Loading
     </div>
     <script>
-      var whatsappnum, card_name; document.addEventListener("DOMContentLoaded", function() { 
-          /*get data*/
-          db.collection('card')
-          .where('cardName','==',getCardName())
+      var whatsappnum, card_name;
+      document.addEventListener("DOMContentLoaded", function () {
+        /*get data*/
+        db.collection("card")
+          .where("cardName", "==", getCardName())
           .limit(1)
           .get()
           .then((snapshot) => {
             snapshot.docs.forEach((doc) => {
               var val = doc.data();
               console.log(doc.data().email);
-              $('#name').html(val.name);
-              $('#description').html(val.description);
-              $('#owner-name').html(val.owner);
-              $('#designation').html(val.designation);
-              $('#phone').html(val.phone);
-              $('#email').html(val.email);
-              $('#address').html(val.address);
-              $('#about-us').html(val.about)
+              $("#name").html(val.name);
+              $("#description").html(val.description);
+              $("#owner-name").html(val.owner);
+              $("#designation").html(val.designation);
+              $("#phone").html(val.phone);
+              $("#email").html(val.email);
+              $("#address").html(val.address);
+              $("#about-us").html(val.about);
               whatsappnum = val.whatsapp;
               isThisBusiness(val);
               showInfo();
-            });            
+            });
           });
-          showQRcode();
+        showQRcode();
       });
-      function getCardName(){
-        var card_name = document.URL.split('/').pop().split('#')[0].split('?')[0];
-      return card_name;
+      function getCardName() {
+        var card_name = document.URL.split("/")
+          .pop()
+          .split("#")[0]
+          .split("?")[0];
+        return card_name;
       }
-      function call(){
-        window.location.href = 'tel:' + $('#phone').html();
+      function call() {
+        window.location.href = "tel:" + $("#phone").html();
       }
-      function whatsapp(){
-        window.location.href = 'https://wa.me/91' + whatsappnum;
+      function whatsapp() {
+        window.location.href = "https://wa.me/91" + whatsappnum;
       }
-      function isThisBusiness(val){
-        if(val.services){
-         $('#h-services').removeClass('d-none');
+      function isThisBusiness(val) {
+        if (val.services) {
+          $("#h-services").removeClass("d-none");
           var services_arr = val.services;
-               var ul = document.createElement('ul');
-       services_arr.forEach(function(services_arr){
-              var li = document.createElement('li');
-              ul.appendChild(li);
-              li.innerHTML += services_arr;
-          }); 
-      document.getElementById('services-list').appendChild(ul);      
-       }       
+          var ul = document.createElement("ul");
+          services_arr.forEach(function (services_arr) {
+            var li = document.createElement("li");
+            ul.appendChild(li);
+            li.innerHTML += services_arr;
+          });
+          document.getElementById("services-list").appendChild(ul);
+        }
       }
-      function openEmail(){
-        window.location.href = 'mailto:' + $('#email').html();
-      } 
-      function showInfo(){
-        $('#loading-spinner').addClass('d-none');
-        $('.container').removeClass('d-none');
-      } 
-      function showQRcode(){
+      function openEmail() {
+        window.location.href = "mailto:" + $("#email").html();
+      }
+      function showInfo() {
+        $("#loading-spinner").addClass("d-none");
+        $(".container").removeClass("d-none");
+      }
+      function showQRcode() {
         var url = document.URL;
-      $('#url').html(url);
-          jQuery('#qrcode').qrcode({
-            height: 150,
-            width: 150,
-            text: document.URL
-          });           
+        $("#url").html(url);
+        jQuery("#qrcode").qrcode({
+          height: 150,
+          width: 150,
+          text: document.URL,
+        });
       }
       logo();
-       function logo(){
-        var card_name = getCardName();  
+      function logo() {
+        var card_name = getCardName();
         var storage = firebase.storage();
-      var storageRef = storage.ref('card/' + card_name + '/logo.png');        storageRef.getDownloadURL().then(function(url) {
-      var img = document.getElementById('logo');
-      img.src = url;
-      }).catch(function(error) {
-      // Handle any errors
-      });
+        var storageRef = storage.ref("card/" + card_name + "/logo.png");
+        storageRef
+          .getDownloadURL()
+          .then(function (url) {
+            var img = document.getElementById("logo");
+            img.src = url;
+          })
+          .catch(function (error) {
+            // Handle any errors
+          });
       }
     </script>
     <!-- JS, Popper.js, and jQuery -->
-    <script defer src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script defer src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script
+      defer
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      defer
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+      integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+      crossorigin="anonymous"
+    ></script>
     <!--qr code jquery-->
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+    <script
+      defer
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"
+    ></script>
   </body>
 </html>
